@@ -1,0 +1,48 @@
+/* 设计 tokens —— 严格按 个人摄影网站布局.txt 第 144-151 行 配色定义 */
+:root {
+  /* 配色 */
+  --c-ink: #111111;        /* 深色：背景、文字、强调 */
+  --c-mid: #888888;        /* 中灰：次要文字、边框、图标 */
+  --c-soft: #cccccc;       /* 浅灰：普通文字、默认菜单 */
+  --c-mist: #dddddd;       /* 极浅灰：背景、悬浮、骨架底色 */
+  --c-bone: #ffffff;       /* 主背景 */
+  --c-shimmer-from: #e0e0e0;
+  --c-shimmer-to: #f0f0f0;
+
+  /* 字体 */
+  --font-display: 'Newsreader', Georgia, 'Songti SC', serif;
+  --font-body: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* 字号 */
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-base: 14px;
+  --fs-md: 16px;
+  --fs-lg: 20px;
+  --fs-xl: 28px;
+  --fs-display: 40px;
+
+  /* 间距 */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* 缓动 */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.3, 0.9, 0.5, 1.1);
+  --t-fast: 0.18s;
+  --t-base: 0.22s;
+  --t-slow: 0.4s;
+
+  /* 布局 */
+  --layout-min-width: 1200px;
+  --side-width: 30%;
+  --main-width: 70%;
+  --gutter: 10px;
+}
