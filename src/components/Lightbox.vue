@@ -291,7 +291,7 @@ defineExpose({ openByIndex })
   font-size: 18px;
   font-weight: 400;
   letter-spacing: 0.01em;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.78);
   margin-bottom: 4px;
 }
 

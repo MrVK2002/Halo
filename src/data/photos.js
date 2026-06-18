@@ -6,18 +6,17 @@
  */
 
 const PHOTO_CATEGORIES = [
-  { key: 'all', label: '全部' },
-  { key: 'portrait', label: '人像' },
-  { key: 'landscape', label: '风光' },
-  { key: 'street', label: '街拍' },
-  { key: 'documentary', label: '纪实' }
+  { key: 'all', labelEN: 'All', labelCN: '全部' },
+  { key: 'frame', labelEN: 'Beyond the Frame Rate', labelCN: '帧率之外' },
+  { key: 'exposure', labelEN: 'Exposure Log', labelCN: '曝光日志' },
+  { key: 'pixels', labelEN: 'Redundant Pixels', labelCN: '冗余像素' }
 ]
 
 const PHOTOS = [
-  // ===== 人像 =====
+  // ===== Beyond the Frame Rate 帧率之外 =====
   {
     id: 'p01',
-    category: 'portrait',
+    category: 'frame',
     photoId: '1500648767791-00dcc994a43e',
     title: '窗边午后',
     width: 1200, height: 1500,
@@ -25,7 +24,7 @@ const PHOTOS = [
   },
   {
     id: 'p02',
-    category: 'portrait',
+    category: 'frame',
     photoId: '1488426862026-3ee34a7d66df',
     title: '光与轮廓',
     width: 1200, height: 1600,
@@ -33,7 +32,7 @@ const PHOTOS = [
   },
   {
     id: 'p03',
-    category: 'portrait',
+    category: 'frame',
     photoId: '1438761681033-6461ffad8d80',
     title: '工作室 #7',
     width: 1200, height: 1500,
@@ -41,7 +40,7 @@ const PHOTOS = [
   },
   {
     id: 'p04',
-    category: 'portrait',
+    category: 'frame',
     photoId: '1494790108377-be9c29b29330',
     title: '眼睛的颜色',
     width: 1200, height: 1500,
@@ -49,7 +48,7 @@ const PHOTOS = [
   },
   {
     id: 'p05',
-    category: 'portrait',
+    category: 'frame',
     photoId: '1531746020798-e6953c6e8e04',
     title: '素色',
     width: 1200, height: 1600,
@@ -57,17 +56,17 @@ const PHOTOS = [
   },
   {
     id: 'p06',
-    category: 'portrait',
+    category: 'frame',
     photoId: '1517841905240-472988babdf9',
     title: '雨后',
     width: 1200, height: 1500,
     exif: { camera: 'Sony A7M4 / 85mm F1.8', aperture: 'F/2.0', shutter: '1/400s', iso: 'ISO 400', date: '2025.04.22' }
   },
 
-  // ===== 风光 =====
+  // ===== Exposure Log 曝光日志 =====
   {
     id: 'p07',
-    category: 'landscape',
+    category: 'exposure',
     photoId: '1769433857600-b00eb44ea79d',
     title: '昆明岩石山',
     width: 1600, height: 1067,
@@ -75,7 +74,7 @@ const PHOTOS = [
   },
   {
     id: 'p08',
-    category: 'landscape',
+    category: 'exposure',
     photoId: '1779715203771-28e65a830965',
     title: '瑞士山林',
     width: 1600, height: 1067,
@@ -83,7 +82,7 @@ const PHOTOS = [
   },
   {
     id: 'p09',
-    category: 'landscape',
+    category: 'exposure',
     photoId: '1469474968028-56623f02e42e',
     title: '海岸线',
     width: 1600, height: 1067,
@@ -91,7 +90,7 @@ const PHOTOS = [
   },
   {
     id: 'p10',
-    category: 'landscape',
+    category: 'exposure',
     photoId: '1501785888041-af3ef285b470',
     title: '北方湖泊',
     width: 1600, height: 1067,
@@ -99,7 +98,7 @@ const PHOTOS = [
   },
   {
     id: 'p11',
-    category: 'landscape',
+    category: 'exposure',
     photoId: '1470770841072-f978cf4d019e',
     title: '峡湾之晨',
     width: 1600, height: 1067,
@@ -107,17 +106,17 @@ const PHOTOS = [
   },
   {
     id: 'p12',
-    category: 'landscape',
+    category: 'exposure',
     photoId: '1518837695005-2083093ee35b',
     title: '海雾',
     width: 1600, height: 1067,
     exif: { camera: 'Sony A7M4 / 35mm F1.4', aperture: 'F/2.8', shutter: '1/1000s', iso: 'ISO 100', date: '2024.09.30' }
   },
 
-  // ===== 街拍 =====
+  // ===== Redundant Pixels 冗余像素 =====
   {
     id: 'p13',
-    category: 'street',
+    category: 'pixels',
     photoId: '1724675708738-ced3a150247e',
     title: '曼哈顿小意大利',
     width: 1200, height: 1500,
@@ -125,7 +124,7 @@ const PHOTOS = [
   },
   {
     id: 'p14',
-    category: 'street',
+    category: 'pixels',
     photoId: '1732631591676-d1d96bf18331',
     title: '马拉加窄巷',
     width: 1200, height: 1500,
@@ -133,7 +132,7 @@ const PHOTOS = [
   },
   {
     id: 'p15',
-    category: 'street',
+    category: 'pixels',
     photoId: '1640900935456-be5332f28a1a',
     title: '夜街',
     width: 1200, height: 1600,
@@ -141,7 +140,7 @@ const PHOTOS = [
   },
   {
     id: 'p16',
-    category: 'street',
+    category: 'pixels',
     photoId: '1733247489206-f66cee6c509c',
     title: '隧道',
     width: 1200, height: 1500,
@@ -149,7 +148,7 @@ const PHOTOS = [
   },
   {
     id: 'p17',
-    category: 'street',
+    category: 'pixels',
     photoId: '1449034446853-66c86144b0ad',
     title: '霓虹路口',
     width: 1200, height: 1500,
@@ -157,17 +156,17 @@ const PHOTOS = [
   },
   {
     id: 'p18',
-    category: 'street',
+    category: 'pixels',
     photoId: '1492571350019-22de08371fd3',
     title: '车站',
     width: 1200, height: 1500,
     exif: { camera: 'Fuji X100V / 23mm F2', aperture: 'F/4.0', shutter: '1/250s', iso: 'ISO 400', date: '2024.08.25' }
   },
 
-  // ===== 纪实 =====
+  // ===== Beyond the Frame Rate (continued) =====
   {
     id: 'p19',
-    category: 'documentary',
+    category: 'frame',
     photoId: '1504198266286-1cd2f0b39e22',
     title: '市场',
     width: 1600, height: 1067,
@@ -175,7 +174,7 @@ const PHOTOS = [
   },
   {
     id: 'p20',
-    category: 'documentary',
+    category: 'frame',
     photoId: '1521134888717-7d6b4b0a8c98',
     title: '码头工人',
     width: 1600, height: 1067,
@@ -183,7 +182,7 @@ const PHOTOS = [
   },
   {
     id: 'p21',
-    category: 'documentary',
+    category: 'exposure',
     photoId: '1509099836639-18ba1795216d',
     title: '街头艺人',
     width: 1600, height: 1067,
@@ -191,7 +190,7 @@ const PHOTOS = [
   },
   {
     id: 'p22',
-    category: 'documentary',
+    category: 'exposure',
     photoId: '1517457373958-b7bdd4587205',
     title: '工厂车间',
     width: 1600, height: 1067,
@@ -199,7 +198,7 @@ const PHOTOS = [
   },
   {
     id: 'p23',
-    category: 'documentary',
+    category: 'pixels',
     photoId: '1505236858219-8359eb29e329',
     title: '街头童年',
     width: 1600, height: 1067,
@@ -207,7 +206,7 @@ const PHOTOS = [
   },
   {
     id: 'p24',
-    category: 'documentary',
+    category: 'pixels',
     photoId: '1469571486292-0ba58a3f068b',
     title: '游行',
     width: 1600, height: 1067,

@@ -21,19 +21,19 @@ const mainCategories = props.categories.filter((c) => c.key !== 'all')
   <aside class="side-menu" aria-label="主导航">
     <!-- Logo / 个人标识 -->
     <button class="side-menu__logo" type="button" @click="onLogoClick" aria-label="回到首页">
-      <span class="side-menu__logo-mark">J.T.</span>
-      <span class="side-menu__logo-text">Photography</span>
+      <span class="side-menu__logo-mark">Mr.VK</span>
+      <span class="side-menu__logo-text">Leo Liang</span>
     </button>
 
     <!-- 作品集主菜单 -->
     <section class="side-menu__section" aria-labelledby="worksets">
-      <h2 id="worksets" class="side-menu__heading">Worksets</h2>
+      <h2 id="worksets" class="side-menu__heading">MY WORKS 我的作品</h2>
       <ul class="side-menu__list">
         <MenuItem
           v-for="cat in mainCategories"
           :key="cat.key"
-          :label="cat.label"
-          :count="counts[cat.key]"
+          :labelEN="cat.labelEN"
+          :labelCN="cat.labelCN"
           :active="activeCategory === cat.key"
           @select="emit('select-category', cat.key)"
         />
@@ -45,20 +45,20 @@ const mainCategories = props.categories.filter((c) => c.key !== 'all')
 
     <!-- 次要菜单 -->
     <section class="side-menu__section">
-      <h2 class="side-menu__heading">Studio</h2>
+      <h2 class="side-menu__heading">INFO</h2>
       <ul class="side-menu__list">
         <MenuItem
-          label="关于摄影师"
+          labelEN="关于我"
           :active="activeCategory === 'about'"
           @select="emit('select-category', 'about')"
         />
         <MenuItem
-          label="联系 / 约拍"
+          labelEN="联系"
           :active="activeCategory === 'contact'"
           @select="emit('select-category', 'contact')"
         />
         <MenuItem
-          label="留言墙"
+          labelEN="留言墙"
           :active="activeCategory === 'guestbook'"
           @select="emit('select-category', 'guestbook')"
         />
@@ -101,7 +101,7 @@ const mainCategories = props.categories.filter((c) => c.key !== 'all')
 }
 
 .side-menu__logo-mark {
-  font-family: var(--font-display);
+  font-family: var(--font-artier);
   font-size: 32px;
   font-weight: 400;
   letter-spacing: -0.02em;
@@ -109,20 +109,12 @@ const mainCategories = props.categories.filter((c) => c.key !== 'all')
   color: var(--c-ink);
 }
 
-.side-menu__logo-text {
-  font-family: var(--font-mono);
-  font-size: var(--fs-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--c-mid);
-}
-
 .side-menu__section {
   margin-bottom: var(--space-5);
 }
 
 .side-menu__heading {
-  font-family: var(--font-mono);
+  font-family: var(--font-hans);
   font-size: var(--fs-xs);
   font-weight: 500;
   text-transform: uppercase;
@@ -153,5 +145,13 @@ const mainCategories = props.categories.filter((c) => c.key !== 'all')
 }
 .side-menu::-webkit-scrollbar-thumb {
   background: var(--c-mist);
+}
+
+.side-menu__logo-text {
+  font-family: var(--font-hans);
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: var(--c-mid);
 }
 </style>

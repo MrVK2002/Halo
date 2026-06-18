@@ -1,7 +1,7 @@
 <script setup>
 const props = defineProps({
-  label: { type: String, required: true },
-  count: { type: Number, default: null },
+  labelEN: { type: String, required: true },
+  labelCN: { type: String, default: '' },
   active: { type: Boolean, default: false }
 })
 defineEmits(['select'])
@@ -19,8 +19,10 @@ defineEmits(['select'])
     @keydown.space.prevent="$emit('select')"
   >
     <span class="menu-item__bar" aria-hidden="true"></span>
-    <span class="menu-item__label">{{ label }}</span>
-    <span v-if="count !== null" class="menu-item__count">{{ count }}</span>
+    <span class="menu-item__labels">
+      <span class="menu-item__label-en">{{ labelEN }}</span>
+      <span v-if="labelCN" class="menu-item__label-cn">{{ labelCN }}</span>
+    </span>
   </li>
 </template>
 
@@ -28,13 +30,9 @@ defineEmits(['select'])
 .menu-item {
   position: relative;
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: var(--space-2);
   padding: 10px 0 10px 16px;
-  font-family: var(--font-body);
-  font-size: var(--fs-md);
-  font-weight: 400;
-  color: var(--c-soft);
   cursor: pointer;
   user-select: none;
   transition: color var(--t-base) var(--ease-out);
@@ -52,20 +50,45 @@ defineEmits(['select'])
   transition: width var(--t-base) var(--ease-out);
 }
 
-.menu-item__label {
+.menu-item__labels {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
   flex: 1;
-  letter-spacing: 0.01em;
 }
 
-.menu-item__count {
-  font-family: var(--font-mono);
-  font-size: var(--fs-sm);
-  color: var(--c-mid);
-  letter-spacing: 0;
+.menu-item__label-en {
+  font-family: 'SourceHanSansSC-VF', 'Noto Sans SC', 'PingFang SC', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: var(--c-ink);
+  transition: color 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  line-height: 1.4;
 }
+
+.menu-item__label-cn {
+  font-family: 'SourceHanSansSC-VF', 'Noto Sans SC', 'PingFang SC', sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  color: #888888;
+  transition: color 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  line-height: 1.4;
+}
+
 
 .menu-item:hover {
   color: var(--c-ink);
+}
+
+.menu-item:hover .menu-item__label-en,
+.menu-item:hover .menu-item__label-cn {
+  color: var(--c-ink);
+}
+
+.menu-item:hover .menu-item__label-cn {
+  color: var(--c-soft);
 }
 
 .menu-item:hover .menu-item__bar {
@@ -78,9 +101,14 @@ defineEmits(['select'])
   background: var(--c-ink);
 }
 
-.menu-item.is-active {
+.menu-item.is-active .menu-item__label-en {
   color: var(--c-ink);
   font-weight: 500;
+}
+
+.menu-item.is-active .menu-item__label-cn {
+  color: var(--c-soft);
+  font-weight: 400;
 }
 
 .menu-item.is-active .menu-item__bar {

@@ -15,6 +15,7 @@
   --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
   --font-elegance: 'HFSimpleElegance-2', 'Songti SC', 'Noto Serif SC', Georgia, serif;
   --font-hans: 'SourceHanSansSC-VF', 'Noto Sans SC', 'PingFang SC', sans-serif;
+  --font-artier: 'ArtierEN-2', 'Didot', 'Bodoni MT', Georgia, serif;
 
   /* 字号 */
   --fs-xs: 11px;
@@ -60,5 +61,11 @@
   font-family: 'SourceHanSansSC-VF';
   src: url('../font/SourceHanSansSC-VF.ttf') format('truetype');
   font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ArtierEN-2';
+  src: url('../font/ArtierEN-2.ttf') format('truetype');
   font-display: swap;
 }
