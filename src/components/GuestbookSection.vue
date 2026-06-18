@@ -220,40 +220,42 @@ const gridItems = computed(() =>
       </div>
     </form>
 
-    <!-- 软木板 + 便签瀑布流 -->
-    <section class="guestbook__board" aria-label="留言列表">
-      <div v-if="notes.length === 0" class="guestbook__empty">
-        <p>还没有便签。留下第一张吧。</p>
-      </div>
+    <!-- 软木板 + 便签瀑布流(外裹木质边框) -->
+    <div class="guestbook__frame" aria-label="留言列表">
+      <section class="guestbook__board">
+        <div v-if="notes.length === 0" class="guestbook__empty">
+          <p>还没有便签。留下第一张吧。</p>
+        </div>
 
-      <MasonryGrid
-        v-else
-        :items="gridItems"
-        :gap="28"
-        :breakpoints="{ 0: 1, 600: 2, 900: 3, 1300: 4 }"
-      >
-        <template #default="{ item }">
-          <article
-            class="note"
-            :style="{
-              '--rotate': item._note.rotate + 'deg',
-              '--enter-delay': item._note.enterDelay + 'ms',
-              '--paper': item._note.color
-            }"
-          >
-            <span class="note__pin" aria-hidden="true"></span>
-            <header class="note__header">
-              <span class="note__name">{{ item._note.name }}</span>
-              <time class="note__date">{{ item._note.date }}</time>
-            </header>
-            <p class="note__body">{{ item._note.body }}</p>
-            <footer v-if="item._note.rating > 0" class="note__rating" aria-label="评分">
-              <span v-for="n in 5" :key="n" :class="{ 'is-on': item._note.rating >= n }">★</span>
-            </footer>
-          </article>
-        </template>
-      </MasonryGrid>
-    </section>
+        <MasonryGrid
+          v-else
+          :items="gridItems"
+          :gap="28"
+          :breakpoints="{ 0: 1, 600: 2, 900: 3, 1300: 4 }"
+        >
+          <template #default="{ item }">
+            <article
+              class="note"
+              :style="{
+                '--rotate': item._note.rotate + 'deg',
+                '--enter-delay': item._note.enterDelay + 'ms',
+                '--paper': item._note.color
+              }"
+            >
+              <span class="note__pin" aria-hidden="true"></span>
+              <header class="note__header">
+                <span class="note__name">{{ item._note.name }}</span>
+                <time class="note__date">{{ item._note.date }}</time>
+              </header>
+              <p class="note__body">{{ item._note.body }}</p>
+              <footer v-if="item._note.rating > 0" class="note__rating" aria-label="评分">
+                <span v-for="n in 5" :key="n" :class="{ 'is-on': item._note.rating >= n }">★</span>
+              </footer>
+            </article>
+          </template>
+        </MasonryGrid>
+      </section>
+    </div>
   </section>
 </template>
 
@@ -524,45 +526,146 @@ const gridItems = computed(() =>
    - 叠加 SVG 噪点作为颗粒
    - background-attachment: fixed 让滚动时背景静止 (按 brief)
 ==================================================================== */
-.guestbook__board {
+/* 木质外框:
+   - 4 个绝对定位的边缘条 + 4 个角块,通过线性渐变模拟木纹 + 内外倒角阴影
+   - 厚度 ~22px,主体颜色取自截图:浅米色木 ( #d9b78b → #b07e4a ) + 微高光 + 暗缝阴影
+   - 框架整体投影到页面上 (drop-shadow),内壁向软木板投阴影做"嵌入"感
+==================================================================== */
+.guestbook__frame {
   position: relative;
   flex: 1;
-  padding: 56px 32px 64px;
-  background-color: #8B5A2B;
-  background-image:
-    radial-gradient(ellipse 1200px 380px at 18% 12%, rgba(0, 0, 0, 0.22), transparent 60%),
-    radial-gradient(ellipse 900px 320px at 82% 30%, rgba(255, 220, 180, 0.10), transparent 65%),
-    radial-gradient(ellipse 1000px 360px at 30% 78%, rgba(0, 0, 0, 0.18), transparent 60%),
-    radial-gradient(ellipse 800px 260px at 90% 92%, rgba(255, 220, 180, 0.08), transparent 65%);
-  background-attachment: fixed, fixed, fixed, fixed;
-  overflow: hidden;
+  display: block;
+  padding: 22px;
+  background:
+    /* 内壁倒角:深凹槽一圈 */
+    linear-gradient(#1a0e06, #1a0e06) padding-box,
+    /* 木纹基色 + 暗角 + 微弱横向纹理 */
+    linear-gradient(180deg, #e3c396 0%, #d2a877 35%, #b48457 70%, #8d5d34 100%) border-box;
+  border: 0 solid transparent;
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.22),
+    0 4px 12px rgba(0, 0, 0, 0.18),
+    inset 0 0 0 1px rgba(255, 240, 210, 0.35),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.28);
 }
 
-/* 颗粒 / 噪点层: SVG 内联数据 URL,不阻塞交互 */
+/* 4 条木纹条幅:模拟拼接板 + 细纹理 */
+.guestbook__frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      180deg,
+      rgba(70, 40, 18, 0.10) 0,
+      rgba(70, 40, 18, 0.10) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+    repeating-linear-gradient(
+      180deg,
+      rgba(255, 240, 210, 0.05) 0,
+      rgba(255, 240, 210, 0.05) 1px,
+      transparent 1px,
+      transparent 9px
+    );
+}
+
+/* 角落拼接缝:水平 + 垂直中线略深的接缝 */
+.guestbook__frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    /* 顶部接缝 */
+    linear-gradient(180deg, rgba(0, 0, 0, 0.30), rgba(0, 0, 0, 0) 2px),
+    /* 底部接缝 */
+    linear-gradient(0deg, rgba(0, 0, 0, 0.30), rgba(0, 0, 0, 0) 2px),
+    /* 左侧接缝 */
+    linear-gradient(90deg, rgba(0, 0, 0, 0.30), rgba(0, 0, 0, 0) 2px),
+    /* 右侧接缝 */
+    linear-gradient(270deg, rgba(0, 0, 0, 0.30), rgba(0, 0, 0, 0) 2px);
+}
+
+/* 软木板表面(在框内)
+   - 真实软木板质感由 5 层叠加:
+     1) 暖棕基色
+     2) 几个大块不规则深棕色斑(径向渐变)
+     3) 高密度小暗点(cork 颗粒) — radial-gradient 平铺
+     4) 稀疏小亮点 — radial-gradient 平铺
+     5) SVG turbulence 噪点(让边缘不齐) — ::before
+     6) 边缘微暗角 — ::after
+   - 颜色取自实际软木板图像:基色 #b48a5a,深斑 #6e4a25,亮点 #e8c896
+==================================================================== */
+.guestbook__board {
+  position: relative;
+  width: 100%;
+  padding: 56px 32px 64px;
+  background-color: #b48a5a;
+  background-image:
+    /* 大块不规则深棕斑(4 个) */
+    radial-gradient(ellipse 520px 360px at 12% 18%, rgba(80, 45, 18, 0.28), transparent 70%),
+    radial-gradient(ellipse 460px 320px at 88% 24%, rgba(60, 35, 14, 0.22), transparent 70%),
+    radial-gradient(ellipse 600px 380px at 28% 82%, rgba(70, 40, 16, 0.26), transparent 70%),
+    radial-gradient(ellipse 480px 340px at 92% 88%, rgba(80, 50, 22, 0.24), transparent 70%),
+    /* 中等深色斑(补充 patchy 感) */
+    radial-gradient(ellipse 280px 200px at 60% 12%, rgba(110, 70, 36, 0.18), transparent 75%),
+    radial-gradient(ellipse 320px 220px at 8% 60%, rgba(110, 70, 36, 0.16), transparent 75%),
+    radial-gradient(ellipse 260px 180px at 70% 70%, rgba(110, 70, 36, 0.18), transparent 75%),
+    /* 高密度暗点: cork 颗粒的主体
+       (radial-gradient 单点 + 小尺寸平铺,产生成千上万的点) */
+    radial-gradient(circle at 50% 50%, rgba(50, 28, 10, 0.55) 0.6px, transparent 1.2px),
+    /* 稀疏亮点:模拟 cork 表面的微高光 */
+    radial-gradient(circle at 50% 50%, rgba(255, 235, 200, 0.45) 0.5px, transparent 1.0px),
+    /* 整体基础径向:让中心略亮、四角略暗(进一步强化 cork 的微反射) */
+    radial-gradient(ellipse at center, rgba(255, 230, 195, 0.10), transparent 65%);
+  background-size:
+    auto, auto, auto, auto,
+    auto, auto, auto,
+    7px 7px,
+    13px 13px,
+    auto;
+  background-position:
+    0 0, 0 0, 0 0, 0 0,
+    0 0, 0 0, 0 0,
+    0 0,
+    3px 4px,
+    0 0;
+  background-repeat:
+    no-repeat, no-repeat, no-repeat, no-repeat,
+    no-repeat, no-repeat, no-repeat,
+    repeat,
+    repeat,
+    no-repeat;
+  background-attachment: local, local, local, local, local, local, local, local, local, local;
+  box-shadow:
+    inset 0 6px 18px rgba(0, 0, 0, 0.45),
+    inset 0 -3px 12px rgba(0, 0, 0, 0.35),
+    inset 4px 0 14px rgba(0, 0, 0, 0.28),
+    inset -4px 0 14px rgba(0, 0, 0, 0.28);
+}
+
+/* 颗粒不齐感:SVG turbulence,让点阵的"死板网格"被打破 */
 .guestbook__board::before {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.18  0 0 0 0 0.10  0 0 0 0 0.05  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-  opacity: 0.42;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.20  0 0 0 0 0.12  0 0 0 0 0.05  0 0 0 0.42 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: 0.55;
   mix-blend-mode: multiply;
 }
 
+/* 暗角:让软木板在木框内显得"沉下去" */
 .guestbook__board::after {
-  /* 木纹方向:横向细纹,极弱 */
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image: repeating-linear-gradient(
-    90deg,
-    rgba(0, 0, 0, 0.05) 0,
-    rgba(0, 0, 0, 0.05) 1px,
-    transparent 1px,
-    transparent 7px
-  );
-  opacity: 0.35;
+  background:
+    radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.28) 100%);
 }
 
 /* 空状态 */
