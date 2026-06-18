@@ -11,13 +11,19 @@ export function usePhotos() {
     const map = { all: PHOTOS.length }
     for (const p of PHOTOS) {
       map[p.category] = (map[p.category] || 0) + 1
+      if (p.subcategory) {
+        map[p.subcategory] = (map[p.subcategory] || 0) + 1
+      }
     }
     return map
   })
 
   const filteredPhotos = computed(() => {
     if (activeCategory.value === 'all') return PHOTOS
-    return PHOTOS.filter((p) => p.category === activeCategory.value)
+    return PHOTOS.filter((p) =>
+      p.category === activeCategory.value ||
+      p.subcategory === activeCategory.value
+    )
   })
 
   /**

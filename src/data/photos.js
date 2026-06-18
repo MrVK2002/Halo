@@ -8,8 +8,11 @@
 const PHOTO_CATEGORIES = [
   { key: 'all', labelEN: 'All', labelCN: '全部' },
   { key: 'frame', labelEN: 'Beyond the Frame Rate', labelCN: '帧率之外' },
+  { key: 'frame.narrative', labelEN: 'Narrative Frames', labelCN: '叙事瞬间' },
   { key: 'exposure', labelEN: 'Exposure Log', labelCN: '曝光日志' },
-  { key: 'pixels', labelEN: 'Redundant Pixels', labelCN: '冗余像素' }
+  { key: 'exposure.available-light', labelEN: 'Available Light', labelCN: '可用光' },
+  { key: 'pixels', labelEN: 'Redundant Pixels', labelCN: '冗余像素' },
+  { key: 'pixels.grain', labelEN: 'Grain Residue', labelCN: '颗粒残像' }
 ]
 
 const PHOTOS = [
@@ -33,6 +36,7 @@ const PHOTOS = [
   {
     id: 'p03',
     category: 'frame',
+    subcategory: 'frame.narrative',
     photoId: '1438761681033-6461ffad8d80',
     title: '工作室 #7',
     width: 1200, height: 1500,
@@ -41,6 +45,7 @@ const PHOTOS = [
   {
     id: 'p04',
     category: 'frame',
+    subcategory: 'frame.narrative',
     photoId: '1494790108377-be9c29b29330',
     title: '眼睛的颜色',
     width: 1200, height: 1500,
@@ -57,6 +62,7 @@ const PHOTOS = [
   {
     id: 'p06',
     category: 'frame',
+    subcategory: 'frame.narrative',
     photoId: '1517841905240-472988babdf9',
     title: '雨后',
     width: 1200, height: 1500,
@@ -99,6 +105,7 @@ const PHOTOS = [
   {
     id: 'p11',
     category: 'exposure',
+    subcategory: 'exposure.available-light',
     photoId: '1470770841072-f978cf4d019e',
     title: '峡湾之晨',
     width: 1600, height: 1067,
@@ -107,6 +114,7 @@ const PHOTOS = [
   {
     id: 'p12',
     category: 'exposure',
+    subcategory: 'exposure.available-light',
     photoId: '1518837695005-2083093ee35b',
     title: '海雾',
     width: 1600, height: 1067,
@@ -133,6 +141,7 @@ const PHOTOS = [
   {
     id: 'p15',
     category: 'pixels',
+    subcategory: 'pixels.grain',
     photoId: '1640900935456-be5332f28a1a',
     title: '夜街',
     width: 1200, height: 1600,
@@ -149,6 +158,7 @@ const PHOTOS = [
   {
     id: 'p17',
     category: 'pixels',
+    subcategory: 'pixels.grain',
     photoId: '1449034446853-66c86144b0ad',
     title: '霓虹路口',
     width: 1200, height: 1500,
