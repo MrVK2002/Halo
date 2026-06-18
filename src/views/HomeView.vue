@@ -4,6 +4,7 @@ import SideMenu from '@/components/SideMenu.vue'
 import MasonryGrid from '@/components/MasonryGrid.vue'
 import Lightbox from '@/components/Lightbox.vue'
 import AboutSection from '@/components/AboutSection.vue'
+import GuestbookSection from '@/components/GuestbookSection.vue'
 import { usePhotos } from '@/composables/usePhotos.js'
 import { useSmoothScroll } from '@/composables/useSmoothScroll.js'
 
@@ -17,11 +18,6 @@ function handleSelectCategory(key) {
   placeholderMessage.value = ''
   if (key === 'contact') {
     placeholderMessage.value = '联系 / 约拍入口即将开放。'
-    setCategory('all')
-    return
-  }
-  if (key === 'guestbook') {
-    placeholderMessage.value = '留言墙模块将在下一版本上线。'
     setCategory('all')
     return
   }
@@ -46,6 +42,8 @@ function handleCardClick(index) {
       <!-- 顶部：按 brief 严格无任何内容（无标题/搜索/筛选/面包屑） -->
 
       <AboutSection v-if="activeCategory === 'about'" />
+
+      <GuestbookSection v-else-if="activeCategory === 'guestbook'" />
 
       <MasonryGrid
         v-else-if="masonryItems.length"
