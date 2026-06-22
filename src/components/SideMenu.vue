@@ -48,17 +48,17 @@ const mainCategories = props.categories.filter((c) => c.key !== 'all')
       <h2 class="side-menu__heading">INFO 更多</h2>
       <ul class="side-menu__list">
         <MenuItem
-          labelEN="ABOUT ME | 关于我"
+          labelEN="ABOUT ME&nbsp;&nbsp; | &nbsp;&nbsp;关于我"
           :active="activeCategory === 'about'"
           @select="emit('select-category', 'about')"
         />
         <MenuItem
-          labelEN="CONTACT | 联系"
+          labelEN="CONTACT&nbsp;&nbsp; | &nbsp;&nbsp;联系"
           :active="activeCategory === 'contact'"
           @select="emit('select-category', 'contact')"
         />
         <MenuItem
-          labelEN="GUESTBOOK | 留言墙"
+          labelEN="GUESTBOOK&nbsp;&nbsp; | &nbsp;&nbsp;留言墙"
           :active="activeCategory === 'guestbook'"
           @select="emit('select-category', 'guestbook')"
         />
