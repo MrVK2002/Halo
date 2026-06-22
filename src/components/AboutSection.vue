@@ -32,14 +32,8 @@ import SocialIcons from './SocialIcons.vue'
           engineered order and organic chaos. Shooting film and digital in parallel.
         </p>
 
-        <!-- 按钮组 + 社交图标 -->
-        <div class="about-page__actions">
-          <div class="about-page__buttons">
-            <a href="#contact" class="about-page__btn">Contact</a>
-          </div>
-
-          <SocialIcons :size="18" />
-        </div>
+        <!-- 社交图标 -->
+        <SocialIcons :size="18" />
       </div>
     </div>
   </section>
@@ -104,7 +98,7 @@ import SocialIcons from './SocialIcons.vue'
   font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
   font-size: 10px;
   font-weight: 400;
-  letter-spacing: 0.42em;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
   color: #000000;
   margin: 0 0 40px;
@@ -117,7 +111,7 @@ import SocialIcons from './SocialIcons.vue'
   font-weight: 300;
   line-height: 1.85;
   color: #888888;
-  margin: 0;
+  margin-bottom: 20px;
   max-width: 48ch;
 }
 
@@ -127,34 +121,6 @@ import SocialIcons from './SocialIcons.vue'
   align-items: center;
   gap: 40px;
   margin-top: 52px;
-}
-
-/* 黑色矩形按钮 */
-.about-page__buttons {
-  display: flex;
-  gap: 12px;
-}
-
-.about-page__btn {
-  display: inline-block;
-  padding: 13px 28px;
-  background: #000000;
-  color: #ffffff;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: background 0.18s ease, color 0.18s ease;
-}
-
-.about-page__btn:hover {
-  background: #555555;
-}
-
-.about-page__btn:active {
-  transform: scale(0.98);
 }
 
 </style>
