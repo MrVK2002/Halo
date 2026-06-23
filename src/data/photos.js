@@ -221,6 +221,264 @@ const PHOTOS = [
     title: '游行',
     width: 1600, height: 1067,
     exif: { camera: 'Sony A1 / 24-70mm F2.8', aperture: 'F/4.0', shutter: '1/640s', iso: 'ISO 200', date: '2024.02.14' }
+  },
+
+  // ===== Beyond the Frame Rate (新增) =====
+  {
+    id: 'p25',
+    category: 'frame',
+    photoId: '1534528741775-53994a69daeb',
+    title: '午后咖啡馆',
+    width: 1200, height: 1500,
+    exif: { camera: 'Fuji X-T5 / 56mm F1.2', aperture: 'F/1.4', shutter: '1/500s', iso: 'ISO 200', date: '2025.06.10' }
+  },
+  {
+    id: 'p26',
+    category: 'frame',
+    photoId: '1524504388940-b1c1722653e1',
+    title: '窗台',
+    width: 1200, height: 1600,
+    exif: { camera: 'Sony A7M4 / 85mm F1.8', aperture: 'F/2.0', shutter: '1/400s', iso: 'ISO 100', date: '2025.05.28' }
+  },
+  {
+    id: 'p27',
+    category: 'frame',
+    subcategory: 'frame.narrative',
+    photoId: '1488426862026-3ee34a7d66df',
+    title: '回眸',
+    width: 1200, height: 1500,
+    exif: { camera: 'Leica Q3 / 28mm', aperture: 'F/2.0', shutter: '1/320s', iso: 'ISO 400', date: '2025.05.15' }
+  },
+  {
+    id: 'p28',
+    category: 'frame',
+    photoId: '1506794778202-cad84cf45f1d',
+    title: '侧影',
+    width: 1200, height: 1500,
+    exif: { camera: 'Canon R5 / 85mm F1.2', aperture: 'F/1.8', shutter: '1/250s', iso: 'ISO 200', date: '2025.04.30' }
+  },
+  {
+    id: 'p29',
+    category: 'frame',
+    subcategory: 'frame.narrative',
+    photoId: '1487412720507-e7ab37603c6f',
+    title: '清晨',
+    width: 1200, height: 1600,
+    exif: { camera: 'Sony A7M4 / 50mm F1.4', aperture: 'F/1.6', shutter: '1/400s', iso: 'ISO 100', date: '2025.04.18' }
+  },
+  {
+    id: 'p30',
+    category: 'frame',
+    photoId: '1494790108377-be9c29b29330',
+    title: '蓝调',
+    width: 1200, height: 1500,
+    exif: { camera: 'Fuji X-T5 / 35mm F1.4', aperture: 'F/2.0', shutter: '1/200s', iso: 'ISO 800', date: '2025.03.25' }
+  },
+  {
+    id: 'p31',
+    category: 'frame',
+    subcategory: 'frame.narrative',
+    photoId: '1517841905240-472988babdf9',
+    title: '雨伞',
+    width: 1200, height: 1500,
+    exif: { camera: 'Leica M11 / 50mm F2', aperture: 'F/2.8', shutter: '1/125s', iso: 'ISO 400', date: '2025.03.10' }
+  },
+  {
+    id: 'p32',
+    category: 'frame',
+    photoId: '1531746020798-e6953c6e8e04',
+    title: '柔光',
+    width: 1200, height: 1600,
+    exif: { camera: 'Sony A7R5 / 85mm F1.4', aperture: 'F/1.4', shutter: '1/640s', iso: 'ISO 100', date: '2025.02.20' }
+  },
+  {
+    id: 'p33',
+    category: 'frame',
+    photoId: '1500648767791-00dcc994a43e',
+    title: '阴影',
+    width: 1200, height: 1500,
+    exif: { camera: 'Canon R5 / 50mm F1.2', aperture: 'F/1.6', shutter: '1/500s', iso: 'ISO 200', date: '2025.02.08' }
+  },
+  {
+    id: 'p34',
+    category: 'frame',
+    subcategory: 'frame.narrative',
+    photoId: '1438761681033-6461ffad8d80',
+    title: '沉思',
+    width: 1200, height: 1500,
+    exif: { camera: 'Nikon Z8 / 85mm F1.4', aperture: 'F/1.8', shutter: '1/320s', iso: 'ISO 400', date: '2025.01.30' }
+  },
+
+  // ===== Exposure Log (新增) =====
+  {
+    id: 'p35',
+    category: 'exposure',
+    photoId: '1470071459604-3b5ec3a7fe05',
+    title: '云海',
+    width: 1600, height: 1067,
+    exif: { camera: 'Sony A7R5 / 24-70mm F2.8', aperture: 'F/8.0', shutter: '1/250s', iso: 'ISO 100', date: '2024.12.20' }
+  },
+  {
+    id: 'p36',
+    category: 'exposure',
+    photoId: '1472214103451-9374f226dde3',
+    title: '麦田',
+    width: 1600, height: 1067,
+    exif: { camera: 'Canon R5 / 35mm F1.4', aperture: 'F/5.6', shutter: '1/500s', iso: 'ISO 100', date: '2024.12.08' }
+  },
+  {
+    id: 'p37',
+    category: 'exposure',
+    subcategory: 'exposure.available-light',
+    photoId: '1433086966358-54859d0ed716',
+    title: '瀑布',
+    width: 1600, height: 1067,
+    exif: { camera: 'Nikon Z8 / 16-35mm F4', aperture: 'F/11', shutter: '1/2s', iso: 'ISO 100', date: '2024.11.25' }
+  },
+  {
+    id: 'p38',
+    category: 'exposure',
+    photoId: '1507003211169-0a1dd7228f2d',
+    title: '沙漠',
+    width: 1600, height: 1067,
+    exif: { camera: 'Leica SL2 / 24-90mm F2.8', aperture: 'F/8.0', shutter: '1/320s', iso: 'ISO 100', date: '2024.11.15' }
+  },
+  {
+    id: 'p39',
+    category: 'exposure',
+    subcategory: 'exposure.available-light',
+    photoId: '1501785888041-af3ef285b470',
+    title: '日出',
+    width: 1600, height: 1067,
+    exif: { camera: 'Sony A7M4 / 70-200mm F2.8', aperture: 'F/5.6', shutter: '1/1000s', iso: 'ISO 200', date: '2024.11.01' }
+  },
+  {
+    id: 'p40',
+    category: 'exposure',
+    photoId: '1470770841072-f978cf4d019e',
+    title: '日落',
+    width: 1600, height: 1067,
+    exif: { camera: 'Fuji GFX 100 / 32-64mm F4', aperture: 'F/8.0', shutter: '1/125s', iso: 'ISO 100', date: '2024.10.18' }
+  },
+  {
+    id: 'p41',
+    category: 'exposure',
+    subcategory: 'exposure.available-light',
+    photoId: '1518837695005-2083093ee35b',
+    title: '极光',
+    width: 1600, height: 1067,
+    exif: { camera: 'Sony A7S3 / 14mm F1.8', aperture: 'F/1.8', shutter: '15s', iso: 'ISO 3200', date: '2024.10.05' }
+  },
+  {
+    id: 'p42',
+    category: 'exposure',
+    photoId: '1501785888041-af3ef285b470',
+    title: '冰川',
+    width: 1600, height: 1067,
+    exif: { camera: 'Canon R5 / 24-70mm F2.8', aperture: 'F/8.0', shutter: '1/500s', iso: 'ISO 100', date: '2024.09.22' }
+  },
+  {
+    id: 'p43',
+    category: 'exposure',
+    photoId: '1469474968028-56623f02e42e',
+    title: '红叶',
+    width: 1600, height: 1067,
+    exif: { camera: 'Nikon Z9 / 105mm F2.8', aperture: 'F/4.0', shutter: '1/250s', iso: 'ISO 200', date: '2024.09.10' }
+  },
+  {
+    id: 'p44',
+    category: 'exposure',
+    subcategory: 'exposure.available-light',
+    photoId: '1779715203771-28e65a830965',
+    title: '雾凇',
+    width: 1600, height: 1067,
+    exif: { camera: 'Leica SL2 / 50mm F1.4', aperture: 'F/2.8', shutter: '1/320s', iso: 'ISO 100', date: '2024.08.28' }
+  },
+
+  // ===== Redundant Pixels (新增) =====
+  {
+    id: 'p45',
+    category: 'pixels',
+    photoId: '1449824913935-59a10b8d2000',
+    title: '城市霓虹',
+    width: 1200, height: 1500,
+    exif: { camera: 'Sony A7M4 / 35mm F1.4', aperture: 'F/1.8', shutter: '1/60s', iso: 'ISO 1600', date: '2024.12.15' }
+  },
+  {
+    id: 'p46',
+    category: 'pixels',
+    photoId: '1444084318824-051a63a4cb2d',
+    title: '夜市',
+    width: 1200, height: 1500,
+    exif: { camera: 'Leica Q2 / 28mm F1.7', aperture: 'F/2.0', shutter: '1/100s', iso: 'ISO 800', date: '2024.12.01' }
+  },
+  {
+    id: 'p47',
+    category: 'pixels',
+    subcategory: 'pixels.grain',
+    photoId: '1519501025264-65ba15a82390',
+    title: '老街',
+    width: 1200, height: 1600,
+    exif: { camera: 'Ricoh GR IIIx', aperture: 'F/2.8', shutter: '1/15s', iso: 'ISO 3200', date: '2024.11.20' }
+  },
+  {
+    id: 'p48',
+    category: 'pixels',
+    photoId: '1493976040374-85c8e12f0c0e',
+    title: '寺庙',
+    width: 1200, height: 1500,
+    exif: { camera: 'Fuji X100V / 23mm F2', aperture: 'F/4.0', shutter: '1/250s', iso: 'ISO 400', date: '2024.11.08' }
+  },
+  {
+    id: 'p49',
+    category: 'pixels',
+    subcategory: 'pixels.grain',
+    photoId: '1506905925346-21bda4d32df4',
+    title: '星空',
+    width: 1200, height: 1500,
+    exif: { camera: 'Sony A7S3 / 14mm F1.8', aperture: 'F/1.8', shutter: '20s', iso: 'ISO 6400', date: '2024.10.25' }
+  },
+  {
+    id: 'p50',
+    category: 'pixels',
+    photoId: '1516483638261-f4dbaf036963',
+    title: '小巷',
+    width: 1200, height: 1500,
+    exif: { camera: 'Leica M6 / 35mm F2 (Kodak Portra 400)', aperture: 'F/5.6', shutter: '1/125s', iso: 'ISO 400', date: '2024.10.12' }
+  },
+  {
+    id: 'p51',
+    category: 'pixels',
+    subcategory: 'pixels.grain',
+    photoId: '1473496169904-658ba7574b1d',
+    title: '地铁',
+    width: 1200, height: 1600,
+    exif: { camera: 'Fuji X-T5 / 23mm F2', aperture: 'F/2.0', shutter: '1/30s', iso: 'ISO 2000', date: '2024.09.28' }
+  },
+  {
+    id: 'p52',
+    category: 'pixels',
+    photoId: '1480714378408-67cf0d13bc1b',
+    title: '天际线',
+    width: 1200, height: 1500,
+    exif: { camera: 'Sony A7R5 / 24mm F1.4', aperture: 'F/8.0', shutter: '1/200s', iso: 'ISO 100', date: '2024.09.15' }
+  },
+  {
+    id: 'p53',
+    category: 'pixels',
+    photoId: '1508193638397-1c4234db14d8',
+    title: '倒影',
+    width: 1200, height: 1500,
+    exif: { camera: 'Canon R5 / 35mm F1.4', aperture: 'F/4.0', shutter: '1/500s', iso: 'ISO 200', date: '2024.09.01' }
+  },
+  {
+    id: 'p54',
+    category: 'pixels',
+    subcategory: 'pixels.grain',
+    photoId: '1465146344425-f00d5f5c8f07',
+    title: '烟花',
+    width: 1200, height: 1600,
+    exif: { camera: 'Nikon Z8 / 24mm F1.4', aperture: 'F/5.6', shutter: '2s', iso: 'ISO 400', date: '2024.08.18' }
   }
 ]
 

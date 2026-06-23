@@ -7,7 +7,7 @@ const props = defineProps({
   /** 列数断点（与 CSS 列宽对应） */
   breakpoints: {
     type: Object,
-    default: () => ({ 0: 2, 700: 3, 1100: 4, 1500: 5 })
+    default: () => ({ 0: 2, 700: 3, 1100: 5, 1500: 5 })
   },
   /** 列间距 px */
   gap: { type: Number, default: 4 }
