@@ -245,29 +245,30 @@ function getStars(rating) {
         <div class="guestbook-page guestbook-cover stf__hard stf__item">
           <div class="cover__inner">
             <div class="cover__ornament cover__ornament--top">
-              <svg viewBox="0 0 60 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 10 Q15 0, 30 10 Q45 20, 60 10" stroke="currentColor" stroke-width="1" fill="none"/>
-                <circle cx="30" cy="10" r="3" fill="currentColor"/>
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" stroke="currentColor" stroke-width="1" fill="none"/>
               </svg>
             </div>
             <div class="cover__content">
               <h2 class="cover__title-zh">留 言 簿</h2>
               <h3 class="cover__title-en">Guestbook</h3>
-              <p class="cover__subtitle">每一张照片，都是一段故事</p>
-              <p class="cover__subtitle-en">Every photo tells a story</p>
             </div>
-            <div class="cover__divider"></div>
+            <div class="cover__quote">
+              <p class="cover__quote-text">每一张照片</p>
+              <p class="cover__quote-text">都是一段故事</p>
+            </div>
+            <div class="cover__divider">
+              <span class="cover__divider-line"></span>
+              <span class="cover__divider-dot"></span>
+              <span class="cover__divider-line"></span>
+            </div>
             <div class="cover__meta">
-              <span class="cover__count">{{ notes.length }} 条留言</span>
+              <span class="cover__count">共 {{ notes.length }} 条留言</span>
             </div>
             <div class="cover__ornament cover__ornament--bottom">
-              <svg viewBox="0 0 80 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M40 5 L40 25 M30 15 L40 5 L50 15" stroke="currentColor" stroke-width="1" fill="none"/>
-                <path d="M20 20 Q30 15, 40 20 Q50 25, 60 20" stroke="currentColor" stroke-width="0.8" fill="none"/>
+              <svg viewBox="0 0 40 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 4 Q10 0, 20 4 Q30 8, 40 4" stroke="currentColor" stroke-width="0.8" fill="none"/>
               </svg>
-            </div>
-            <div class="cover__hint">
-              <span>↓ 翻开第一页</span>
             </div>
           </div>
         </div>
@@ -618,10 +619,10 @@ function getStars(rating) {
    翻页书页面样式
 ==================================================================== */
 .guestbook-page {
-  background: var(--paper, #FFFA9E);
+  background: #ffffff;
   box-shadow: 
-    2px 4px 12px rgba(0, 0, 0, 0.15),
-    inset 0 0 40px rgba(0, 0, 0, 0.03);
+    2px 4px 12px rgba(0, 0, 0, 0.12),
+    inset 0 0 60px rgba(0, 0, 0, 0.02);
   border-radius: 2px;
 }
 
@@ -637,6 +638,29 @@ function getStars(rating) {
   padding: 40px 32px;
   font-family: var(--font-elegance);
   color: #333333;
+  background-color: #ffffff;
+  background-image: 
+    linear-gradient(#e8e4dc 1px, transparent 1px);
+  background-size: 100% 32px;
+  background-position: 0 28px;
+  position: relative;
+}
+
+.page__inner::before {
+  content: '';
+  position: absolute;
+  left: 24px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, 
+    rgba(200, 100, 80, 0.3) 0%, 
+    rgba(200, 100, 80, 0.15) 20%,
+    rgba(200, 100, 80, 0.3) 40%,
+    rgba(200, 100, 80, 0.15) 60%,
+    rgba(200, 100, 80, 0.3) 80%,
+    rgba(200, 100, 80, 0.15) 100%
+  );
 }
 
 .page__header {
@@ -644,28 +668,34 @@ function getStars(rating) {
   align-items: baseline;
   justify-content: space-between;
   gap: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
-  margin-bottom: 16px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
+  background: #ffffff;
 }
 
 .page__name {
   font-family: 'XianSheng-GaiZenMeChengNi-2', var(--font-elegance);
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 400;
-  color: #111111;
+  color: #1a1a1a;
   letter-spacing: 0.02em;
 }
 
 .page__date {
   font-family: var(--font-mono);
-  font-size: 12px;
-  color: #888888;
+  font-size: 11px;
+  color: #999999;
   letter-spacing: 0.06em;
 }
 
 .page__rating {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+  background: #ffffff;
 }
 
 .page__stars {
@@ -677,19 +707,25 @@ function getStars(rating) {
 .page__body {
   flex: 1;
   margin: 0;
+  padding: 8px 0;
   font-family: 'XianSheng-GaiZenMeChengNi-2', var(--font-elegance);
   font-size: 18px;
-  line-height: 1.7;
+  line-height: 32px;
   color: #333333;
   word-break: break-word;
+  position: relative;
+  z-index: 1;
 }
 
 .page__footer {
   display: flex;
   justify-content: flex-end;
-  padding-top: 16px;
-  border-top: 1px dashed rgba(0, 0, 0, 0.15);
-  margin-top: 16px;
+  padding-top: 12px;
+  margin-top: auto;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
+  background: #ffffff;
 }
 
 .page__number {
@@ -697,6 +733,117 @@ function getStars(rating) {
   font-size: 11px;
   color: #888888;
   letter-spacing: 0.1em;
+}
+
+/* ====================================================================
+   封面样式
+==================================================================== */
+.cover__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 48px 36px;
+  text-align: center;
+  position: relative;
+}
+
+.cover__ornament {
+  color: rgba(0, 0, 0, 0.15);
+}
+
+.cover__ornament--top {
+  margin-bottom: 32px;
+}
+
+.cover__ornament--top svg {
+  width: 24px;
+  height: 24px;
+}
+
+.cover__ornament--bottom {
+  margin-top: 32px;
+}
+
+.cover__ornament--bottom svg {
+  width: 40px;
+  height: 8px;
+}
+
+.cover__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.cover__title-zh {
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 400;
+  color: #1a1a1a;
+  letter-spacing: 0.35em;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.cover__title-en {
+  font-family: var(--font-hans);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: #888888;
+  margin: 0;
+}
+
+.cover__quote {
+  margin-top: 36px;
+}
+
+.cover__quote-text {
+  font-family: var(--font-elegance);
+  font-size: 18px;
+  font-weight: 400;
+  color: #555555;
+  letter-spacing: 0.15em;
+  margin: 0;
+  line-height: 1.8;
+}
+
+.cover__divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 32px;
+  width: 100%;
+  max-width: 180px;
+}
+
+.cover__divider-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.cover__divider-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.cover__meta {
+  margin-top: 24px;
+}
+
+.cover__count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  color: #999999;
 }
 
 /* ====================================================================
