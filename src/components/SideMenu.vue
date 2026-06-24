@@ -102,7 +102,7 @@ const mainCategories = props.categories.filter((c) => c.key !== 'all')
 
 .side-menu__logo-mark {
   font-family: var(--font-artier);
-  font-size: 32px;
+  font-size: 40px;
   font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1;
@@ -149,7 +149,7 @@ const mainCategories = props.categories.filter((c) => c.key !== 'all')
 
 .side-menu__logo-text {
   font-family: var(--font-hans);
-  font-size: var(--fs-xs);
+  font-size: var(--fs-base);
   font-weight: 400;
   letter-spacing: 0.01em;
   color: var(--c-mid);

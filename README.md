@@ -1,6 +1,6 @@
-# J.T. Photography
+# MrVK Photography
 
-一个使用 Vue 3 + Vite 实现的极简风格个人摄影作品集网站。布局与交互严格遵循 `个人摄影网站布局.txt` 设计稿。
+一个使用 Vue 3 + Vite 实现的极简风格个人摄影作品集网站。布局与交互严格遵循 `个人摄影网站布局.txt` 设计稿。瀑布流照片支持 3D 拾起悬浮交互效果。
 
 ## 设计取向
 
@@ -40,7 +40,8 @@ src/
 │   ├── SideMenu.vue              左侧 30% 菜单
 │   ├── MenuItem.vue              单个菜单项 (透明背景/竖线激活态)
 │   ├── SocialIcons.vue           社交图标 (Instagram/小红书/X/抖音)
-│   ├── MasonryGrid.vue           瀑布流容器 (masonry-layout)
+│   ├── MasonryGrid.vue           瀑布流容器 (vue-waterfall-plugin-next)
+│   ├── WaterfallCard.vue         瀑布流卡片 (3D 拾起悬浮效果)
 │   ├── PhotoCard.vue             照片卡片 (骨架屏 + 瓦片铺开 + hover)
 │   └── Lightbox.vue              灯箱 (PhotoSwipe v5 + EXIF 信息栏)
 └── views/
@@ -54,10 +55,11 @@ src/
 | 左侧菜单 | `position: sticky` + 独立原生滚动,与右侧 Lenis 互不干扰 |
 | 菜单激活态 | 左侧 2px 竖线 (`::before` 伪元素 width 过渡) |
 | 菜单 hover | 文字色 `#888 → #111`,竖线由 0 → 2px |
-| 瀑布流 | `masonry-layout` 自适应列数 (2~4 列),`ResizeObserver` 触发重排 |
+| 瀑布流 | `vue-waterfall-plugin-next` 自适应列数 (2~5 列),`ResizeObserver` 触发重排 |
 | 骨架屏 | `linear-gradient` 横向移动 shimmer 动画,直角矩形 |
 | 瓦片铺开 | `scale(0.96) opacity(0) → scale(1) opacity(1)`,stagger 40ms |
-| Hover 照片 | `scale(1.03)` + `box-shadow: 4px 8px 20px rgba(0,0,0,0.15)`,0.22s ease-out |
+| 3D 拾起悬浮 | 鼠标跟踪倾斜 `rotateX/rotateY(±9deg)` + `translateZ(20px)` + `scale(1.06)` + 高光层 + 双层投影,弹性缓动曲线 |
+| Hover 照片 | 3D 拾起悬浮效果替代传统缩放阴影 |
 | 阻尼滚动 | Lenis `lerp: 0.1`,`wheelMultiplier: 1` |
 | 灯箱 | PhotoSwipe v5,`zoom` 动画从缩略图起点放大 |
 | 灯箱信息栏 | `addCaptionHTMLFn` 自定义,标题 + EXIF 字段 |
@@ -105,7 +107,7 @@ src/
 
 ## 设计决策记录
 
-- **Masonry 库选型**:`masonry-layout` (Desandro) 体积小,行为可预测。Vue 包装版本对动效接管不友好,直接用原生库 + `ResizeObserver`。
+- **Masonry 库选型**:`vue-waterfall-plugin-next` 是 Vue 3 专用瀑布流组件,支持懒加载和动画,内置列数响应式。`WaterfallCard.vue` 封装卡片交互逻辑,解决与 Vue 3.5+ 的兼容性问题。
 - **Lightbox 库选型**:PhotoSwipe v5 是当前事实标准,EXIF 与缩略图放大开箱即用,MIT。
 - **不用 Tailwind/UnoCSS**:Vue SFC `<style scoped>` 配合 CSS 变量,符合 `minimalist-skill` 协议 2,减少学习与配置成本。
 - **图标手写 SVG**:只画了 4 个社交图标路径,代码量极小,避免引入 phosphor 图标包的多余依赖。

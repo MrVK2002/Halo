@@ -1,10 +1,12 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch, nextTick, useSlots } from 'vue'
-import PhotoCard from './PhotoCard.vue'
+import { ref, watch, onMounted } from 'vue'
+import { Waterfall } from 'vue-waterfall-plugin-next'
+import 'vue-waterfall-plugin-next/dist/style.css'
+import WaterfallCard from './WaterfallCard.vue'
 
 const props = defineProps({
   items: { type: Array, required: true },
-  /** 列数断点（与 CSS 列宽对应） */
+  /** 列数断点 */
   breakpoints: {
     type: Object,
     default: () => ({ 0: 2, 700: 3, 1100: 5, 1500: 5 })
@@ -15,144 +17,96 @@ const props = defineProps({
 
 const emit = defineEmits(['card-click', 'relayout'])
 
-const gridEl = ref(null)
-const positions = ref([]) // [{ left, top, width, height }, ...]
-const containerHeight = ref(0)
+const waterfallRef = ref(null)
 
-// 如果父级传入了 default slot,就用 slot 渲染（保持定位由 MasonryGrid 提供）
-// 否则降级为 PhotoCard（与历史用法一致）
-const slots = useSlots()
-const useSlot = !!slots.default
+// vue-waterfall-plugin-next v3 breakpoints format: { containerWidth: { rowPerView } }
+const wfBreakpoints = ref({})
 
-let ro = null
-let winRO = null
-
-function getColumnCount(width) {
-  const bp = props.breakpoints
-  const keys = Object.keys(bp)
+function buildBreakpoints() {
+  const result = {}
+  const keys = Object.keys(props.breakpoints)
     .map(Number)
     .sort((a, b) => a - b)
-  let count = bp[0] ?? 1
   for (const k of keys) {
-    if (width >= k) count = bp[k]
+    result[k] = { rowPerView: props.breakpoints[k] }
   }
-  return count
-}
-
-function relayout() {
-  const el = gridEl.value
-  if (!el) return
-  const containerWidth = el.clientWidth
-  if (!containerWidth) return
-
-  const columnCount = getColumnCount(containerWidth)
-  const columnWidth = (containerWidth - (columnCount - 1) * props.gap) / columnCount
-
-  const colHeights = new Array(columnCount).fill(0)
-  const result = new Array(props.items.length)
-
-  for (let i = 0; i < props.items.length; i++) {
-    const item = props.items[i]
-    const ratio = (item.height || 4) / (item.width || 5)
-    const cardHeight = columnWidth * ratio
-
-    // 选最矮的列
-    let minIdx = 0
-    for (let c = 1; c < columnCount; c++) {
-      if (colHeights[c] < colHeights[minIdx]) minIdx = c
-    }
-
-    const left = minIdx * (columnWidth + props.gap)
-    const top = colHeights[minIdx]
-
-    result[i] = { left, top, width: columnWidth, height: cardHeight }
-    colHeights[minIdx] = top + cardHeight + props.gap
-  }
-
-  positions.value = result
-  // 容器高度 = 最高列高（去掉最后那个 gap）
-  containerHeight.value = Math.max(0, Math.max(...colHeights) - props.gap)
-  // 通知父组件（如 Lenis）刷新滚动边界
-  emit('relayout')
+  wfBreakpoints.value = result
 }
 
 onMounted(() => {
-  relayout()
-  // 容器尺寸变化（如侧栏收起、字体加载导致重排）
-  if (typeof ResizeObserver !== 'undefined' && gridEl.value) {
-    ro = new ResizeObserver(() => relayout())
-    ro.observe(gridEl.value)
-  }
-  // 窗口缩放
-  if (typeof ResizeObserver !== 'undefined') {
-    winRO = new ResizeObserver(() => relayout())
-    winRO.observe(document.documentElement)
-  }
+  buildBreakpoints()
+  emit('relayout')
 })
 
-onBeforeUnmount(() => {
-  ro?.disconnect()
-  winRO?.disconnect()
-})
-
-// items / 列数变化时重排
 watch(
-  () => [props.items.length, props.gap, JSON.stringify(props.breakpoints)],
-  () => nextTick(relayout)
+  () => [JSON.stringify(props.breakpoints), props.gap],
+  () => buildBreakpoints()
 )
 
-function handleClick(index) {
+function handleCardClick(index) {
   emit('card-click', index)
+}
+
+function handleAfterRender() {
+  emit('relayout')
+}
+
+// 3D 拾起效果
+const tiltData = ref({})
+const hoveredId = ref(null)
+
+function onMouseMove(e, itemId) {
+  const rect = e.currentTarget.getBoundingClientRect()
+  tiltData.value = {
+    ...tiltData.value,
+    [itemId]: {
+      x: (e.clientX - rect.left) / rect.width - 0.5,
+      y: (e.clientY - rect.top) / rect.height - 0.5
+    }
+  }
+}
+
+function onMouseEnter(itemId) {
+  hoveredId.value = itemId
+}
+
+function onMouseLeave(itemId) {
+  hoveredId.value = null
+  tiltData.value = { ...tiltData.value, [itemId]: { x: 0, y: 0 } }
 }
 </script>
 
 <template>
-  <div ref="gridEl" class="masonry-grid" :style="{ height: containerHeight + 'px' }">
-    <template v-if="!useSlot">
-      <PhotoCard
-        v-for="(item, idx) in items"
-        v-show="positions[idx]"
-        :key="item.id"
+  <Waterfall
+    ref="waterfallRef"
+    :list="items"
+    :breakpoints="wfBreakpoints"
+    :gutter="gap"
+    :lazyload="true"
+    :animation-delay="300"
+    :animation-duration="800"
+    :has-around-gutter="false"
+    class="masonry-grid"
+    @after-render="handleAfterRender"
+  >
+    <template #default="{ item, index }">
+      <WaterfallCard
         :item="item"
-        :index="idx"
-        :style="{
-          position: 'absolute',
-          left: (positions[idx]?.left ?? 0) + 'px',
-          top: (positions[idx]?.top ?? 0) + 'px',
-          width: (positions[idx]?.width ?? 0) + 'px',
-          height: (positions[idx]?.height ?? 0) + 'px'
-        }"
-        @click="handleClick(idx)"
+        :index="index"
+        :is-hovered="hoveredId === item.id"
+        :tilt-x="(tiltData[item.id]?.y ?? 0) * 18 + 'deg'"
+        :tilt-y="-((tiltData[item.id]?.x ?? 0) * 18) + 'deg'"
+        @mouse-move="(e) => onMouseMove(e, item.id)"
+        @mouse-enter="() => onMouseEnter(item.id)"
+        @mouse-leave="() => onMouseLeave(item.id)"
+        @click="handleCardClick(index)"
       />
     </template>
-    <template v-else>
-      <div
-        v-for="(item, idx) in items"
-        v-show="positions[idx]"
-        :key="item.id"
-        class="masonry-grid__slot-item"
-        :style="{
-          position: 'absolute',
-          left: (positions[idx]?.left ?? 0) + 'px',
-          top: (positions[idx]?.top ?? 0) + 'px',
-          width: (positions[idx]?.width ?? 0) + 'px',
-          height: (positions[idx]?.height ?? 0) + 'px'
-        }"
-        @click="handleClick(idx)"
-      >
-        <slot :item="item" :index="idx" />
-      </div>
-    </template>
-  </div>
+  </Waterfall>
 </template>
 
 <style scoped>
 .masonry-grid {
-  position: relative;
   width: 100%;
-}
-
-.masonry-grid__slot-item {
-  display: block;
 }
 </style>
