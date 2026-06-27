@@ -117,6 +117,15 @@ function handleMouseLeave() {
 onMounted(() => {
   tickerActive = true
   springUpdate()
+
+  // 模糊渐清动画
+  const img = innerRef.value?.querySelector('.tilted-card-img')
+  if (img) {
+    gsap.fromTo(img,
+      { filter: 'grayscale(100%) blur(16px)' },
+      { filter: 'grayscale(100%) blur(0px)', duration: 1.2, ease: 'power2.out' }
+    )
+  }
 })
 
 onUnmounted(() => {
