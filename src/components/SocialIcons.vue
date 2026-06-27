@@ -70,10 +70,13 @@ function pathFor(id) {
   width: 28px;
   height: 28px;
   color: var(--c-mid);
-  transition: color var(--t-base) var(--ease-out);
+  transition:
+    color var(--t-base) var(--ease-out),
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .social-icons__link:hover {
   color: var(--c-ink);
+  transform: translateY(-3px) scale(1.1);
 }
 </style>
