@@ -1,12 +1,10 @@
 <script setup>
-import { ref, reactive, onMounted, onUnmounted, nextTick } from 'vue'
-import { PageFlip } from 'page-flip'
+import { ref, reactive } from 'vue'
 
 /**
  * Guestbook 留言簿视图
- * - 3D 翻页效果（使用 page-flip 库）
- * - 每一页显示一条用户留言
- * - 支持鼠标拖拽翻页和触摸翻页
+ * - 便签风格展示（参考便签纸样式）
+ * - 每张便签显示一条用户留言
  * - 顶部"留下便签"按钮 → 内联表单
  */
 
@@ -52,8 +50,6 @@ const SEED_NOTES = [
 ]
 
 const notes = ref(SEED_NOTES.map(makeNote))
-const bookContainer = ref(null)
-let pageFlip = null
 
 // 顶部表单
 const formOpen = ref(false)
@@ -94,57 +90,11 @@ function submitNote() {
   errors.name = ''
   errors.body = ''
   formOpen.value = false
-  // 重新初始化翻页书
-  initPageFlip()
 }
 
 function setRating(n) {
   draft.rating = draft.rating === n ? 0 : n
 }
-
-// 初始化翻页书
-function initPageFlip() {
-  if (pageFlip) {
-    pageFlip.destroy()
-    pageFlip = null
-  }
-  
-  nextTick(() => {
-    if (bookContainer.value) {
-      pageFlip = new PageFlip(bookContainer.value, {
-        width: 420,
-        height: 560,
-        size: 'stretch',
-        minWidth: 315,
-        maxWidth: 600,
-        minHeight: 420,
-        maxHeight: 800,
-        drawShadow: true,
-        flippingTime: 800,
-        usePortrait: true,
-        autoSize: true,
-        maxShadowOpacity: 0.4,
-        showCover: true,
-        mobileScrollSupport: false
-      })
-      
-      const pages = document.querySelectorAll('.guestbook-page')
-      if (pages.length > 0) {
-        pageFlip.loadFromHTML(Array.from(pages))
-      }
-    }
-  })
-}
-
-onMounted(() => {
-  initPageFlip()
-})
-
-onUnmounted(() => {
-  if (pageFlip) {
-    pageFlip.destroy()
-  }
-})
 
 // 生成星星显示
 function getStars(rating) {
@@ -238,92 +188,40 @@ function getStars(rating) {
       </div>
     </form>
 
-    <!-- 3D翻页留言簿 -->
-    <div class="guestbook__book-wrapper">
-      <div ref="bookContainer" class="guestbook__book">
-        <!-- 封面（第一页） -->
-        <div class="guestbook-page guestbook-cover stf__hard stf__item">
-          <div class="cover__inner">
-            <div class="cover__ornament cover__ornament--top">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" stroke="currentColor" stroke-width="1" fill="none"/>
-              </svg>
-            </div>
-            <div class="cover__content">
-              <h2 class="cover__title-zh">留 言 簿</h2>
-              <h3 class="cover__title-en">Guestbook</h3>
-            </div>
-            <div class="cover__quote">
-              <p class="cover__quote-text">每一张照片</p>
-              <p class="cover__quote-text">都是一段故事</p>
-            </div>
-            <div class="cover__divider">
-              <span class="cover__divider-line"></span>
-              <span class="cover__divider-dot"></span>
-              <span class="cover__divider-line"></span>
-            </div>
-            <div class="cover__meta">
-              <span class="cover__count">共 {{ notes.length }} 条留言</span>
-            </div>
-            <div class="cover__ornament cover__ornament--bottom">
-              <svg viewBox="0 0 40 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 4 Q10 0, 20 4 Q30 8, 40 4" stroke="currentColor" stroke-width="0.8" fill="none"/>
-              </svg>
-            </div>
-          </div>
+    <!-- 便签网格 -->
+    <div class="guestbook__notes-grid">
+      <article
+        v-for="(note, index) in notes"
+        :key="note.id"
+        class="note-card"
+        :style="{
+          '--note-bg': note.color,
+          '--delay': `${index * 0.05}s`
+        }"
+      >
+        <!-- 装饰元素 -->
+        <svg class="note-doodle note-doodle--star" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L15 9L22 10L17 15L18.5 22L12 18.5L5.5 22L7 15L2 10L9 9L12 2Z"></path>
+        </svg>
+        <svg class="note-doodle note-doodle--sparkle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z"></path>
+        </svg>
+
+        <!-- 便签内容 -->
+        <header class="note-card__header">
+          <span class="note-card__name">{{ note.name }}</span>
+          <span class="note-card__date">{{ note.date }}</span>
+        </header>
+
+        <div class="note-card__rating" v-if="note.rating > 0">
+          <span class="note-card__stars">{{ getStars(note.rating) }}</span>
         </div>
 
-        <!-- 动态渲染的页面 -->
-        <div
-          v-for="(note, index) in notes"
-          :key="note.id"
-          class="guestbook-page"
-          :class="{
-            'stf__item': true
-          }"
-          :style="{ '--paper': note.color }"
-        >
-          <div class="page__inner">
-            <header class="page__header">
-              <span class="page__name">{{ note.name }}</span>
-              <span class="page__date">{{ note.date }}</span>
-            </header>
-            <div class="page__rating" v-if="note.rating > 0">
-              <span class="page__stars">{{ getStars(note.rating) }}</span>
-            </div>
-            <p class="page__body">{{ note.body }}</p>
-            <footer class="page__footer">
-              <span class="page__number">{{ index + 1 }} / {{ notes.length }}</span>
-            </footer>
-          </div>
-        </div>
+        <p class="note-card__body">{{ note.body }}</p>
 
-        <!-- 封底（最后一页） -->
-        <div class="guestbook-page guestbook-backcover stf__hard stf__item">
-          <div class="backcover__inner">
-            <div class="backcover__content">
-              <div class="backcover__icon">
-                <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                  <circle cx="24" cy="24" r="12" stroke="currentColor" stroke-width="1" fill="none"/>
-                  <circle cx="24" cy="24" r="4" fill="currentColor"/>
-                  <path d="M24 4 L24 10 M24 38 L24 44 M4 24 L10 24 M38 24 L44 24" stroke="currentColor" stroke-width="1"/>
-                </svg>
-              </div>
-              <p class="backcover__quote">"光影定格瞬间，留言留存温度"</p>
-              <p class="backcover__thanks">感谢你的足迹</p>
-              <p class="backcover__invite">期待下次相遇</p>
-            </div>
-            <div class="backcover__divider"></div>
-            <div class="backcover__meta">
-              <span class="backcover__label">JT Photography</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- 提示文字 -->
-      <p class="guestbook__hint">拖拽页面边缘翻页，或使用鼠标拖拽翻页</p>
+        <!-- 装饰胶带 -->
+        <div class="note-card__tape" aria-hidden="true"></div>
+      </article>
     </div>
   </section>
 </template>
@@ -587,263 +485,202 @@ function getStars(rating) {
 }
 
 /* ====================================================================
-   3D翻页留言簿容器
+   便签网格布局
 ==================================================================== */
-.guestbook__book-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: var(--space-5) 0;
-  flex: 1;
-}
-
-.guestbook__book {
-  width: 100%;
-  max-width: 600px;
-  min-height: 420px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.guestbook__hint {
-  margin-top: var(--space-4);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  color: var(--c-mid);
-  text-align: center;
+.guestbook__notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-5);
+  padding: var(--space-4) 0;
 }
 
 /* ====================================================================
-   翻页书页面样式
+   便签卡片样式
 ==================================================================== */
-.guestbook-page {
-  background: #ffffff;
-  box-shadow: 
-    2px 4px 12px rgba(0, 0, 0, 0.12),
-    inset 0 0 60px rgba(0, 0, 0, 0.02);
-  border-radius: 2px;
-}
+.note-card {
+  /* 便签配色 */
+  --ink-color: #2c2c2c;
+  --paper-line: rgba(0, 0, 0, 0.08);
+  --tape-color: rgba(255, 221, 161, 0.85);
+  --accent-coral: #ff8ba7;
+  --accent-mint: #c6e377;
+  --accent-lavender: #c0bbfe;
+  --accent-yellow: #ffdf6c;
 
-.guestbook-page.stf__hard {
-  background: linear-gradient(135deg, #f5f0e6 0%, #e8e0d0 100%);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.page__inner {
+  position: relative;
+  background: var(--note-bg);
+  background-image:
+    linear-gradient(var(--note-bg) 1.8em, transparent 1.8em) 0 0 / 100% 1.9em,
+    linear-gradient(var(--paper-line) 0.08em, transparent 0.08em) 0 1.8em / 100% 1.9em var(--note-bg);
+  border: 0.2em solid var(--ink-color);
+  border-radius: 3px 18px 3px 18px / 18px 3px 18px 3px;
+  box-shadow:
+    0.4em 0.4em 0 var(--ink-color),
+    inset 0 0 1em rgba(0, 0, 0, 0.03);
+  padding: 2.5em 1.5em 1.5em;
+  min-height: 180px;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  padding: 40px 32px;
-  font-family: var(--font-elegance);
-  color: #333333;
-  background-color: #ffffff;
-  background-image: 
-    linear-gradient(#e8e4dc 1px, transparent 1px);
-  background-size: 100% 32px;
-  background-position: 0 28px;
-  position: relative;
+  transition:
+    transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.4s ease,
+    border-radius 0.4s ease;
+  animation: noteFloat 5s ease-in-out infinite;
+  animation-delay: var(--delay);
+  z-index: 1;
 }
 
-.page__inner::before {
-  content: '';
+/* 胶带装饰 */
+.note-card__tape {
   position: absolute;
-  left: 24px;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: linear-gradient(to bottom, 
-    rgba(200, 100, 80, 0.3) 0%, 
-    rgba(200, 100, 80, 0.15) 20%,
-    rgba(200, 100, 80, 0.3) 40%,
-    rgba(200, 100, 80, 0.15) 60%,
-    rgba(200, 100, 80, 0.3) 80%,
-    rgba(200, 100, 80, 0.15) 100%
-  );
+  top: -0.5em;
+  left: 50%;
+  transform: translateX(-50%) rotate(-3deg);
+  width: 4em;
+  height: 1.2em;
+  background: var(--tape-color);
+  border: 0.1em solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0.1em 0.1em 0.15em rgba(0, 0, 0, 0.1);
+  border-radius: 2px 3px 2px 4px;
+  z-index: 10;
+  animation: tapeFlutter 4s infinite alternate ease-in-out;
 }
 
-.page__header {
+/* 悬停效果 */
+.note-card:hover {
+  transform: translateY(-0.5em) rotate(1deg);
+  box-shadow:
+    0.6em 0.6em 0 var(--ink-color),
+    inset 0 0 1em rgba(0, 0, 0, 0.03);
+  z-index: 10;
+}
+
+/* 装饰图案 */
+.note-doodle {
+  position: absolute;
+  fill: none;
+  stroke: var(--ink-color);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.note-doodle--star {
+  width: 1.4em;
+  height: 1.4em;
+  top: 1em;
+  right: 1em;
+  fill: var(--accent-yellow);
+  animation: pulseSparkle 3s infinite alternate ease-in-out;
+}
+
+.note-doodle--sparkle {
+  width: 1.2em;
+  height: 1.2em;
+  bottom: 3em;
+  left: 0.8em;
+  fill: var(--accent-mint);
+  animation: pulseSparkle 2.5s infinite alternate-reverse ease-in-out;
+}
+
+/* 便签头部 */
+.note-card__header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 16px;
-  padding-bottom: 12px;
-  margin-bottom: 12px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  gap: 12px;
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
   position: relative;
-  z-index: 1;
-  background: #ffffff;
+  z-index: 2;
 }
 
-.page__name {
+.note-card__name {
   font-family: 'XianSheng-GaiZenMeChengNi-2', var(--font-elegance);
-  font-size: 20px;
-  font-weight: 400;
-  color: #1a1a1a;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink-color);
   letter-spacing: 0.02em;
 }
 
-.page__date {
+.note-card__date {
   font-family: var(--font-mono);
-  font-size: 11px;
-  color: #999999;
+  font-size: 10px;
+  color: rgba(0, 0, 0, 0.5);
   letter-spacing: 0.06em;
 }
 
-.page__rating {
-  margin-bottom: 8px;
+.note-card__rating {
+  margin-bottom: 4px;
   position: relative;
-  z-index: 1;
-  background: #ffffff;
+  z-index: 2;
 }
 
-.page__stars {
-  font-size: 14px;
-  color: #c89b2c;
-  letter-spacing: 2px;
+.note-card__stars {
+  font-size: 13px;
+  color: #d4a017;
+  letter-spacing: 1px;
 }
 
-.page__body {
+.note-card__body {
   flex: 1;
   margin: 0;
-  padding: 8px 0;
+  padding: 8px 0 0;
   font-family: 'XianSheng-GaiZenMeChengNi-2', var(--font-elegance);
-  font-size: 18px;
-  line-height: 32px;
-  color: #333333;
+  font-size: 16px;
+  line-height: 1.9;
+  color: var(--ink-color);
   word-break: break-word;
   position: relative;
-  z-index: 1;
-}
-
-.page__footer {
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 12px;
-  margin-top: auto;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  position: relative;
-  z-index: 1;
-  background: #ffffff;
-}
-
-.page__number {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: #888888;
-  letter-spacing: 0.1em;
+  z-index: 2;
 }
 
 /* ====================================================================
-   封面样式
+   便签动画
 ==================================================================== */
-.cover__inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  padding: 48px 36px;
-  text-align: center;
-  position: relative;
+@keyframes noteFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.3em);
+  }
 }
 
-.cover__ornament {
-  color: rgba(0, 0, 0, 0.15);
+@keyframes tapeFlutter {
+  0% {
+    transform: translateX(-50%) rotate(-3deg) scale(1);
+  }
+  100% {
+    transform: translateX(-50%) rotate(-1deg) scale(1.02);
+  }
 }
 
-.cover__ornament--top {
-  margin-bottom: 32px;
+@keyframes pulseSparkle {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
 }
 
-.cover__ornament--top svg {
-  width: 24px;
-  height: 24px;
-}
+/* ====================================================================
+   响应式布局
+==================================================================== */
+@media (max-width: 640px) {
+  .guestbook__notes-grid {
+    grid-template-columns: 1fr;
+  }
 
-.cover__ornament--bottom {
-  margin-top: 32px;
-}
-
-.cover__ornament--bottom svg {
-  width: 40px;
-  height: 8px;
-}
-
-.cover__content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.cover__title-zh {
-  font-family: var(--font-display);
-  font-size: 42px;
-  font-weight: 400;
-  color: #1a1a1a;
-  letter-spacing: 0.35em;
-  margin: 0;
-  line-height: 1.3;
-}
-
-.cover__title-en {
-  font-family: var(--font-hans);
-  font-size: 13px;
-  font-weight: 400;
-  letter-spacing: 0.45em;
-  text-transform: uppercase;
-  color: #888888;
-  margin: 0;
-}
-
-.cover__quote {
-  margin-top: 36px;
-}
-
-.cover__quote-text {
-  font-family: var(--font-elegance);
-  font-size: 18px;
-  font-weight: 400;
-  color: #555555;
-  letter-spacing: 0.15em;
-  margin: 0;
-  line-height: 1.8;
-}
-
-.cover__divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 32px;
-  width: 100%;
-  max-width: 180px;
-}
-
-.cover__divider-line {
-  flex: 1;
-  height: 1px;
-  background: rgba(0, 0, 0, 0.12);
-}
-
-.cover__divider-dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.2);
-}
-
-.cover__meta {
-  margin-top: 24px;
-}
-
-.cover__count {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 400;
-  letter-spacing: 0.2em;
-  color: #999999;
+  .note-card {
+    min-height: 160px;
+  }
 }
 
 /* ====================================================================
@@ -853,6 +690,18 @@ function getStars(rating) {
   .guestbook__form {
     animation: none !important;
     transition: none !important;
+  }
+
+  .note-card {
+    animation: none !important;
+  }
+
+  .note-card__tape {
+    animation: none !important;
+  }
+
+  .note-doodle {
+    animation: none !important;
   }
 }
 </style>
