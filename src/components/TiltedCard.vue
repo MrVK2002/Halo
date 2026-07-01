@@ -96,8 +96,11 @@ function handleMouseMove(e) {
   rotateX.value = rotX
   rotateY.value = rotY
 
-  captionX.value = e.clientX - rect.left
-  captionY.value = e.clientY - rect.top
+  // caption 用 position: fixed + Teleport 渲染到 body 下，
+  // 所以这里直接用视口绝对坐标，而不是相对 figure 的偏移。
+  // 这样 caption 永远精确对齐鼠标，不受任何外层 transform 影响。
+  captionX.value = e.clientX
+  captionY.value = e.clientY
 
   const velocityY = offsetY - lastY.value
   captionRotate.value = -velocityY * 0.6
@@ -170,13 +173,21 @@ onUnmounted(() => {
       />
     </div>
 
-    <figcaption
-      v-if="captionText"
-      ref="captionRef"
-      class="tilted-card-caption"
-    >
-      {{ captionText }}
-    </figcaption>
+    <!-- caption 通过 Teleport 渲染到 body 下，position: fixed 直接定位在视口坐标
+         原因：caption 是 figure 的子元素，figure 又被外层 .photo-card 的 transform 旋转/缩放。
+         如果 caption 在 figure 内部，rotateX/Y/Z 会带着它一起转，
+         而 gsap.set(caption, { x, y }) 写的是 figure 局部坐标，
+         旋转后视觉位置 ≠ 鼠标位置 —— 这就是之前 caption 不对齐鼠标的原因。
+         用 Teleport 把它放到 body 下，外层 transform 完全传不过来，fixed 始终定位在视口。 -->
+    <Teleport to="body">
+      <div
+        v-if="captionText"
+        ref="captionRef"
+        class="tilted-card-caption"
+      >
+        {{ captionText }}
+      </div>
+    </Teleport>
   </figure>
 </template>
 
@@ -213,9 +224,16 @@ onUnmounted(() => {
   filter: grayscale(100%);
 }
 
+/* caption 样式在下方非 scoped 块里 —— Teleport 出去的节点不匹配 scoped 属性选择器 */
+</style>
+
+<!-- 非 scoped style：caption 通过 Teleport 渲染到 body 下，
+     scoped CSS 的 [data-v-xxx] 属性选择器不会作用到 Teleport 出去的节点。
+     所以 caption 的样式必须放在这里。 -->
+<style>
 .tilted-card-caption {
   pointer-events: none;
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   border-radius: 4px;
@@ -224,7 +242,8 @@ onUnmounted(() => {
   font-size: 10px;
   color: #2d2d2d;
   opacity: 0;
-  z-index: 3;
+  z-index: 9999;
   white-space: nowrap;
+  will-change: transform, opacity;
 }
 </style>
