@@ -241,6 +241,7 @@ onMounted(() => {
   text-align: left;
   cursor: pointer;
   perspective: 500px;
+  padding-left: 12px;
 }
 
 .side-menu__logo-mark,
