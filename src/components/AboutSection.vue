@@ -1,12 +1,80 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import gsap from 'gsap'
 import SocialIcons from './SocialIcons.vue'
 import TiltedCard from './TiltedCard.vue'
 
 const contentRef = ref(null)
+const photoCardRef = ref(null)
+
+// 3D 倾斜由手写 RAF 平滑循环驱动 —— 完全不依赖 gsap.to / quickTo，
+// 避免 tween 之间互相 kill 导致的「第二次 hover 后 3D 倾斜消失」问题。
+const targetRot = { x: 0, y: 0 }
+const currentRot = { x: 0, y: 0 }
+let targetScale = 1
+let currentScale = 1
+let isHovering = false
+let rafId = null
+
+function lerp(start, end, t) {
+  return start + (end - start) * t
+}
+
+function tick() {
+  const card = photoCardRef.value
+  if (!card) {
+    rafId = null
+    return
+  }
+  // 平滑系数 0.15，越大越快追上目标
+  const ease = 0.15
+  currentRot.x = lerp(currentRot.x, targetRot.x, ease)
+  currentRot.y = lerp(currentRot.y, targetRot.y, ease)
+  currentScale = lerp(currentScale, targetScale, ease)
+  // 写入 transform
+  card.style.transform =
+    `rotateX(${currentRot.x}deg) ` +
+    `rotateY(${currentRot.y}deg) ` +
+    `rotateZ(-3deg) ` +
+    `scale(${currentScale})`
+  rafId = requestAnimationFrame(tick)
+}
+
+function ensureRaf() {
+  if (rafId === null) rafId = requestAnimationFrame(tick)
+}
+
+function handlePhotoMouseMove(e) {
+  const card = photoCardRef.value
+  if (!card) return
+  const rect = card.getBoundingClientRect()
+  const offsetX = e.clientX - rect.left - rect.width / 2
+  const offsetY = e.clientY - rect.top - rect.height / 2
+  const amplitude = 2
+  targetRot.x = (offsetY / (rect.height / 2)) * -amplitude
+  targetRot.y = (offsetX / (rect.width / 2)) * amplitude
+  ensureRaf()
+}
+
+function handlePhotoMouseEnter() {
+  isHovering = true
+  targetScale = 1.04
+  ensureRaf()
+}
+
+function handlePhotoMouseLeave() {
+  isHovering = false
+  // 鼠标移出：旋转归零、缩放归位。Z 轴的 -3deg 已硬编码在 style.transform 中。
+  targetRot.x = 0
+  targetRot.y = 0
+  targetScale = 1
+  ensureRaf()
+}
 
 onMounted(() => {
+  // 启动 RAF 循环（即使还没 hover，循环也跑，保证 initial transform 已生效）
+  ensureRaf()
+
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
   // 1. 姓名两行依次弹出
@@ -32,24 +100,41 @@ onMounted(() => {
     '-=0.3'
   )
 })
+
+onUnmounted(() => {
+  if (rafId !== null) cancelAnimationFrame(rafId)
+})
 </script>
 
 <template>
   <section ref="sectionRef" class="about-page" aria-label="关于我">
-    <!-- 左侧：黑白肖像 -->
+    <!-- 左侧：黑白肖像（Polaroid 相纸容器） -->
     <div class="about-page__photo-wrap" aria-hidden="true">
-      <div class="photo-card">
-        <TiltedCard
-          image-src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&q=85"
-          alt-text="Leo Liang 肖像"
-          container-height="100%"
-          container-width="100%"
-          image-height="100%"
-          image-width="100%"
-          caption-text="Leo Liang"
-          :rotate-amplitude="2"
-          :scale-on-hover="1.04"
-        />
+      <div
+        ref="photoCardRef"
+        class="photo-card photo-card--polaroid"
+        @mousemove="handlePhotoMouseMove"
+        @mouseenter="handlePhotoMouseEnter"
+        @mouseleave="handlePhotoMouseLeave"
+      >
+        <div class="photo-frame">
+          <TiltedCard
+            image-src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&q=85"
+            alt-text="Leo Liang 肖像"
+            container-height="100%"
+            container-width="100%"
+            image-height="100%"
+            image-width="100%"
+            caption-text="Leo Liang"
+            :rotate-amplitude="0"
+            :scale-on-hover="1"
+            :apply-inner-tilt="false"
+          />
+        </div>
+        <div class="photo-card__caption" aria-hidden="true">
+          <span class="photo-card__name">Leo Liang</span>
+          <span class="photo-card__email">leo@mr-vk.studio</span>
+        </div>
       </div>
     </div>
 
@@ -108,20 +193,86 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  perspective: 800px; /* 给相纸 3D 旋转提供观察视角 */
 }
 
-/* 双层卡片容器 */
+/* Polaroid 相纸容器 */
 .photo-card {
   position: relative;
-  width: 85%;
-  height: 85%;
-  background: #e8e8e8;
-  border-radius: 8px;
+  width: 78%;
+  aspect-ratio: 2 / 3; /* 相纸宽高比 4:5，含下方留白 */
+  background: #ffffff;
+  border-radius: 2px;
+  padding: 18px 18px 72px; /* 三边略宽，下方加宽作为相纸留白 */
+  box-sizing: border-box;
   box-shadow:
-    12px 12px 0 #f0f0f0,
-    0 20px 40px -10px rgba(0, 0, 0, 0.15);
-  transform: rotate(-1.5deg);
-  overflow: visible;
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 22px 48px -16px rgba(0, 0, 0, 0.30),
+    0 40px 72px -28px rgba(0, 0, 0, 0.20);
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  will-change: transform;
+  /* 静态 transform 由 GSAP 在 onMounted 里设置：rotationZ: -3
+     鼠标 hover 后旋转、缩放继续由 GSAP 接管 */
+}
+
+/* 相纸四角微微泛黄，做出被岁月洗过的质感 */
+.photo-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(210, 190, 150, 0.10) 0%,
+    rgba(0, 0, 0, 0) 35%,
+    rgba(0, 0, 0, 0) 65%,
+    rgba(210, 190, 150, 0.10) 100%
+  );
+}
+
+/* 相纸内照片区域 */
+.photo-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #f0f0f0;
+  border-radius: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 相纸左下角文字 caption：姓名 + 邮箱两行 */
+.photo-card__caption {
+  position: absolute;
+  left: 22px;
+  bottom: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  line-height: 1.1;
+  pointer-events: none;
+}
+
+.photo-card__name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: #1a1a1a;
+}
+
+.photo-card__email {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--c-mid);
 }
 
 /* 右侧内容 */
@@ -186,4 +337,6 @@ onMounted(() => {
   gap: 40px;
   margin-top: 52px;
 }
+
+/* 减弱动效：尊重用户偏好（3D 旋转已由 GSAP 接管，gsap 默认会看媒体查询） */
 </style>

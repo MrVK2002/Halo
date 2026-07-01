@@ -11,10 +11,16 @@ const props = defineProps({
   imageWidth: { type: String, default: '100%' },
   rotateAmplitude: { type: Number, default: 12 },
   scaleOnHover: { type: Number, default: 1.05 },
-  captionText: { type: String, default: '' }
+  captionText: { type: String, default: '' },
+  /**
+   * 当传 true（默认）时，3D 旋转作用在内部 `tilted-card-inner` 上；
+   * 传 false 则不应用 3D，但鼠标事件依旧 fire —— 由外部容器接管。
+   * 配合外部在自身 ref 上监听 mouseenter/move/leave 自行驱动 transform 即可。
+   */
+  applyInnerTilt: { type: Boolean, default: true }
 })
 
-const emit = defineEmits(['mouseenter', 'mouseleave'])
+const emit = defineEmits(['mouseenter', 'mousemove', 'mouseleave'])
 
 const figureRef = ref(null)
 const innerRef = ref(null)
@@ -57,7 +63,7 @@ function springUpdate() {
   const currentScale = innerRef.value ? parseFloat(gsap.getProperty(innerRef.value, 'scale')) || 1 : 1
   targetScale.val += (currentScale - targetScale.val) * dampingFactor
 
-  if (innerRef.value) {
+  if (innerRef.value && props.applyInnerTilt) {
     gsap.set(innerRef.value, {
       rotateX: -targetRotateX.val,
       rotateY: targetRotateY.val,
@@ -96,22 +102,32 @@ function handleMouseMove(e) {
   const velocityY = offsetY - lastY.value
   captionRotate.value = -velocityY * 0.6
   lastY.value = offsetY
+
+  emit('mousemove', {
+    offsetX,
+    offsetY,
+    rotX,
+    rotY,
+    rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height }
+  })
 }
 
-function handleMouseEnter() {
+function handleMouseEnter(e) {
   targetScale.val = 1
-  gsap.to(targetScale, { val: props.scaleOnHover, duration: 0.4, ease: 'power2.out' })
+  if (props.applyInnerTilt) {
+    gsap.to(targetScale, { val: props.scaleOnHover, duration: 0.4, ease: 'power2.out' })
+  }
   captionOpacity.val = 1
-  emit('mouseenter')
+  emit('mouseenter', e)
 }
 
-function handleMouseLeave() {
+function handleMouseLeave(e) {
   rotateX.value = 0
   rotateY.value = 0
-  resetAnimation()
+  if (props.applyInnerTilt) resetAnimation()
   captionOpacity.val = 0
   captionRotate.value = 0
-  emit('mouseleave')
+  emit('mouseleave', e)
 }
 
 onMounted(() => {
@@ -179,7 +195,6 @@ onUnmounted(() => {
 .tilted-card-inner {
   position: relative;
   transform-style: preserve-3d;
-  border-radius: 8px;
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -192,7 +207,6 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 8px;
   will-change: transform;
   transform: translateZ(0);
   display: block;
