@@ -1,10 +1,11 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 
 /**
  * Guestbook 留言簿视图
  * - 卡片网格布局
  * - 简洁现代风格
+ * - 入场动画:头部栏淡升 + 卡片错落浮入
  */
 
 const SEED_NOTES = [
@@ -176,10 +177,24 @@ function submitNote() {
   errors.body = ''
   formOpen.value = false
 }
+
+/**
+ * 入场动画开关
+ * - 初始为 false,首帧元素保持初始态(不可见 / 位移)
+ * - onMounted 下一帧翻转为 true,触发过渡
+ * - 配合 <TransitionGroup> 实现卡片错落浮入
+ */
+const mounted = ref(false)
+onMounted(() => {
+  // requestAnimationFrame 保证过渡类名正确就位后再切换
+  requestAnimationFrame(() => {
+    mounted.value = true
+  })
+})
 </script>
 
 <template>
-  <section class="guestbook" aria-label="留言簿">
+  <section class="guestbook" aria-label="留言簿" :class="{ 'is-mounted': mounted }">
     <!-- 顶部栏:标题 + 计数 + 操作 -->
     <header class="guestbook__top">
       <div class="guestbook__title-wrap">
@@ -250,16 +265,22 @@ function submitNote() {
     </Transition>
 
     <!-- 卡片网格 -->
-    <div class="guestbook__grid">
+    <TransitionGroup
+      tag="div"
+      name="guestbook-card"
+      class="guestbook__grid"
+      appear
+    >
       <article
         v-for="(note, index) in notes"
-        :key="note.id"
+        :key="note.id ?? `seed-${index}`"
         class="guestbook-card"
         :class="{
           'guestbook-card--featured': note.featured,
           'guestbook-card--tall': index % 5 === 1 || index % 5 === 3,
           'guestbook-card--wide': index % 7 === 0
         }"
+        :style="{ '--enter-delay': `${Math.min(index, 12) * 60}ms` }"
       >
         <header class="guestbook-card__header">
           <h2 class="guestbook-card__name">{{ note.name }}</h2>
@@ -268,7 +289,7 @@ function submitNote() {
         
         <p class="guestbook-card__body">{{ note.body }}</p>
       </article>
-    </div>
+    </TransitionGroup>
   </section>
 </template>
 
@@ -763,6 +784,14 @@ button[aria-expanded="false"] .guestbook__leave-btn-icon::after {
    减弱动效:用户偏好 prefers-reduced-motion
 ==================================================================== */
 @media (prefers-reduced-motion: reduce) {
+  .guestbook__top,
+  :deep(.guestbook-card-enter-from),
+  :deep(.guestbook-card-enter-to) {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
   .guestbook-form-enter-active,
   .guestbook-form-leave-active {
     transition: none !important;
@@ -779,5 +808,50 @@ button[aria-expanded="false"] .guestbook__leave-btn-icon::after {
   .guestbook__leave-btn {
     transition: none !important;
   }
+}
+
+/* ====================================================================
+   入场动画 — 顶部栏淡升
+==================================================================== */
+.guestbook__top {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.guestbook.is-mounted .guestbook__top {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ====================================================================
+   入场动画 — 卡片错落浮入
+   - 初始态:卡片隐形 + 下移 + 微缩,由 Vue 的 enter-from 类负责
+   - enter 阶段:过渡到 enter-to 完整态
+   - 12 张之后 delay 封顶,避免最后几张入场太晚
+   - 注意:Vue 在过渡中派发的 enter-* 类不会带 [data-v-xxx],必须 :deep()
+     否则被 scoped 重写后的选择器永远命中不到。
+==================================================================== */
+
+/* 入场动画过渡 (TransitionGroup) */
+:deep(.guestbook-card-enter-active) {
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  /* 错落延迟,每张卡片按 index 推迟 60ms,最大 12 档 */
+  transition-delay: var(--enter-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+:deep(.guestbook-card-enter-from) {
+  opacity: 0;
+  transform: translateY(28px) scale(0.96);
+}
+
+:deep(.guestbook-card-enter-to) {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 </style>
