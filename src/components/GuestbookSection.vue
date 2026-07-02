@@ -61,8 +61,68 @@ const SEED_NOTES = [
     date: '2025.03.08', 
     body: '雨天那组让我想学摄影，虽然大概会三天打鱼。',
     featured: false
+  },
+  {
+    name: 'Vivian Hsu',
+    date: '2025.02.26',
+    body: '伊斯坦布尔天桥那张,光与影的切分让人整个下午都盯在屏幕上。',
+    featured: true
+  },
+  {
+    name: '林小满',
+    date: '2025.02.18',
+    body: '想问一下颗粒那档,是 LR 套的预设还是直接来自胶片扫描?差别挺大的。',
+    featured: false
+  },
+  {
+    name: '蓝山',
+    date: '2025.02.10',
+    body: '夜街系列让我换了一周屏保,每天开机都觉得舒服。已设。',
+    featured: false
+  },
+  {
+    name: 'Theo Park',
+    date: '2025.02.02',
+    body: 'Love the pacing across the gallery. The 16:9 hero crop sits perfectly on ultrawide.',
+    featured: true
+  },
+  {
+    name: '雾港',
+    date: '2025.01.25',
+    body: '港口凌晨那组让我立刻想买一张去东极岛的船票,凌晨四点的港口真的那种光。',
+    featured: false
+  },
+  {
+    name: 'K. Tanaka',
+    date: '2025.01.17',
+    body: '每一张都有自己的呼吸感。在堆量的年代里,这种克制挺难得。',
+    featured: false
+  },
+  {
+    name: '苏打绿',
+    date: '2025.01.09',
+    body: '想问下主页动效是 GSAP 还是 Motion One?想偷偷抄一份作业。',
+    featured: true
+  },
+  {
+    name: '北纬',
+    date: '2025.01.02',
+    body: '留言墙的字体层级舒服,一路滚下来眼睛不累。新年快乐。',
+    featured: false
+  },
+  {
+    name: '木木',
+    date: '2024.12.24',
+    body: '船厂那组黑白,喜欢到想洗一张 11x14 贴在书桌上方。请问能开放售卖吗?',
+    featured: false
+  },
+  {
+    name: '余白',
+    date: '2024.12.15',
+    body: '主页标题那个英文字体是 Inter Tight 的哪个字重?同问小字辅助用的是几号。',
+    featured: false
   }
-]
+]  // 共 19 条
 
 const notes = ref([...SEED_NOTES])
 
