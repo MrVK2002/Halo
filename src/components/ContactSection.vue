@@ -164,6 +164,7 @@ onMounted(() => {
   align-items: stretch;
   width: 100%;
   height: calc(100vh - var(--space-5) * 2);
+  height: calc(100dvh - var(--space-5) * 2);
   min-height: 640px;
   background: var(--c-bone);
   overflow: hidden;
@@ -322,6 +323,10 @@ onMounted(() => {
     padding: 56px 32px;
   }
 
+  .contact-title {
+    font-size: clamp(40px, 8vw, 64px);
+  }
+
   .contact-info {
     position: static;
     margin-top: 48px;
@@ -330,6 +335,58 @@ onMounted(() => {
   .contact__image {
     height: 60vh;
     min-height: 420px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact {
+    min-height: auto;
+  }
+
+  .contact__copy {
+    padding: 40px 24px 48px;
+  }
+
+  .contact-title {
+    font-size: clamp(36px, 9vw, 56px);
+  }
+
+  .contact-desc {
+    font-size: 16px;
+    margin-top: 28px;
+    max-width: none;
+  }
+
+  .contact-info {
+    margin-top: 36px;
+    gap: 4px;
+  }
+
+  .contact-info__line {
+    font-size: clamp(18px, 4.5vw, 24px);
+  }
+
+  .contact__image {
+    height: 50vh;
+    height: 50dvh;
+    min-height: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact__copy {
+    padding: 32px 18px 40px;
+  }
+  .contact-title {
+    font-size: clamp(32px, 10vw, 48px);
+  }
+  .contact-desc {
+    font-size: 14px;
+    margin-top: 22px;
+  }
+  .contact-cta {
+    margin-top: 22px;
+    font-size: 16px;
   }
 }
 </style>

@@ -303,6 +303,7 @@ onMounted(() => {
   flex-direction: column;
   width: 100%;
   min-height: calc(100vh - var(--space-5) * 2);
+  min-height: calc(100dvh - var(--space-5) * 2);
   padding: var(--space-5) var(--space-4);
 }
 
@@ -755,26 +756,86 @@ button[aria-expanded="false"] .guestbook__leave-btn-icon::after {
 /* ====================================================================
    响应式布局
 ==================================================================== */
-@media (max-width: 480px) {
+
+/* 平板以下 */
+@media (max-width: 768px) {
   .guestbook {
-    padding: var(--space-4) var(--space-3);
+    padding: var(--space-4) var(--space-4);
+    min-height: calc(100vh - var(--space-5) * 2);
+    min-height: calc(100dvh - var(--space-5) * 2);
   }
-  
+
   .guestbook__top {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+
+  .guestbook__title-wrap {
+    flex-direction: column;
+    gap: var(--space-2);
+    align-items: flex-start;
+  }
+
+  .guestbook__count {
+    padding-left: 0;
+    border-left: 0;
+    margin-left: 0;
+  }
+
+  .guestbook__form {
+    padding: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+
+  .guestbook__leave-btn {
+    align-self: stretch;
+    justify-content: center;
+    padding: 14px 20px;
+    font-size: 13px;
+  }
+}
+
+/* 手机 */
+@media (max-width: 480px) {
+  .guestbook {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .guestbook__title {
+    font-size: clamp(28px, 8vw, 36px);
+  }
+
+  .guestbook__grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .guestbook-card {
+    padding: 20px;
+    gap: 14px;
+  }
+
+  .guestbook-card__body {
+    font-size: 14px;
+    line-height: 1.6;
   }
 
   .guestbook-card--featured {
     grid-column: span 1;
     grid-row: span 1;
+    padding: 22px;
   }
-  
+
+  .guestbook-card--featured .guestbook-card__body {
+    font-size: 15px;
+  }
+
   .guestbook-card--wide {
     grid-column: span 1;
   }
-  
+
   .guestbook-card--tall {
     grid-row: span 1;
   }

@@ -48,6 +48,59 @@
   --side-width: 17.5%;
   --main-width: 82.5%;
   --gutter: 10px;
+
+  /* 断点（与移动端适配变量一一对应） */
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1200px;
+
+  /* 触屏状态切换标记：通过 <html data-touch> 控制（仅作排版微调使用） */
+}
+
+/* 小屏断点（≤768px）：覆盖通用 token */
+@media (max-width: 768px) {
+  :root {
+    --side-width: 100%;
+    --main-width: 100%;
+    --layout-min-width: 0;
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 10px;
+    --space-4: 14px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 32px;
+    --space-8: 48px;
+
+    --fs-xs: 10px;
+    --fs-sm: 12px;
+    --fs-base: 13px;
+    --fs-md: 15px;
+    --fs-lg: 18px;
+    --fs-xl: 24px;
+    --fs-display: 30px;
+  }
+}
+
+/* 极小屏断点（≤480px）：更紧凑 */
+@media (max-width: 480px) {
+  :root {
+    --space-4: 12px;
+    --space-5: 16px;
+    --space-6: 20px;
+    --space-7: 24px;
+
+    --fs-display: 26px;
+  }
+}
+
+/* iOS Safari 100vh 不准确，包含地址栏高度时的兜底 */
+.h-100vh,
+.full-viewport {
+  height: 100vh;
+  height: 100dvh;
 }
 
 /* 本地字体 */

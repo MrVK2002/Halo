@@ -47,6 +47,13 @@ function ensureRaf() {
 function handlePhotoMouseMove(e) {
   const card = photoCardRef.value
   if (!card) return
+  if (typeof window !== 'undefined') {
+    const isTouch =
+      ('ontouchstart' in window) ||
+      navigator.maxTouchPoints > 0 ||
+      navigator.msMaxTouchPoints > 0
+    if (isTouch) return // 触屏不做 3D 倾斜
+  }
   const rect = card.getBoundingClientRect()
   const offsetX = e.clientX - rect.left - rect.width / 2
   const offsetY = e.clientY - rect.top - rect.height / 2
@@ -57,6 +64,13 @@ function handlePhotoMouseMove(e) {
 }
 
 function handlePhotoMouseEnter() {
+  if (typeof window !== 'undefined') {
+    const isTouch =
+      ('ontouchstart' in window) ||
+      navigator.maxTouchPoints > 0 ||
+      navigator.msMaxTouchPoints > 0
+    if (isTouch) return // 触屏不触发放大
+  }
   isHovering = true
   targetScale = 1.04
   ensureRaf()
@@ -339,4 +353,48 @@ onUnmounted(() => {
 }
 
 /* 减弱动效：尊重用户偏好（3D 旋转已由 GSAP 接管，gsap 默认会看媒体查询） */
+/* 响应式 —— 极小屏：用 flex 纵向滚动替代 100vh / 两栏 */
+@media (max-width: 768px) {
+  .about-page {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  .about-page__photo-wrap {
+    flex: 0 0 auto;
+    width: 100%;
+    height: auto;
+    padding: 40px 24px 24px;
+  }
+
+  .photo-card {
+    width: min(82%, 360px);
+    margin: 0 auto;
+  }
+
+  .about-page__content {
+    flex: 0 0 auto;
+    width: 100%;
+    padding: 24px 7vw 56px;
+    overflow-y: visible;
+  }
+
+  .about-page__name {
+    font-size: clamp(36px, 10vw, 56px);
+  }
+}
+
+@media (max-width: 480px) {
+  .about-page__photo-wrap {
+    padding: 24px 16px 16px;
+  }
+  .about-page__content {
+    padding: 16px 6vw 40px;
+  }
+  .about-page__name {
+    font-size: clamp(32px, 11vw, 44px);
+  }
+}
 </style>

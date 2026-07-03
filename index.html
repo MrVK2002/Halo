@@ -2,7 +2,8 @@
 <html lang="zh-CN">
   <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#ffffff" />
 <meta name="description" content="Leo Liang Photography | 屿墙摄影 - 个人摄影作品集。" />
 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.cn" />
@@ -21,25 +22,32 @@
     />
     <title>Leo Liang Photography | 屿墙摄影</title>
     <style>
-      /* Custom cursor — minimalist dot with lerp damping */
-      #cursor {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 10px;
-        height: 10px;
-        background: #888888;
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 99999;
-        transform: translate(-50%, -50%);
-        transition: opacity 0.2s ease;
-      }
+      /* 移动端不留默认 cursor 的圆形背景 */
+      html, body { height: 100%; }
+      body { -webkit-tap-highlight-color: transparent; }
+      /* 自定义光标默认隐藏；如果不是触屏再启用 */
+      #cursor { display: none; }
     </style>
   </head>
   <body>
     <div id="cursor"></div>
     <div id="app"></div>
+    <script>
+      // 触屏检测：把标识写到 <html data-touch> 上，供 CSS 与 Vue 逻辑判断
+      (function () {
+        const isTouch =
+          ('ontouchstart' in window) ||
+          navigator.maxTouchPoints > 0 ||
+          navigator.msMaxTouchPoints > 0;
+        if (isTouch) {
+          document.documentElement.setAttribute('data-touch', 'true');
+        } else {
+          // 非触屏才显示自定义光标
+          const c = document.getElementById('cursor');
+          if (c) c.style.display = 'block';
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.js"></script>
     <script>
       (function () {

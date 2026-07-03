@@ -6,8 +6,18 @@
   margin: 0;
   padding: 0;
   border-radius: 0;
-  /* Hide native cursor — custom cursor takes over */
-  cursor: none !important;
+}
+
+/* Hide native cursor — desktop only (hover-capable, fine pointer).
+ * Touch / coarse-pointer devices keep the system cursor. */
+@media (hover: hover) and (pointer: fine) {
+  html,
+  body,
+  *,
+  *::before,
+  *::after {
+    cursor: none !important;
+  }
 }
 
 html,
@@ -21,7 +31,6 @@ body {
   font-family: var(--font-body);
   font-size: 14px;
   line-height: 1.5;
-  cursor: none !important;
 }
 
 body {
@@ -52,7 +61,6 @@ select {
   color: inherit;
   background: none;
   border: none;
-  cursor: none !important;
 }
 
 a {

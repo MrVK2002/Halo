@@ -50,6 +50,13 @@ function resetAnimation() {
 // gsap ticker 实现 spring
 let tickerActive = true
 
+/* 触屏判定 —— 在触屏设备上禁用 3D 倾斜效果，避免触屏拖动导致抖动 */
+const isTouch =
+  typeof window !== 'undefined' &&
+  (('ontouchstart' in window) ||
+    navigator.maxTouchPoints > 0 ||
+    navigator.msMaxTouchPoints > 0)
+
 function springUpdate() {
   if (!tickerActive) return
 
@@ -85,6 +92,7 @@ function springUpdate() {
 
 function handleMouseMove(e) {
   if (!figureRef.value) return
+  if (isTouch) return // 触屏不读鼠标坐标
 
   const rect = figureRef.value.getBoundingClientRect()
   const offsetX = e.clientX - rect.left - rect.width / 2
@@ -116,6 +124,7 @@ function handleMouseMove(e) {
 }
 
 function handleMouseEnter(e) {
+  if (isTouch) return // 触屏不触发
   targetScale.val = 1
   if (props.applyInnerTilt) {
     gsap.to(targetScale, { val: props.scaleOnHover, duration: 0.4, ease: 'power2.out' })
@@ -125,6 +134,7 @@ function handleMouseEnter(e) {
 }
 
 function handleMouseLeave(e) {
+  if (isTouch) return // 触屏不触发
   rotateX.value = 0
   rotateY.value = 0
   if (props.applyInnerTilt) resetAnimation()

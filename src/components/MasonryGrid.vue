@@ -9,13 +9,15 @@ let scrollLocked = false
 
 const props = defineProps({
   items: { type: Array, required: true },
-  /** 列数断点 */
+  /** 列数断点。默认：极小屏单列/小屏双列/中屏三列/大屏五列 */
   breakpoints: {
     type: Object,
-    default: () => ({ 0: 2, 700: 3, 1100: 5, 1500: 5 })
+    default: () => ({ 0: 1, 480: 2, 700: 3, 1100: 4, 1500: 5 })
   },
   /** 列间距 px */
   gap: { type: Number, default: 12 },
+  /** 触屏设备列间距（默认更小以容纳更多视觉密度） */
+  touchGap: { type: Number, default: 6 },
   /** GSAP 动画缓动 */
   ease: { type: String, default: 'power3.out' },
   /** 入场动画时长 */
@@ -25,7 +27,9 @@ const props = defineProps({
   /** 入场方向 */
   animateFrom: { type: String, default: 'bottom' },
   /** 悬停缩放 */
-  hoverScale: { type: Number, default: 0.95 }
+  hoverScale: { type: Number, default: 0.95 },
+  /** 触屏设备缩放（更小，更不会触发抖动） */
+  touchHoverScale: { type: Number, default: 0.97 }
 })
 
 const emit = defineEmits(['card-click', 'relayout'])
@@ -33,6 +37,19 @@ const emit = defineEmits(['card-click', 'relayout'])
 const containerRef = ref(null)
 const containerWidth = ref(0)
 const hasMounted = ref(false)
+
+/* 触屏判定（用于调整瀑布流间距 + hover 行为） */
+const isTouch =
+  typeof window !== 'undefined' &&
+  (('ontouchstart' in window) ||
+    navigator.maxTouchPoints > 0 ||
+    navigator.msMaxTouchPoints > 0)
+
+/* 当前生效的列间距：触屏更小 */
+const effectiveGap = computed(() => (isTouch ? props.touchGap : props.gap))
+
+/* 当前生效的 hover 缩放：触屏使用更小档位 */
+const effectiveHoverScale = computed(() => (isTouch ? props.touchHoverScale : props.hoverScale))
 
 // 3D tilt 效果
 const tiltData = ref({})
@@ -59,15 +76,15 @@ const grid = computed(() => {
   if (!containerWidth.value || !props.items.length) return []
 
   const colHeights = new Array(columns.value).fill(0)
-  const columnWidth = (containerWidth.value - props.gap * (columns.value - 1)) / columns.value
+  const columnWidth = (containerWidth.value - effectiveGap.value * (columns.value - 1)) / columns.value
 
   return props.items.map((item) => {
     const col = colHeights.indexOf(Math.min(...colHeights))
-    const x = col * (columnWidth + props.gap)
+    const x = col * (columnWidth + effectiveGap.value)
     const height = columnWidth * ((item.height || 4) / (item.width || 3))
     const y = colHeights[col]
 
-    colHeights[col] += height + props.gap
+    colHeights[col] += height + effectiveGap.value
 
     return {
       ...item,
@@ -195,11 +212,12 @@ watch(containerWidth, animateItems)
 
 // 悬停效果
 function handleMouseEnter(itemId) {
+  if (isTouch) return // 触屏不触发 3D 倾斜
   hoveredId.value = itemId
   const el = containerRef.value?.querySelector(`[data-key="${itemId}"]`)
   if (el) {
     gsap.to(el, {
-      scale: props.hoverScale,
+      scale: effectiveHoverScale.value,
       duration: 0.3,
       ease: 'power2.out'
     })
@@ -207,6 +225,7 @@ function handleMouseEnter(itemId) {
 }
 
 function handleMouseLeave(itemId) {
+  if (isTouch) return
   hoveredId.value = null
   const el = containerRef.value?.querySelector(`[data-key="${itemId}"]`)
   if (el) {
@@ -219,6 +238,7 @@ function handleMouseLeave(itemId) {
 }
 
 function handleMouseMove(e, itemId) {
+  if (isTouch) return // 触屏不读坐标
   const el = containerRef.value?.querySelector(`[data-key="${itemId}"]`)
   if (el) {
     const rect = el.getBoundingClientRect()

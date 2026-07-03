@@ -9,12 +9,35 @@ const props = defineProps({
 const emit = defineEmits(['mouse-move', 'mouse-enter', 'mouse-leave', 'click'])
 
 const aspectRatio = (props.item.height || 4) / (props.item.width || 3)
+
+/* 触屏判定：避免在移动端触发 3D 倾斜动画（体验不佳） */
+const isTouch =
+  typeof window !== 'undefined' &&
+  (('ontouchstart' in window) ||
+    navigator.maxTouchPoints > 0 ||
+    navigator.msMaxTouchPoints > 0)
+
+function onClick() {
+  emit('click')
+}
+
+function onTouchStart() {
+  /* 触发短暂的"active"放大效果 */
+  emit('mouse-enter')
+}
+
+function onTouchEnd() {
+  emit('mouse-leave')
+}
 </script>
 
 <template>
   <div
     class="waterfall-card"
-    :class="{ 'is-hovered': isHovered }"
+    :class="[
+      { 'is-hovered': isHovered },
+      { 'is-touch': isTouch }
+    ]"
     :style="{
       '--tilt-x': tiltX,
       '--tilt-y': tiltY
@@ -22,7 +45,10 @@ const aspectRatio = (props.item.height || 4) / (props.item.width || 3)
     @mousemove="(e) => emit('mouse-move', e)"
     @mouseenter="() => emit('mouse-enter')"
     @mouseleave="() => emit('mouse-leave')"
-    @click="() => emit('click')"
+    @click="onClick"
+    @touchstart.passive="onTouchStart"
+    @touchend.passive="onTouchEnd"
+    @touchcancel.passive="onTouchEnd"
   >
     <div
       class="waterfall-card__img-wrap"
@@ -104,6 +130,21 @@ const aspectRatio = (props.item.height || 4) / (props.item.width || 3)
 
 .waterfall-card.is-hovered .waterfall-card__sheen {
   opacity: 1;
+}
+
+/* ====================================================================
+   触屏设备：去掉 3D 倾斜 / z 轴位移，只保留简单的轻微缩放反馈
+==================================================================== */
+.is-touch.is-hovered,
+.is-touch:active {
+  transform: scale(0.97);
+  box-shadow:
+    0 6px 14px -6px rgba(0, 0, 0, 0.20),
+    0 14px 28px -10px rgba(0, 0, 0, 0.12);
+}
+
+.is-touch .waterfall-card__sheen {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

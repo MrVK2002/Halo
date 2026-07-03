@@ -7,10 +7,21 @@ import SocialIcons from './SocialIcons.vue'
 const props = defineProps({
   categories: { type: Array, required: true },
   activeCategory: { type: String, required: true },
-  counts: { type: Object, required: true }
+  counts: { type: Object, required: true },
+  drawerOpen: { type: Boolean, default: false }
 })
 
-const emit = defineEmits(['select-category'])
+const emit = defineEmits(['select-category', 'close-drawer'])
+
+const isMobile = ref(false)
+
+if (typeof window !== 'undefined') {
+  const mql = window.matchMedia('(max-width: 768px)')
+  isMobile.value = mql.matches
+  mql.addEventListener('change', (e) => {
+    isMobile.value = e.matches
+  })
+}
 
 const menuSectionRef = ref(null)
 const hoverBarRef = ref(null)
@@ -19,10 +30,11 @@ function onLogoClick() {
   emit('select-category', 'all')
 }
 
-const mainCategories = props.categories.filter((c) => c.key !== 'all')
+const mainCategories = computed(() => props.categories.filter((c) => c.key !== 'all'))
 
-// Handle hover on menu item
+/* 桌面端 hover bar 动画逻辑 —— 移动端跳过，避免误触发 */
 function onMenuHover(event) {
+  if (isMobile.value) return
   if (!menuSectionRef.value || !hoverBarRef.value) return
 
   const wrapper = event.currentTarget
@@ -32,7 +44,6 @@ function onMenuHover(event) {
   const sectionRect = menuSectionRef.value.getBoundingClientRect()
   const itemRect = menuItem.getBoundingClientRect()
 
-  // Calculate center position relative to section
   const targetY = itemRect.top - sectionRect.top + itemRect.height / 2
 
   gsap.to(hoverBarRef.value, {
@@ -44,6 +55,7 @@ function onMenuHover(event) {
 }
 
 function onSectionLeave() {
+  if (isMobile.value) return
   if (!hoverBarRef.value) return
   gsap.to(hoverBarRef.value, {
     opacity: 0,
@@ -51,19 +63,24 @@ function onSectionLeave() {
   })
 }
 
-// Split text to chars helper
 function splitToChars(text) {
   return text.split('')
 }
 
-// Section headings
-const worksHeadingChars = computed(() => splitToChars('MY WORKS 我的作品'))
+const worksHeadingChars = computed(() => splitToChars('MY WORKS'))
 const infoHeadingChars = computed(() => splitToChars('INFO 更多'))
 
 onMounted(() => {
+  // 桌面端才入场动画（移动端抽屉式首帧直接显示）
+  if (isMobile.value) {
+    gsap.set(['.logo-char', '.heading-char', '.menu-item-wrapper', '.side-menu__divider', '.social-icons'], {
+      clearProps: 'all'
+    })
+    return
+  }
+
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
-  // Logo animation
   tl.from('.logo-char--mark', {
     y: 40,
     opacity: 0,
@@ -77,16 +94,12 @@ onMounted(() => {
     duration: 0.5,
     stagger: 0.02
   }, '-=0.3')
-
-  // Section headings animation
   .from('.heading-char', {
     y: 20,
     opacity: 0,
     duration: 0.4,
     stagger: 0.015
   }, '-=0.2')
-
-  // Menu items animation
   .from('.menu-item-wrapper', {
     x: -30,
     opacity: 0,
@@ -94,16 +107,12 @@ onMounted(() => {
     stagger: 0.08,
     ease: 'power2.out'
   }, '-=0.3')
-
-  // Divider animation
   .from('.side-menu__divider', {
     scaleX: 0,
     transformOrigin: 'left center',
     duration: 0.5,
     ease: 'power2.inOut'
   }, '-=0.1')
-
-  // Social icons animation
   .from('.social-icons', {
     opacity: 0,
     y: 10,
@@ -113,7 +122,30 @@ onMounted(() => {
 </script>
 
 <template>
-  <aside class="side-menu" aria-label="主导航">
+  <aside
+    class="side-menu"
+    :class="{ 'is-open': props.drawerOpen }"
+    aria-label="主导航"
+    @click.stop
+  >
+    <!-- 移动端顶部关闭按钮 -->
+    <button
+      class="side-menu__close"
+      type="button"
+      aria-label="关闭导航"
+      @click="emit('close-drawer')"
+    >
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+        <path
+          d="M5 5l14 14M19 5L5 19"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="square"
+        />
+      </svg>
+    </button>
+
     <!-- Logo / 个人标识 -->
     <button class="side-menu__logo" type="button" @click="onLogoClick" aria-label="回到首页">
       <span class="side-menu__logo-mark">
@@ -139,7 +171,6 @@ onMounted(() => {
       aria-labelledby="worksets"
       @mouseleave="onSectionLeave"
     >
-      <!-- 共享的悬浮 Bar -->
       <span ref="hoverBarRef" class="hover-bar" aria-hidden="true"></span>
 
       <h2 id="worksets" class="side-menu__heading">
@@ -165,10 +196,15 @@ onMounted(() => {
         </li>
       </ul>
 
-      <!-- 分隔线 -->
       <hr class="side-menu__divider" aria-hidden="true" />
 
-      <!-- 次要菜单 -->
+      <h2 class="side-menu__heading">
+        <span
+          v-for="(char, i) in infoHeadingChars"
+          :key="'info-' + i"
+          class="heading-char"
+        >{{ char }}</span>
+      </h2>
       <ul class="side-menu__list side-menu__list--secondary">
         <li class="menu-item-wrapper" @mouseenter="onMenuHover">
           <MenuItem
@@ -216,23 +252,21 @@ onMounted(() => {
   min-width: 296px;
   max-width: 480px;
   height: 100vh;
+  height: 100dvh;
   padding: var(--space-7) var(--space-6) var(--space-6);
   background: var(--c-bone);
   overflow-y: auto;
   align-self: start;
   font-family: var(--font-body);
-  /*
-   * 右侧层次阴影 —— 让侧栏从主内容区轻微抬起（克制 / 无截断感版）。
-   *
-   * 关键：去掉 1px 描边层（硬边界制造"截断"），让所有阴影都从源头 0px 起始，
-   * 即阴影只在 offset 方向上扩散，不在侧栏边缘形成可见的硬线。
-   * 多层模糊叠加，靠远端柔光晕建立层级感，眼睛感知不到具体边界。
-   * 色相与 oklch(55.2% .016 285.938) 中性灰调和谐。
-   */
+  /* 右侧层次阴影 */
   box-shadow:
     0 0 6px oklch(20% 0.012 285.938 / 0.025),
     0 0 14px oklch(20% 0.012 285.938 / 0.035),
     0 0 32px oklch(20% 0.012 285.938 / 0.045);
+}
+
+.side-menu__close {
+  display: none;
 }
 
 .side-menu__logo {
@@ -355,5 +389,88 @@ onMounted(() => {
 }
 .side-menu::-webkit-scrollbar-thumb {
   background: var(--c-mist);
+}
+
+/* ====================================================================
+   移动端 —— 抽屉式菜单
+==================================================================== */
+@media (max-width: 768px) {
+  .side-menu {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 84vw;
+    max-width: 320px;
+    min-width: 0;
+    height: 100vh;
+    height: 100dvh;
+    padding: 24px 24px 28px;
+    z-index: 100;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    transform: translateX(-100%);
+    transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+    box-shadow:
+      0 0 6px oklch(20% 0.012 285.938 / 0.04),
+      0 0 22px oklch(20% 0.012 285.938 / 0.10),
+      12px 0 36px -8px oklch(20% 0.012 285.938 / 0.18);
+  }
+
+  .side-menu.is-open {
+    transform: translateX(0);
+  }
+
+  .side-menu__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: 1px solid var(--c-mist);
+    border-radius: 50%;
+    color: var(--c-ink);
+    cursor: pointer;
+    align-self: flex-end;
+    margin-bottom: 8px;
+    transition: background 0.2s ease;
+  }
+
+  .side-menu__close:hover {
+    background: var(--c-mist);
+  }
+
+  .side-menu__logo {
+    margin-bottom: var(--space-5);
+    padding-left: 0;
+  }
+
+  .side-menu__logo-mark {
+    font-size: 32px;
+  }
+
+  .side-menu__heading {
+    margin-left: 8px;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+  }
+
+  .side-menu__divider {
+    margin: var(--space-3) 0;
+  }
+
+  .side-menu__spacer {
+    min-height: var(--space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .side-menu {
+    width: 88vw;
+    padding: 20px 20px 24px;
+  }
+
+  .side-menu__logo-mark {
+    font-size: 28px;
+  }
 }
 </style>
