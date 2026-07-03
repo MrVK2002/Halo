@@ -67,8 +67,7 @@ function splitToChars(text) {
   return text.split('')
 }
 
-const worksHeadingChars = computed(() => splitToChars('MY WORKS'))
-const infoHeadingChars = computed(() => splitToChars('INFO 更多'))
+const worksHeadingChars = computed(() => splitToChars('MY WORKS 我的作品'))
 
 onMounted(() => {
   // 桌面端才入场动画（移动端抽屉式首帧直接显示）
@@ -198,13 +197,6 @@ onMounted(() => {
 
       <hr class="side-menu__divider" aria-hidden="true" />
 
-      <h2 class="side-menu__heading">
-        <span
-          v-for="(char, i) in infoHeadingChars"
-          :key="'info-' + i"
-          class="heading-char"
-        >{{ char }}</span>
-      </h2>
       <ul class="side-menu__list side-menu__list--secondary">
         <li class="menu-item-wrapper" @mouseenter="onMenuHover">
           <MenuItem
@@ -426,7 +418,6 @@ onMounted(() => {
     width: 36px;
     height: 36px;
     background: transparent;
-    border: 1px solid var(--c-mist);
     border-radius: 50%;
     color: var(--c-ink);
     cursor: pointer;

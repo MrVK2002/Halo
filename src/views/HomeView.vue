@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import SideMenu from '@/components/SideMenu.vue'
 import MasonryGrid from '@/components/MasonryGrid.vue'
 import Lightbox from '@/components/Lightbox.vue'
@@ -27,6 +27,21 @@ function handleSelectCategory(key) {
   }
 }
 
+/* —— 移动端顶部右侧“作品集名称”标记 —— */
+const mobileBrand = computed(() => {
+  if (activeCategory.value === 'all') {
+    return { mark: 'Mr.VK', sub: 'Leo Liang', showEn: true, showCn: false }
+  }
+  const cat = categories.find((c) => c.key === activeCategory.value)
+  if (!cat) return { mark: 'Mr.VK', sub: 'Leo Liang', showEn: true, showCn: false }
+  return {
+    mark: cat.labelEN || '',
+    sub: cat.labelCN || '',
+    showEn: true,
+    showCn: !!cat.labelCN
+  }
+})
+
 function handleCardClick(index) {
   lightboxRef.value?.openByIndex(index)
 }
@@ -51,18 +66,30 @@ onMounted(() => {
 
 <template>
   <div class="home" :class="{ 'drawer-is-open': drawerOpen }">
-    <!-- 移动端：汉堡按钮 -->
-    <button
-      class="hamburger"
-      type="button"
-      :aria-expanded="drawerOpen"
-      aria-label="打开导航"
-      @click="openDrawer"
-    >
-      <span class="hamburger__bar"></span>
-      <span class="hamburger__bar"></span>
-      <span class="hamburger__bar"></span>
-    </button>
+    <!-- 移动端：统一顶部条（汉堡 + 作品集名称） -->
+    <header v-show="!drawerOpen" class="mobile-topbar">
+      <button
+        class="hamburger"
+        type="button"
+        :aria-expanded="drawerOpen"
+        aria-label="打开导航"
+        @click="openDrawer"
+      >
+        <span class="hamburger__bar"></span>
+        <span class="hamburger__bar"></span>
+        <span class="hamburger__bar"></span>
+      </button>
+
+      <!-- 移动端：右上作品集名称（与汉堡同条） -->
+      <div
+        class="mobile-brand"
+        :class="{ 'is-tall': mobileBrand.showCn }"
+        aria-hidden="true"
+      >
+        <span class="mobile-brand__mark">{{ mobileBrand.mark }}</span>
+        <span v-if="mobileBrand.showCn" class="mobile-brand__sub">{{ mobileBrand.sub }}</span>
+      </div>
+    </header>
 
     <!-- 移动端：抽屉遮罩 -->
     <div
@@ -138,32 +165,54 @@ onMounted(() => {
   color: var(--c-mid);
 }
 
-/* —— 汉堡按钮 —— 默认隐藏，移动端显示 —— */
-.hamburger {
+/* —— 移动端顶部条（汉堡 + 作品集名称 同一块） —— */
+.mobile-topbar {
   display: none;
   position: fixed;
   top: 14px;
   left: 14px;
+  right: 14px;
   z-index: 200;
-  width: 40px;
-  height: 40px;
-  border: 0;
+  min-height: 40px;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: opacity 0.18s ease, transform 0.22s ease;
+}
+
+/* 抽屉打开 → 让位给抽屉（不要与抽屉的 ✕ 按钮重叠） */
+.drawer-is-open .mobile-topbar {
+  opacity: 0;
+  transform: translateY(-12px);
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.18s ease, transform 0.22s ease, visibility 0s linear 0.22s;
+}
+
+/* —— 汉堡按钮 —— 默认隐藏，移动端显示 —— */
+.hamburger {
+  display: flex;
+  position: relative;
+  width: 40px;
+  align-self: stretch;
+  min-height: inherit;
+  border: 0;
+  background: transparent;
   padding: 0;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 5px;
   cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
   transition: background 0.2s ease;
+  flex-shrink: 0;
 }
 
 .hamburger:hover {
-  background: rgba(255, 255, 255, 1);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .hamburger__bar {
@@ -174,14 +223,60 @@ onMounted(() => {
   transition: transform 0.25s ease, opacity 0.2s ease;
 }
 
+/* X 形闭合：用 50% 自适应任意按钮高度 */
 .drawer-is-open .hamburger__bar:nth-child(1) {
-  transform: translateY(6.5px) rotate(45deg);
+  transform: translateY(calc(50% - 0.75px)) rotate(45deg);
 }
 .drawer-is-open .hamburger__bar:nth-child(2) {
   opacity: 0;
 }
 .drawer-is-open .hamburger__bar:nth-child(3) {
-  transform: translateY(-6.5px) rotate(-45deg);
+  transform: translateY(calc(-50% + 0.75px)) rotate(-45deg);
+}
+
+/* —— 移动端右上作品集名 —— */
+.mobile-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 14px 0 12px;
+  margin-left: auto;
+  min-width: 0;
+  font-family: var(--font-artier);
+  color: var(--c-ink);
+  line-height: 1.1;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.mobile-brand__mark {
+  font-size: 22px;
+  letter-spacing: 0.02em;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobile-brand.is-tall {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.mobile-brand.is-tall .mobile-brand__mark {
+  font-size: 14px;
+  font-family: var(--font-hans);
+  font-weight: 500;
+  margin-bottom: 1px;
+}
+
+.mobile-brand__sub {
+  display: block;
+  font-family: var(--font-hans);
+  font-weight: 400;
+  font-size: 10px;
+  color: var(--c-mid);
+  letter-spacing: 0.04em;
 }
 
 /* —— 抽屉遮罩 —— */
@@ -206,8 +301,9 @@ onMounted(() => {
     min-width: 0;
   }
 
-  .hamburger {
+  .mobile-topbar {
     display: flex;
+    align-items: center;
   }
 
   .drawer-is-open .main-pane {
@@ -217,7 +313,7 @@ onMounted(() => {
 
   .main-pane {
     padding: var(--space-4);
-    /* 给顶部留出汉堡按钮不挡住内容的安全距离 */
+    /* 给顶部条（14 + 40 + 18 呼吸）留出安全距离 */
     padding-top: 72px;
   }
 }
