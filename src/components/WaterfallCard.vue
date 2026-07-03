@@ -53,7 +53,6 @@ const aspectRatio = (props.item.height || 4) / (props.item.width || 3)
     transform 0.4s cubic-bezier(0.2, 0.85, 0.3, 1.15),
     box-shadow 0.4s cubic-bezier(0.2, 0.85, 0.3, 1.15);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-  border-radius: 3px;
   height: 100%;
 }
 

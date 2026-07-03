@@ -213,7 +213,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   width: var(--side-width);
-  min-width: 295px;
+  min-width: 296px;
   max-width: 480px;
   height: 100vh;
   padding: var(--space-7) var(--space-6) var(--space-6);
@@ -255,6 +255,14 @@ onMounted(() => {
 .logo-char {
   display: inline-block;
   will-change: transform, opacity;
+}
+
+.logo-char--text {
+  min-width: 0.3em;
+}
+
+.logo-char--text:empty {
+  min-width: 0;
 }
 
 .side-menu__logo-mark {
