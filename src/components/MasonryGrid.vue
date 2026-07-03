@@ -9,11 +9,14 @@ let scrollLocked = false
 
 const props = defineProps({
   items: { type: Array, required: true },
-  /** 列数断点。默认：极小屏单列/小屏双列/中屏三列/大屏五列 */
-  breakpoints: {
-    type: Object,
-    default: () => ({ 0: 1, 480: 2, 700: 3, 1100: 4, 1500: 5 })
-  },
+/**
+ * 列数断点。默认：移动端双列 / 桌面端及以上五列
+ * （与 SideMenu 的 (max-width: 768px) / CustomCursor 的 (hover: hover) 桌面判定对齐）
+ */
+breakpoints: {
+  type: Object,
+  default: () => ({ 0: 2, 769: 5 })
+},
   /** 列间距 px */
   gap: { type: Number, default: 12 },
   /** 触屏设备列间距（默认更小以容纳更多视觉密度） */
