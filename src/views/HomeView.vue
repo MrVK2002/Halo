@@ -30,15 +30,14 @@ function handleSelectCategory(key) {
 /* —— 移动端顶部右侧“作品集名称”标记 —— */
 const mobileBrand = computed(() => {
   if (activeCategory.value === 'all') {
-    return { mark: 'Mr.VK', sub: 'Leo Liang', showEn: true, showCn: false }
+    return { mark: 'Mr.VK', sub: 'Leo Liang Photography', layout: 'row' }
   }
   const cat = categories.find((c) => c.key === activeCategory.value)
-  if (!cat) return { mark: 'Mr.VK', sub: 'Leo Liang', showEn: true, showCn: false }
+  if (!cat) return { mark: 'Mr.VK', sub: 'Leo Liang Photography', layout: 'row' }
   return {
     mark: cat.labelEN || '',
     sub: cat.labelCN || '',
-    showEn: true,
-    showCn: !!cat.labelCN
+    layout: 'tall'
   }
 })
 
@@ -80,14 +79,25 @@ onMounted(() => {
         <span class="hamburger__bar"></span>
       </button>
 
-      <!-- 移动端：右上作品集名称（与汉堡同条） -->
+      <!-- 移动端：作品集名称 / 品牌行 -->
       <div
         class="mobile-brand"
-        :class="{ 'is-tall': mobileBrand.showCn }"
+        :class="{
+          'is-tall': mobileBrand.layout === 'tall',
+          'is-row': mobileBrand.layout === 'row'
+        }"
         aria-hidden="true"
       >
-        <span class="mobile-brand__mark">{{ mobileBrand.mark }}</span>
-        <span v-if="mobileBrand.showCn" class="mobile-brand__sub">{{ mobileBrand.sub }}</span>
+        <!-- 横向单行：首页品牌行 [Mr.VK | Leo Liang Photography] -->
+        <template v-if="mobileBrand.layout === 'row'">
+          <span class="mobile-brand__mark mobile-brand__mark--row">{{ mobileBrand.mark }}</span>
+          <span class="mobile-brand__sub mobile-brand__sub--row">{{ mobileBrand.sub }}</span>
+        </template>
+        <!-- 双行：作品集名 + 中文副标题 -->
+        <template v-else>
+          <span class="mobile-brand__mark">{{ mobileBrand.mark }}</span>
+          <span v-if="mobileBrand.sub" class="mobile-brand__sub">{{ mobileBrand.sub }}</span>
+        </template>
       </div>
     </header>
 
@@ -238,10 +248,10 @@ onMounted(() => {
 .mobile-brand {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: center;
   padding: 0 14px 0 12px;
-  margin-left: auto;
+  margin-left: 0;
   min-width: 0;
   font-family: var(--font-artier);
   color: var(--c-ink);
@@ -263,11 +273,36 @@ onMounted(() => {
   padding-bottom: 6px;
 }
 
+.mobile-brand.is-row {
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: flex-start;
+  padding: 0 14px 0 12px;
+}
+
 .mobile-brand.is-tall .mobile-brand__mark {
   font-size: 14px;
   font-family: var(--font-hans);
   font-weight: 500;
   margin-bottom: 1px;
+}
+
+/* —— 横向单行品牌行：[Mr.VK | Leo Liang Photography] —— */
+.mobile-brand__mark--row {
+  font-size: 24px;
+  font-family: var(--font-artier);
+  font-weight: 500;
+  max-width: none;
+  margin-right: 10px;
+}
+
+.mobile-brand__sub--row {
+  display: inline-block;
+  font-family: var(--font-hans);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--c-mid);
 }
 
 .mobile-brand__sub {
