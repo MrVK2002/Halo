@@ -30,11 +30,12 @@ function handleSelectCategory(key) {
 /* —— 移动端顶部右侧“作品集名称”标记 —— */
 const mobileBrand = computed(() => {
   if (activeCategory.value === 'all') {
-    return { mark: 'Mr.VK', sub: 'Leo Liang Photography', layout: 'row' }
+    return { mark: 'Mr.VK.', sub: 'Leo Liang Photography', layout: 'row' }
   }
   const cat = categories.find((c) => c.key === activeCategory.value)
-  if (!cat) return { mark: 'Mr.VK', sub: 'Leo Liang Photography', layout: 'row' }
+  if (!cat) return { mark: 'Mr.VK.', sub: 'Leo Liang Photography', layout: 'row' }
   return {
+    brand: 'Mr.VK.',
     mark: cat.labelEN || '',
     sub: cat.labelCN || '',
     layout: 'tall'
@@ -93,10 +94,16 @@ onMounted(() => {
           <span class="mobile-brand__mark mobile-brand__mark--row">{{ mobileBrand.mark }}</span>
           <span class="mobile-brand__sub mobile-brand__sub--row">{{ mobileBrand.sub }}</span>
         </template>
-        <!-- 双行：作品集名 + 中文副标题 -->
+        <!-- 双行：Mr.VK.（大 logo）+ 分割线 + EN/CN 叠两行 -->
         <template v-else>
-          <span class="mobile-brand__mark">{{ mobileBrand.mark }}</span>
-          <span v-if="mobileBrand.sub" class="mobile-brand__sub">{{ mobileBrand.sub }}</span>
+          <div class="mobile-brand__layout">
+            <span class="mobile-brand__brand">{{ mobileBrand.brand }}</span>
+            <span class="mobile-brand__sep" aria-hidden="true"></span>
+            <div class="mobile-brand__stack">
+              <span class="mobile-brand__mark">{{ mobileBrand.mark }}</span>
+              <span v-if="mobileBrand.sub" class="mobile-brand__sub">{{ mobileBrand.sub }}</span>
+            </div>
+          </div>
         </template>
       </div>
     </header>
@@ -179,27 +186,26 @@ onMounted(() => {
 .mobile-topbar {
   display: none;
   position: fixed;
-  top: 14px;
-  left: 14px;
-  right: 14px;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 200;
-  min-height: 40px;
-  background: rgba(255, 255, 255, 0.85);
+  min-height: 48px;
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 4px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   overflow: hidden;
-  transition: opacity 0.18s ease, transform 0.22s ease;
+  transition: transform 0.28s ease, opacity 0.22s ease;
 }
 
 /* 抽屉打开 → 让位给抽屉（不要与抽屉的 ✕ 按钮重叠） */
 .drawer-is-open .mobile-topbar {
   opacity: 0;
-  transform: translateY(-12px);
+  transform: translateY(-100%);
   pointer-events: none;
   visibility: hidden;
-  transition: opacity 0.18s ease, transform 0.22s ease, visibility 0s linear 0.22s;
+  transition: transform 0.28s ease, opacity 0.22s ease, visibility 0s linear 0.28s;
 }
 
 /* —— 汉堡按钮 —— 默认隐藏，移动端显示 —— */
@@ -269,8 +275,8 @@ onMounted(() => {
 }
 
 .mobile-brand.is-tall {
-  padding-top: 6px;
-  padding-bottom: 6px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 .mobile-brand.is-row {
@@ -285,6 +291,34 @@ onMounted(() => {
   font-family: var(--font-hans);
   font-weight: 500;
   margin-bottom: 1px;
+}
+
+/* —— 作品集双层布局：Mr.VK.(logo) + EN/CN 叠行 —— */
+.mobile-brand__layout {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.mobile-brand__stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.15;
+}
+
+/* —— 品牌前缀 logo：Mr.VK. —— */
+.mobile-brand__brand {
+  display: inline-block;
+  font-size: 26px;
+  font-family: var(--font-artier);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--c-ink);
+  line-height: 1;
+  /* 大写字母视觉中线比几何中线偏高，微调下移让字符中心对齐 stack 中线 */
+  transform: translateY(2px);
 }
 
 /* —— 横向单行品牌行：[Mr.VK | Leo Liang Photography] —— */
@@ -312,6 +346,28 @@ onMounted(() => {
   font-size: 10px;
   color: var(--c-mid);
   letter-spacing: 0.04em;
+}
+
+/* —— 作品集名块内的竖分隔线 —— */
+.mobile-brand__sep {
+  display: inline-block;
+  position: relative;
+  width: 6px;
+  height: 22px;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.mobile-brand__sep::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1px;
+  height: 22px;
+  background: var(--c-mist);
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
 }
 
 /* —— 抽屉遮罩 —— */
@@ -347,9 +403,8 @@ onMounted(() => {
   }
 
   .main-pane {
-    padding: var(--space-4);
-    /* 给顶部条（14 + 40 + 18 呼吸）留出安全距离 */
-    padding-top: 72px;
+    padding: 64px var(--space-4) var(--space-4);
+    /* 给顶部条（48 + 16 呼吸）留出安全距离 */
   }
 }
 
