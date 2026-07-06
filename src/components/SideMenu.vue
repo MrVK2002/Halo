@@ -401,10 +401,8 @@ onMounted(() => {
     overscroll-behavior: contain;
     transform: translateX(-100%);
     transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
-    box-shadow:
-      0 0 6px oklch(20% 0.012 285.938 / 0.04),
-      0 0 22px oklch(20% 0.012 285.938 / 0.10),
-      12px 0 36px -8px oklch(20% 0.012 285.938 / 0.18);
+    /* 移动端靠遮罩分层，阴影会让主内容显得"脏" */
+    box-shadow: none;
   }
 
   .side-menu.is-open {
