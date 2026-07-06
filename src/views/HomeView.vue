@@ -291,6 +291,10 @@ onMounted(() => {
   font-family: var(--font-hans);
   font-weight: 500;
   margin-bottom: 1px;
+  max-width: none;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 /* —— 作品集双层布局：Mr.VK.(logo) + EN/CN 叠行 —— */
