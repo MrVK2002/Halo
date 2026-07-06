@@ -3,9 +3,13 @@
  * CustomCursor —— 仅一个跟随指针的灰色圆点
  *  - 进入可点击元素时放大 + 变实心（hover 态）
  *  - 进入文本输入框时变竖条
+ *  - 进入黑底灯箱时自动反转为浅色（保持可见）
  *  - reduced-motion / touch / coarse-pointer 设备自动放行原生光标
  */
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useLightbox } from '@/composables/useLightbox.js'
+
+const { state: lightboxState } = useLightbox()
 
 const enabled = ref(false)
 const dotRef = ref(null)
@@ -17,6 +21,7 @@ const dot = { x: 0, y: 0 }
 let hovering = false
 let pressing = false
 let visible = true
+let inverted = false
 
 const INTERACTIVE = 'a,button,[role="button"],input,textarea,select,label,summary,.menu-item,[data-cursor="pointer"]'
 const TEXT_INPUT = 'input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]),textarea,[contenteditable="true"]'
@@ -29,6 +34,8 @@ function tick() {
     const pressingScale = pressing ? 'scale(0.5)' : ''
     dotRef.value.style.transform = `translate3d(${dot.x}px, ${dot.y}px, 0) translate(-50%, -50%) ${pressingScale}`
     dotRef.value.style.opacity = visible ? '1' : '0'
+    /* 黑底灯箱里用浅色光标保持可见 */
+    dotRef.value.dataset.invert = inverted ? '1' : '0'
   }
   rafId = requestAnimationFrame(tick)
 }
@@ -85,6 +92,14 @@ function activate() {
   rafId = requestAnimationFrame(tick)
 }
 
+/* 灯箱打开时光标颜色反转（黑底→浅色） */
+watch(
+  () => lightboxState.isOpen,
+  (isOpen) => {
+    inverted = isOpen
+  }
+)
+
 function deactivate() {
   enabled.value = false
   globalThis.removeEventListener('pointermove', onMove)
@@ -119,7 +134,8 @@ onBeforeUnmount(deactivate)
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 9999;
+  /* 必须高于 Lightbox (9999) / SideMenu 抽屉 (100) 等所有覆盖层 */
+  z-index: 100000;
   contain: layout paint;
 }
 
@@ -152,6 +168,19 @@ onBeforeUnmount(deactivate)
   height: 18px;
   border-radius: 1px;
   background: var(--c-ink, #222);
+}
+
+/* 黑底场景（灯箱打开时）：光标反转为浅色保持可见 */
+.cursor-dot[data-invert='1'] {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.cursor-dot[data-invert='1'][data-state='hover'] {
+  background: #fff;
+}
+
+.cursor-dot[data-invert='1'][data-state='text'] {
+  background: #fff;
 }
 
 @media (prefers-reduced-motion: reduce) {
