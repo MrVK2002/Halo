@@ -459,8 +459,8 @@ defineExpose({ openByIndex })
 ==================================================================== */
 @media (max-width: 768px) {
   .lb {
-    padding: 56px 12px calc(20px + env(safe-area-inset-bottom, 0));
-    align-items: flex-start;
+    padding: 64px 12px 64px;
+    align-items: center;
   }
 
   .lb__btn--nav {
@@ -478,13 +478,13 @@ defineExpose({ openByIndex })
   }
 
   .lb__stage {
-    max-height: calc(100vh - 96px - 80px);
-    max-height: calc(100dvh - 96px - 80px);
+    max-height: calc(100vh - 128px);
+    max-height: calc(100dvh - 128px);
   }
 
   .lb__img {
-    max-height: calc(100vh - 96px - 80px);
-    max-height: calc(100dvh - 96px - 80px);
+    max-height: calc(100vh - 128px);
+    max-height: calc(100dvh - 128px);
   }
 
   .lb__caption {
