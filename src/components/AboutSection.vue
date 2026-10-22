@@ -166,9 +166,9 @@ onUnmounted(() => {
 
         <!-- 简介 -->
         <p class="about-page__bio">
-          Based in Shanghai. By day, building distributed systems at a fintech startup.
+          Based in ShenZhen. By day, building distributed systems at a fintech startup.
           By night and weekends, chasing available light and quiet moments — from the
-          neon-lit streets of Shanghai to the open landscapes of the Tibetan plateau.
+          neon-lit streets of ShenZhen to the open landscapes of the Tibetan plateau.
           Fascinated by the tension between permanence and transience, between
           engineered order and organic chaos. Shooting film and digital in parallel.
         </p>
