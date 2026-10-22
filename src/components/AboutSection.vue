@@ -192,8 +192,9 @@ onUnmounted(() => {
 .about-page {
   display: flex;
   width: 100%;
-  height: 94vh;
-  overflow: hidden;
+  /* 高度跟随内容：固定高度 + overflow:hidden 会把肖像卡片下方的阴影裁成一条硬边 */
+  min-height: 94vh;
+  overflow: visible;
   background: #ffffff;
 }
 
@@ -201,7 +202,8 @@ onUnmounted(() => {
 .about-page__photo-wrap {
   position: relative;
   flex: 0 0 50%;
-  height: 100%;
+  /* 父级高度改为 auto 后，用 stretch 代替 100% 才能继续撑满并垂直居中卡片 */
+  align-self: stretch;
   padding: 40px;
   box-sizing: border-box;
   display: flex;
