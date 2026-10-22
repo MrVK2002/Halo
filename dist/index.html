@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#ffffff" />
+<meta name="description" content="Leo Liang Photography | 屿墙摄影 - 个人摄影作品集。" />
+<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.cn" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    <!-- ContactSection 右侧氛围图：首屏关键图，提前 preload + fetchpriority=high，最快加载 -->
+    <link
+      rel="preload"
+      as="image"
+      href="https://images.unsplash.com/photo-1764755932155-dabbee87df7e?auto=format&fit=crop&w=1600&h=2000&q=80"
+      fetchpriority="high"
+    />
+    <link
+      href="https://fonts.googleapis.cn/css2?family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,400&display=swap"
+      rel="stylesheet"
+    />
+    <title>Leo Liang Photography | 屿墙摄影</title>
+    <style>
+      /* 移动端不留默认 cursor 的圆形背景 */
+      html, body { height: 100%; }
+      body { -webkit-tap-highlight-color: transparent; }
+      /* 自定义光标默认隐藏；如果不是触屏再启用 */
+      #cursor { display: none; }
+    </style>
+    <script type="module" crossorigin src="/assets/index-BpZ3CIpO.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CQozeSq1.css">
+  </head>
+  <body>
+    <div id="cursor"></div>
+    <div id="app"></div>
+    <script>
+      // 触屏检测：把标识写到 <html data-touch> 上，供 CSS 与 Vue 逻辑判断
+      (function () {
+        const isTouch =
+          ('ontouchstart' in window) ||
+          navigator.maxTouchPoints > 0 ||
+          navigator.msMaxTouchPoints > 0;
+        if (isTouch) {
+          document.documentElement.setAttribute('data-touch', 'true');
+        } else {
+          // 非触屏才显示自定义光标
+          const c = document.getElementById('cursor');
+          if (c) c.style.display = 'block';
+        }
+      })();
+    </script>
+    <script>
+      (function () {
+        const cursor = document.getElementById('cursor');
+        if (!cursor) return;
+
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let curX = mouseX;
+        let curY = mouseY;
+        let isVisible = false;
+
+        const lerp = (a, b, t) => a + (b - a) * t;
+
+        function tick() {
+          curX = lerp(curX, mouseX, 0.14);
+          curY = lerp(curY, mouseY, 0.14);
+          cursor.style.left = curX + 'px';
+          cursor.style.top = curY + 'px';
+          requestAnimationFrame(tick);
+        }
+
+        document.addEventListener('mousemove', (e) => {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+          if (!isVisible) {
+            isVisible = true;
+            cursor.style.opacity = '1';
+          }
+        }, { passive: true });
+
+        document.addEventListener('mouseleave', () => {
+          cursor.style.opacity = '0';
+          isVisible = false;
+        });
+
+        document.addEventListener('mouseout', (e) => {
+          if (!e.relatedTarget) cursor.style.opacity = '0';
+        });
+
+        tick();
+      })();
+    </script>
+  </body>
+</html>

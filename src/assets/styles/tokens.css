@@ -43,10 +43,10 @@
   --t-base: 0.22s;
   --t-slow: 0.4s;
 
-  /* 布局 */
+  /* 布局 —— 侧栏宽度随视口自适应，极窄/超宽屏各自封顶 */
   --layout-min-width: 1200px;
-  --side-width: 17.5%;
-  --main-width: 82.5%;
+  --side-width: clamp(296px, 17.5vw, 480px);
+  --main-width: minmax(0, 1fr);
   --gutter: 10px;
 
   /* 断点（与移动端适配变量一一对应） */

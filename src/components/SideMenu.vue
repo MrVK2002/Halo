@@ -240,7 +240,8 @@ onMounted(() => {
   top: 0;
   display: flex;
   flex-direction: column;
-  width: var(--side-width);
+  /* 填满网格列（列宽由 --side-width 控制），避免百分比二次计算导致留白 */
+  width: 100%;
   min-width: 296px;
   max-width: 480px;
   height: 100vh;

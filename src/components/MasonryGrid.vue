@@ -10,12 +10,13 @@ let scrollLocked = false
 const props = defineProps({
   items: { type: Array, required: true },
 /**
- * 列数断点。默认：移动端双列 / 桌面端及以上五列
+ * 列数断点（按容器宽度自适应）
+ * 移动端双列，随后随可用宽度逐级增加，2K 及以上六列
  * （与 SideMenu 的 (max-width: 768px) / CustomCursor 的 (hover: hover) 桌面判定对齐）
  */
 breakpoints: {
   type: Object,
-  default: () => ({ 0: 2, 769: 5 })
+  default: () => ({ 0: 2, 620: 3, 900: 4, 1250: 5, 1900: 6 })
 },
   /** 列间距 px */
   gap: { type: Number, default: 12 },
