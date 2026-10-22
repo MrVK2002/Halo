@@ -304,18 +304,30 @@ onMounted(() => {
   width: 100%;
   min-height: calc(100vh - var(--space-5) * 2);
   min-height: calc(100dvh - var(--space-5) * 2);
-  padding: var(--space-5) var(--space-4);
+  /* 顶部留白交给吸顶栏内部，避免滚动时先跟随移动一段距离才吸顶 */
+  margin-top: calc(-1 * var(--space-4));
+  padding: 0 var(--space-4) var(--space-5);
 }
 
 /* ====================================================================
    顶部栏
 ==================================================================== */
 .guestbook__top {
+  /* 滚动时吸顶：滚动容器是 window（Lenis 直接驱动原生滚动） */
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--c-bone);
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--space-5);
-  padding: 0 0 var(--space-5);
+  /* 向两侧延伸到主区内边距，背景与分隔线完整盖住主区，卡片不会从侧边露出 */
+  margin-left: calc(-1 * var(--space-4));
+  margin-right: calc(-1 * var(--space-4));
+  padding: var(--space-6) var(--space-4) var(--space-5);
+  /* 吸顶后与下方滚过的卡片形成明确的层级分隔 */
+  box-shadow: 0 10px 24px -18px rgba(0, 0, 0, 0.28);
   border-bottom: 1px solid #e0e0e0;
   margin-bottom: var(--space-6);
 }
@@ -760,12 +772,16 @@ button[aria-expanded="false"] .guestbook__leave-btn-icon::after {
 /* 平板以下 */
 @media (max-width: 768px) {
   .guestbook {
-    padding: var(--space-4) var(--space-4);
+    /* 主区顶部 64px 留白中，上移 16px 让吸顶栏正好落在移动端顶栏 48px 下方 */
+    margin-top: -16px;
+    padding: 0 var(--space-4) var(--space-4);
     min-height: calc(100vh - var(--space-5) * 2);
     min-height: calc(100dvh - var(--space-5) * 2);
   }
 
   .guestbook__top {
+    /* 移动端顶部条固定占 48px，吸顶栏让位到其下方 */
+    top: 48px;
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-4);
