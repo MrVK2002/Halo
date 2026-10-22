@@ -57,7 +57,8 @@ defineEmits(['select'])
 
 .menu-item__label-en {
   font-family: 'SourceHanSansSC-VF', 'Noto Sans SC', 'PingFang SC', sans-serif;
-  font-size: 14px;
+  /* 继承侧栏基准字号（随屏幕自适应） */
+  font-size: 1em;
   font-weight: 400;
   letter-spacing: 0.01em;
   color: var(--c-ink);
@@ -67,7 +68,8 @@ defineEmits(['select'])
 
 .menu-item__label-cn {
   font-family: 'SourceHanSansSC-VF', 'Noto Sans SC', 'PingFang SC', sans-serif;
-  font-size: 12px;
+  /* 12 / 14 ≈ 0.857em */
+  font-size: 0.857em;
   font-weight: 300;
   letter-spacing: 0.04em;
   color: #888888;

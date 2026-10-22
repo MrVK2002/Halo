@@ -236,6 +236,8 @@ onMounted(() => {
 
 <style scoped>
 .side-menu {
+  /* 菜单基准字号：随视口宽度连续缩放（笔记本 14px → 2K 18px） */
+  --menu-fs: clamp(14px, 0.72vw, 18px);
   position: sticky;
   top: 0;
   display: flex;
@@ -251,6 +253,7 @@ onMounted(() => {
   overflow-y: auto;
   align-self: start;
   font-family: var(--font-body);
+  font-size: var(--menu-fs);
   /* 右侧层次阴影 */
   box-shadow:
     0 0 6px oklch(20% 0.012 285.938 / 0.025),
@@ -294,7 +297,8 @@ onMounted(() => {
 
 .side-menu__logo-mark {
   font-family: var(--font-artier);
-  font-size: 40px;
+  /* 40 / 14 ≈ 2.857em，随基准字号同比放大 */
+  font-size: 2.857em;
   font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1;
@@ -303,7 +307,7 @@ onMounted(() => {
 
 .side-menu__logo-text {
   font-family: var(--font-hans);
-  font-size: var(--fs-base);
+  font-size: 1em;
   font-weight: 400;
   letter-spacing: 0.01em;
   color: var(--c-mid);
@@ -318,7 +322,8 @@ onMounted(() => {
   display: flex;
   flex-wrap: wrap;
   font-family: var(--font-hans);
-  font-size: var(--fs-xs);
+  /* 11 / 14 ≈ 0.786em，随基准字号同比放大 */
+  font-size: 0.786em;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.18em;
