@@ -133,7 +133,7 @@ onUnmounted(() => {
       >
         <div class="photo-frame">
           <TiltedCard
-            image-src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&q=85"
+            image-src="/images/Outdoor%20Selfie%20Scene.png"
             alt-text="Leo Liang 肖像"
             container-height="100%"
             container-width="100%"
