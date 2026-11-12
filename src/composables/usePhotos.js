@@ -34,13 +34,13 @@ export function usePhotos() {
   const masonryItems = computed(() =>
     filteredPhotos.value.map((p) => ({
       id: p.id,
-      src: unsplashUrl(p.photoId, { width: 800, quality: 80 }),
-      thumb: unsplashUrl(p.photoId, { width: 400, quality: 70 }),
+      src: unsplashUrl(p.photoId, { width: 800, quality: 80, mono: p.mono }),
+      thumb: unsplashUrl(p.photoId, { width: 400, quality: 70, mono: p.mono }),
       width: p.width,
       height: p.height,
       alt: p.title,
       lightbox: {
-        src: unsplashUrl(p.photoId, { width: 1600, quality: 85 }),
+        src: unsplashUrl(p.photoId, { width: 1600, quality: 85, mono: p.mono }),
         width: p.width,
         height: p.height,
         title: p.title,

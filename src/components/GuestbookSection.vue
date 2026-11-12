@@ -486,11 +486,11 @@ button[aria-expanded="false"] .guestbook__leave-btn-icon::after {
   padding: var(--space-5);
   margin-bottom: var(--space-6);
   background: #ffffff;
-  border: 1px solid #e8e8e8;
   border-radius: 2px;
+  /* 与留言卡片保持同一套纸片质感：硬偏移投影 + 柔和落影 */
   box-shadow:
-    6px 6px 0 #e8e8e8,
-    0 8px 24px -8px rgba(0, 0, 0, 0.1);
+    8px 8px 0 #e8e8e8,
+    0 12px 32px -8px rgba(0, 0, 0, 0.12);
   overflow: hidden;
   transform-origin: top center;
 }
@@ -824,7 +824,8 @@ button[aria-expanded="false"] .guestbook__leave-btn-icon::after {
   }
 
   .guestbook__form {
-    padding: var(--space-4);
+    /* 与留言卡片一致的桌面内边距 */
+    padding: 24px;
     margin-bottom: var(--space-5);
   }
 
@@ -852,6 +853,12 @@ button[aria-expanded="false"] .guestbook__leave-btn-icon::after {
   }
 
   .guestbook-card {
+    padding: 20px;
+    gap: 14px;
+  }
+
+  .guestbook__form {
+    /* 与手机端留言卡片一致的内边距 */
     padding: 20px;
     gap: 14px;
   }

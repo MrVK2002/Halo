@@ -1,7 +1,8 @@
 /**
  * 摄影作品数据
  * - 图片使用 Unsplash CDN 真实摄影直链
- * - 4 个分类各 6 张，合计 24 张
+ * - 3 个主分类 + 3 个子分类，合计 56 张
+ * - 题材以街拍与自然风景为主，含一组黑白作品（mono: true）
  * - 每张带完整 EXIF 元数据（Lightbox 内展示）
  */
 
@@ -20,52 +21,52 @@ const PHOTOS = [
   {
     id: 'p01',
     category: 'frame',
-    photoId: '1500648767791-00dcc994a43e',
-    title: '窗边午后',
-    width: 1200, height: 1500,
+    photoId: '1441974231531-c6227db76b6e',
+    title: '林间晨光',
+    width: 1200, height: 800,
     exif: { camera: 'Sony A7M4 / 50mm F1.4', aperture: 'F/1.8', shutter: '1/320s', iso: 'ISO 200', date: '2025.04.12' }
   },
   {
     id: 'p02',
     category: 'frame',
-    photoId: '1488426862026-3ee34a7d66df',
-    title: '光与轮廓',
-    width: 1200, height: 1600,
+    photoId: '1447752875215-b2761acb3c5d',
+    title: '树影斑驳',
+    width: 1200, height: 800,
     exif: { camera: 'Leica Q3 / 28mm', aperture: 'F/2.0', shutter: '1/500s', iso: 'ISO 100', date: '2025.02.28' }
   },
   {
     id: 'p03',
     category: 'frame',
     subcategory: 'frame.narrative',
-    photoId: '1438761681033-6461ffad8d80',
-    title: '工作室 #7',
-    width: 1200, height: 1500,
+    photoId: '1501854140801-50d01698950b',
+    title: '河谷航拍',
+    width: 1200, height: 714,
     exif: { camera: 'Canon R5 / 85mm F1.2', aperture: 'F/1.4', shutter: '1/250s', iso: 'ISO 400', date: '2025.05.03' }
   },
   {
     id: 'p04',
     category: 'frame',
     subcategory: 'frame.narrative',
-    photoId: '1494790108377-be9c29b29330',
-    title: '眼睛的颜色',
-    width: 1200, height: 1500,
+    photoId: '1472396961693-142e6e269027',
+    title: '林中小鹿',
+    width: 1200, height: 1980,
     exif: { camera: 'Sony A7M4 / 35mm F1.4', aperture: 'F/2.8', shutter: '1/200s', iso: 'ISO 800', date: '2025.03.18' }
   },
   {
     id: 'p05',
     category: 'frame',
-    photoId: '1531746020798-e6953c6e8e04',
-    title: '素色',
-    width: 1200, height: 1600,
+    photoId: '1493246507139-91e8fad9978e',
+    title: '高山湖泊',
+    width: 1200, height: 800,
     exif: { camera: 'Fuji X-T5 / 56mm F1.2', aperture: 'F/1.2', shutter: '1/1000s', iso: 'ISO 200', date: '2025.01.15' }
   },
   {
     id: 'p06',
     category: 'frame',
     subcategory: 'frame.narrative',
-    photoId: '1517841905240-472988babdf9',
-    title: '雨后',
-    width: 1200, height: 1500,
+    photoId: '1519681393784-d120267933ba',
+    title: '星空雪山',
+    width: 1200, height: 800,
     exif: { camera: 'Sony A7M4 / 85mm F1.8', aperture: 'F/2.0', shutter: '1/400s', iso: 'ISO 400', date: '2025.04.22' }
   },
 
@@ -213,85 +214,85 @@ const PHOTOS = [
   {
     id: 'p25',
     category: 'frame',
-    photoId: '1534528741775-53994a69daeb',
-    title: '午后咖啡馆',
-    width: 1200, height: 1500,
+    photoId: '1464822759023-fed622ff2c3b',
+    title: '群山云海',
+    width: 1200, height: 800,
     exif: { camera: 'Fuji X-T5 / 56mm F1.2', aperture: 'F/1.4', shutter: '1/500s', iso: 'ISO 200', date: '2025.06.10' }
   },
   {
     id: 'p26',
     category: 'frame',
-    photoId: '1524504388940-b1c1722653e1',
-    title: '窗台',
-    width: 1200, height: 1600,
+    photoId: '1483728642387-6c3bdd6c93e5',
+    title: '云上群山',
+    width: 1200, height: 792,
     exif: { camera: 'Sony A7M4 / 85mm F1.8', aperture: 'F/2.0', shutter: '1/400s', iso: 'ISO 100', date: '2025.05.28' }
   },
   {
     id: 'p27',
     category: 'frame',
     subcategory: 'frame.narrative',
-    photoId: '1488426862026-3ee34a7d66df',
-    title: '回眸',
-    width: 1200, height: 1500,
+    photoId: '1454496522488-7a8e488e8606',
+    title: '雾中公路',
+    width: 1200, height: 792,
     exif: { camera: 'Leica Q3 / 28mm', aperture: 'F/2.0', shutter: '1/320s', iso: 'ISO 400', date: '2025.05.15' }
   },
   {
     id: 'p28',
     category: 'frame',
-    photoId: '1506794778202-cad84cf45f1d',
-    title: '侧影',
-    width: 1200, height: 1500,
+    photoId: '1497436072909-60f360e1d4b1',
+    title: '湖畔倒影',
+    width: 1200, height: 678,
     exif: { camera: 'Canon R5 / 85mm F1.2', aperture: 'F/1.8', shutter: '1/250s', iso: 'ISO 200', date: '2025.04.30' }
   },
   {
     id: 'p29',
     category: 'frame',
     subcategory: 'frame.narrative',
-    photoId: '1487412720507-e7ab37603c6f',
-    title: '清晨',
-    width: 1200, height: 1600,
+    photoId: '1507525428034-b723cf961d3e',
+    title: '热带海岸',
+    width: 1200, height: 800,
     exif: { camera: 'Sony A7M4 / 50mm F1.4', aperture: 'F/1.6', shutter: '1/400s', iso: 'ISO 100', date: '2025.04.18' }
   },
   {
     id: 'p30',
     category: 'frame',
-    photoId: '1494790108377-be9c29b29330',
-    title: '蓝调',
-    width: 1200, height: 1500,
+    photoId: '1500534314209-a25ddb2bd429',
+    title: '沙丘',
+    width: 1200, height: 1800,
     exif: { camera: 'Fuji X-T5 / 35mm F1.4', aperture: 'F/2.0', shutter: '1/200s', iso: 'ISO 800', date: '2025.03.25' }
   },
   {
     id: 'p31',
     category: 'frame',
     subcategory: 'frame.narrative',
-    photoId: '1517841905240-472988babdf9',
-    title: '雨伞',
-    width: 1200, height: 1500,
+    photoId: '1514565131-fce0801e5785',
+    title: '街头车流',
+    width: 1200, height: 726,
     exif: { camera: 'Leica M11 / 50mm F2', aperture: 'F/2.8', shutter: '1/125s', iso: 'ISO 400', date: '2025.03.10' }
   },
   {
     id: 'p32',
     category: 'frame',
-    photoId: '1531746020798-e6953c6e8e04',
-    title: '柔光',
-    width: 1200, height: 1600,
+    photoId: '1477959858617-67f85cf4f1df',
+    title: '城市天际线',
+    width: 1200, height: 738,
     exif: { camera: 'Sony A7R5 / 85mm F1.4', aperture: 'F/1.4', shutter: '1/640s', iso: 'ISO 100', date: '2025.02.20' }
   },
   {
     id: 'p33',
     category: 'frame',
-    photoId: '1500648767791-00dcc994a43e',
-    title: '阴影',
-    width: 1200, height: 1500,
+    photoId: '1486406146926-c627a92ad1ab',
+    title: '玻璃幕墙',
+    width: 1200, height: 800,
     exif: { camera: 'Canon R5 / 50mm F1.2', aperture: 'F/1.6', shutter: '1/500s', iso: 'ISO 200', date: '2025.02.08' }
   },
   {
     id: 'p34',
     category: 'frame',
     subcategory: 'frame.narrative',
-    photoId: '1438761681033-6461ffad8d80',
-    title: '沉思',
-    width: 1200, height: 1500,
+    photoId: '1494522855154-9297ac14b55f',
+    title: '夜色街头',
+    width: 1200, height: 800,
     exif: { camera: 'Nikon Z8 / 85mm F1.4', aperture: 'F/1.8', shutter: '1/320s', iso: 'ISO 400', date: '2025.01.30' }
   },
 
@@ -317,8 +318,8 @@ const PHOTOS = [
   {
     id: 'p38',
     category: 'exposure',
-    photoId: '1507003211169-0a1dd7228f2d',
-    title: '沙漠',
+    photoId: '1476514525535-07fb3b4ae5f1',
+    title: '林间公路',
     width: 1600, height: 1067,
     exif: { camera: 'Leica SL2 / 24-90mm F2.8', aperture: 'F/8.0', shutter: '1/320s', iso: 'ISO 100', date: '2024.11.15' }
   },
@@ -443,6 +444,75 @@ const PHOTOS = [
     title: '烟花',
     width: 1200, height: 1600,
     exif: { camera: 'Nikon Z8 / 24mm F1.4', aperture: 'F/5.6', shutter: '2s', iso: 'ISO 400', date: '2024.08.18' }
+  },
+
+  // ===== 黑白街头（mono: true，展示时自动去色） =====
+  {
+    id: 'p55',
+    category: 'pixels',
+    subcategory: 'pixels.grain',
+    photoId: '1514924013411-cbf25faa35bb',
+    title: '黑白切片 #1',
+    width: 1200, height: 1788,
+    mono: true,
+    exif: { camera: 'Leica M6 / 35mm F2 (Ilford HP5 400)', aperture: 'F/5.6', shutter: '1/250s', iso: 'ISO 400', date: '2024.07.18' }
+  },
+  {
+    id: 'p56',
+    category: 'pixels',
+    photoId: '1444723121867-7a241cacace9',
+    title: '黑白切片 #2',
+    width: 1200, height: 800,
+    mono: true,
+    exif: { camera: 'Ricoh GR IIIx', aperture: 'F/4.0', shutter: '1/320s', iso: 'ISO 400', date: '2024.07.06' }
+  },
+  {
+    id: 'p57',
+    category: 'pixels',
+    subcategory: 'pixels.grain',
+    photoId: '1472214103451-9374bd1c798e',
+    title: '黑白切片 #3',
+    width: 1200, height: 800,
+    mono: true,
+    exif: { camera: 'Fuji X100V / 23mm F2', aperture: 'F/2.8', shutter: '1/500s', iso: 'ISO 200', date: '2024.06.22' }
+  },
+  {
+    id: 'p58',
+    category: 'pixels',
+    photoId: '1500530855697-b586d89ba3ee',
+    title: '黑白切片 #4',
+    width: 1200, height: 1800,
+    mono: true,
+    exif: { camera: 'Leica Q2 / 28mm F1.7', aperture: 'F/4.0', shutter: '1/250s', iso: 'ISO 400', date: '2024.06.09' }
+  },
+  {
+    id: 'p59',
+    category: 'exposure',
+    subcategory: 'exposure.available-light',
+    photoId: '1496568816309-51d7c20e3b21',
+    title: '黑白切片 #5',
+    width: 1200, height: 678,
+    mono: true,
+    exif: { camera: 'Sony A7R5 / 35mm F1.4', aperture: 'F/8.0', shutter: '1/500s', iso: 'ISO 200', date: '2024.05.27' }
+  },
+  {
+    id: 'p60',
+    category: 'exposure',
+    photoId: '1513635269975-59663e0ac1ad',
+    title: '黑白切片 #6',
+    width: 1200, height: 800,
+    mono: true,
+    exif: { camera: 'Canon R5 / 24-70mm F2.8', aperture: 'F/5.6', shutter: '1/320s', iso: 'ISO 200', date: '2024.05.14' }
+  },
+  {
+    id: 'p61',
+    category: 'frame',
+    subcategory: 'frame.narrative',
+    photoId: '1526481280693-3bfa7568e0f3',
+    title: '黑白切片 #7',
+    width: 1200, height: 800,
+    mono: true,
+    exif: { camera: 'Leica M11 / 50mm F2', aperture: 'F/2.8', shutter: '1/125s', iso: 'ISO 800', date: '2024.04.30' }
   }
 ]
 
@@ -451,9 +521,11 @@ const PHOTOS = [
  * - 普通：质量 80，宽度 800
  * - 缩略：质量 70，宽度 400
  * - 灯箱原图：质量 85，宽度 1600
+ * - mono: true 时追加 sat=-100，输出黑白效果
  */
-function unsplashUrl(photoId, { width = 800, quality = 80 } = {}) {
-  return `https://images.unsplash.com/photo-${photoId}?w=${width}&q=${quality}&auto=format&fit=crop`
+function unsplashUrl(photoId, { width = 800, quality = 80, mono = false } = {}) {
+  const url = `https://images.unsplash.com/photo-${photoId}?w=${width}&q=${quality}&auto=format&fit=crop`
+  return mono ? `${url}&sat=-100` : url
 }
 
 export { PHOTOS, PHOTO_CATEGORIES, unsplashUrl }

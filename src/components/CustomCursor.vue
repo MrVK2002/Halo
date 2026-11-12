@@ -74,9 +74,6 @@ function onLeave() {
 function onEnter() {
   visible = true
 }
-function onScroll() {
-  visible = false
-}
 
 function activate() {
   if (globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -88,7 +85,6 @@ function activate() {
   globalThis.addEventListener('pointerup', onUp, { passive: true })
   globalThis.addEventListener('mouseleave', onLeave)
   globalThis.addEventListener('mouseenter', onEnter)
-  globalThis.addEventListener('scroll', onScroll, { passive: true })
   rafId = requestAnimationFrame(tick)
 }
 
@@ -107,7 +103,6 @@ function deactivate() {
   globalThis.removeEventListener('pointerup', onUp)
   globalThis.removeEventListener('mouseleave', onLeave)
   globalThis.removeEventListener('mouseenter', onEnter)
-  globalThis.removeEventListener('scroll', onScroll)
   if (rafId) cancelAnimationFrame(rafId)
 }
 
