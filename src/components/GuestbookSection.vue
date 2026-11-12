@@ -317,19 +317,41 @@ onMounted(() => {
   position: sticky;
   top: 0;
   z-index: 30;
-  background: var(--c-bone);
+  /* 底缘渐隐高度：与下方留白一致，保证静止时渐隐区不压到卡片 */
+  --top-fade: var(--space-8);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-5);
-  /* 向两侧延伸到主区内边距，背景与分隔线完整盖住主区，卡片不会从侧边露出 */
+  /* 向两侧延伸到主区内边距，背景完整盖住主区，卡片不会从侧边露出 */
   margin-left: calc(-1 * var(--space-4));
   margin-right: calc(-1 * var(--space-4));
-  padding: var(--space-6) var(--space-4) var(--space-5);
-  /* 吸顶后与下方滚过的卡片形成明确的层级分隔 */
-  box-shadow: 0 10px 24px -18px rgba(0, 0, 0, 0.28);
-  border-bottom: 1px solid #e0e0e0;
-  margin-bottom: var(--space-6);
+  padding: var(--space-5) var(--space-4);
+  margin-bottom: var(--top-fade);
+  background: var(--c-bone);
+}
+
+/*
+ * 底缘长渐隐：遮罩本身始终为纯白，与顶栏底色无缝衔接，
+ * 再在整段留白内平滑过渡到透明，滚动时卡片逐步浮现，不会出现横向分割线。
+ */
+.guestbook__top::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: var(--top-fade);
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    #ffffff 0%,
+    rgba(255, 255, 255, 0.92) 24%,
+    rgba(255, 255, 255, 0.68) 48%,
+    rgba(255, 255, 255, 0.32) 72%,
+    rgba(255, 255, 255, 0.08) 90%,
+    rgba(255, 255, 255, 0) 100%
+  );
 }
 
 .guestbook__title-wrap {
@@ -365,7 +387,7 @@ onMounted(() => {
   letter-spacing: 0.05em;
   color: #666666;
   padding-left: var(--space-3);
-  border-left: 1px solid #e0e0e0;
+  border-left: 1px solid rgba(17, 17, 17, 0.08);
   margin-left: var(--space-2);
 }
 
@@ -782,10 +804,11 @@ button[aria-expanded="false"] .guestbook__leave-btn-icon::after {
   .guestbook__top {
     /* 移动端顶部条固定占 48px，吸顶栏让位到其下方 */
     top: 48px;
+    /* 小屏缩短渐隐高度，避免占用过多首屏空间 */
+    --top-fade: var(--space-7);
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-4);
-    margin-bottom: var(--space-5);
   }
 
   .guestbook__title-wrap {

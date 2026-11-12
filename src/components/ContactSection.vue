@@ -121,14 +121,14 @@ onMounted(() => {
       </h1>
 
       <p ref="descRef" class="contact-desc">
-        Lorem ipsum dolor sit amet consectetur. Amet vel placerat ultrices viverra.
-        Pellentesque pulvinar massa risus odio nibh. Nulla at mauris euismod
-        placerat.
+        Have a story worth capturing, or a project you would like to collaborate on?
+        Whether it is a portrait session, an editorial shoot, or an idea you are still
+        shaping, I would love to hear about it. Based in Shenzhen, available worldwide.
       </p>
 
       <a
         ref="ctaRef"
-        href="mailto:hi@shadcnblocks.com"
+        href="mailto:hello@example.com"
         class="contact-cta"
         aria-label="通过邮件联系"
       >
@@ -137,8 +137,8 @@ onMounted(() => {
       </a>
 
       <div ref="contactRef" class="contact-info">
-        <a class="contact-info__line" href="tel:+10023124123">+1 (002) 312 4123</a>
-        <a class="contact-info__line" href="mailto:hi@shadcnblocks.com">hi@shadcnblocks.com</a>
+        <a class="contact-info__line" href="tel:+8613800000000">+86 138 0000 0000</a>
+        <a class="contact-info__line" href="mailto:hello@example.com">hello@example.com</a>
       </div>
     </div>
 
