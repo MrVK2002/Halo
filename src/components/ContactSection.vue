@@ -142,14 +142,14 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- 右侧：办公桌 / 工作室氛围图（远程 Unsplash 图源，cover + center 裁切，首屏最高优先级加载） -->
+    <!-- 右侧：现代建筑氛围图（本地图片，cover + center 裁切，首屏最高优先级加载） -->
     <div ref="imageRef" class="contact__image">
       <img
         class="contact__image-photo"
-        src="https://images.unsplash.com/photo-1764755932155-dabbee87df7e?auto=format&fit=crop&w=1600&h=2000&q=80"
-        alt="Minimal workspace with a laptop on a clean desk, soft natural sunlight casting geometric shadows on the wall"
-        width="1600"
-        height="2000"
+        src="/images/Isolation%20Amidst%20Modern%20Architecture.png"
+        alt="Isolation amidst modern architecture, geometric concrete surfaces"
+        width="791"
+        height="1200"
         fetchpriority="high"
         decoding="sync"
       />
