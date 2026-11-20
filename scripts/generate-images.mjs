@@ -10,12 +10,14 @@
  *
  * 用法：npm run images
  */
-import { mkdir, readdir } from 'node:fs/promises'
+import { mkdir, readdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import sharp from 'sharp'
 
 const SRC_ROOT = path.resolve('public/images/portfolio')
 const OUT_ROOT = path.resolve('public/images/portfolio-optimized')
+/** 生成的 24px 模糊占位图（base64）清单，供前端直接内联使用 */
+const PLACEHOLDER_FILE = path.resolve('src/data/photo-placeholders.json')
 const WIDTHS = [400, 800, 1600]
 const QUALITY = 76
 const SOURCE_RE = /\.(png|jpe?g|webp)$/i
@@ -55,6 +57,7 @@ async function main() {
   }
 
   let totalBytes = 0
+  const placeholders = {}
 
   for (const file of files) {
     const relDir = path.relative(SRC_ROOT, path.dirname(file))
@@ -62,6 +65,15 @@ async function main() {
     const slug = slugify(path.basename(file))
 
     await mkdir(outDir, { recursive: true })
+
+    // 24px 超低分辨率占位图，直接转成 base64 内联，避免额外请求
+    const thumbBuffer = await sharp(file)
+      .rotate()
+      .resize({ width: 24, withoutEnlargement: true })
+      .webp({ quality: 40 })
+      .toBuffer()
+    const key = [relDir.split(path.sep).join('/'), slug].filter(Boolean).join('/')
+    placeholders[key] = `data:image/webp;base64,${thumbBuffer.toString('base64')}`
 
     for (const width of WIDTHS) {
       const out = path.join(outDir, `${slug}-${width}.webp`)
@@ -78,10 +90,13 @@ async function main() {
     }
   }
 
+  await mkdir(path.dirname(PLACEHOLDER_FILE), { recursive: true })
+  await writeFile(PLACEHOLDER_FILE, `${JSON.stringify(placeholders, null, 2)}\n`, 'utf8')
+
   console.log(
     `\n完成：${files.length} 张源图 → ${files.length * WIDTHS.length} 个文件，合计 ${(
       totalBytes / 1024 / 1024
-    ).toFixed(1)} MB`
+    ).toFixed(1)} MB；占位图 ${Object.keys(placeholders).length} 条`
   )
 }
 

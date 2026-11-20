@@ -9,7 +9,7 @@ import ContactSection from '@/components/ContactSection.vue'
 import { usePhotos } from '@/composables/usePhotos.js'
 import { useSmoothScroll } from '@/composables/useSmoothScroll.js'
 
-const { categories, activeCategory, counts, masonryItems, setCategory } = usePhotos()
+const { categories, activeCategory, counts, masonryItems, hasMore, loadMore, setCategory } = usePhotos()
 const { resize: notifyScroll } = useSmoothScroll()
 
 const lightboxRef = ref(null)
@@ -138,8 +138,10 @@ onMounted(() => {
         v-else-if="masonryItems.length"
         :key="activeCategory"
         :items="masonryItems"
+        :has-more="hasMore"
         @card-click="handleCardClick"
         @relayout="notifyScroll"
+        @load-more="loadMore"
       />
 
       <div v-else class="empty">

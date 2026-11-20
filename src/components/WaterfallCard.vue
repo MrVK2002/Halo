@@ -1,4 +1,6 @@
 <script setup>
+import { onMounted, ref } from 'vue'
+
 const props = defineProps({
   item: { type: Object, required: true },
   isHovered: { type: Boolean, default: false },
@@ -9,6 +11,27 @@ const props = defineProps({
 const emit = defineEmits(['mouse-move', 'mouse-enter', 'mouse-leave', 'click'])
 
 const aspectRatio = (props.item.height || 4) / (props.item.width || 3)
+
+/** 清晰图是否已完成加载 */
+const loaded = ref(false)
+const mainImgRef = ref(null)
+
+function onLoad() {
+  loaded.value = true
+}
+
+/** 加载失败也结束占位态，避免一直停留在模糊层 */
+function onError() {
+  loaded.value = true
+}
+
+onMounted(() => {
+  // 命中缓存时 load 事件可能早于监听，这里补一次判断
+  const el = mainImgRef.value
+  if (el?.complete && el.naturalWidth > 0) {
+    loaded.value = true
+  }
+})
 
 /* 触屏判定：避免在移动端触发 3D 倾斜动画（体验不佳） */
 const isTouch =
@@ -54,12 +77,28 @@ function onTouchEnd() {
       class="waterfall-card__img-wrap"
       :style="{ paddingBottom: (aspectRatio * 100) + '%' }"
     >
+      <!-- 低分辨率占位：24px base64 模糊图，尺寸由外层比例盒锁定 -->
       <img
-        :src="item.src"
-        :alt="item.title || 'Gallery'"
-        class="waterfall-card__img"
-        loading="lazy"
+        v-if="item.placeholder"
+        :src="item.placeholder"
+        class="waterfall-card__img waterfall-card__img--placeholder"
+        alt=""
+        aria-hidden="true"
         draggable="false"
+      />
+
+      <!-- 清晰图：加载完成后淡入覆盖占位图 -->
+      <img
+        ref="mainImgRef"
+        :src="item.src"
+        :alt="item.alt || item.title || 'Gallery'"
+        class="waterfall-card__img waterfall-card__img--main"
+        :class="{ 'is-loaded': loaded }"
+        loading="lazy"
+        decoding="async"
+        draggable="false"
+        @load="onLoad"
+        @error="onError"
       />
     </div>
     <div class="waterfall-card__sheen" aria-hidden="true" />
@@ -71,6 +110,8 @@ function onTouchEnd() {
   position: relative;
   overflow: hidden;
   background: var(--c-mist);
+  /* 圆角由容器裁剪，内部图片与高光层会一起贴合 */
+  border-radius: 8px;
   cursor: pointer;
   transform-style: preserve-3d;
   perspective: 1000px;
@@ -111,6 +152,24 @@ function onTouchEnd() {
   user-select: none;
   -webkit-user-drag: none;
   display: block;
+}
+
+/* 模糊占位：小图放大 + 高斯模糊，轻微 overflow 裁掉模糊边缘 */
+.waterfall-card__img--placeholder {
+  filter: blur(18px);
+  transform: scale(1.08);
+  z-index: 0;
+}
+
+/* 清晰图淡入覆盖占位图 */
+.waterfall-card__img--main {
+  opacity: 0;
+  z-index: 1;
+  transition: opacity 0.5s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+.waterfall-card__img--main.is-loaded {
+  opacity: 1;
 }
 
 .waterfall-card__sheen {
@@ -154,6 +213,9 @@ function onTouchEnd() {
   }
   .waterfall-card__sheen {
     display: none;
+  }
+  .waterfall-card__img--main {
+    transition: none;
   }
 }
 </style>

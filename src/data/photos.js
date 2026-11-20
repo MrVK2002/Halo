@@ -4,6 +4,7 @@
  * - 3 个主分类 + 3 个子分类，合计 13 张
  * - 每张带完整 EXIF 元数据（Lightbox 内展示）
  */
+import placeholders from './photo-placeholders.json'
 
 const PHOTO_CATEGORIES = [
   { key: 'all', labelEN: 'All', labelCN: '全部' },
@@ -21,7 +22,8 @@ function localImages(category, slug) {
   return {
     thumb: `${base}-400.webp`,
     display: `${base}-800.webp`,
-    full: `${base}-1600.webp`
+    full: `${base}-1600.webp`,
+    placeholder: placeholders[`${category}/${slug}`] || ''
   }
 }
 

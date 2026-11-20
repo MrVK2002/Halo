@@ -9,6 +9,8 @@ let scrollLocked = false
 
 const props = defineProps({
   items: { type: Array, required: true },
+  /** 是否还有下一批待加载（由 usePhotos 的分页状态驱动） */
+  hasMore: { type: Boolean, default: false },
 /**
  * 列数断点（按容器宽度自适应）
  * 移动端双列，随后随可用宽度逐级增加，2K 及以上六列
@@ -36,11 +38,18 @@ breakpoints: {
   touchHoverScale: { type: Number, default: 0.97 }
 })
 
-const emit = defineEmits(['card-click', 'relayout'])
+const emit = defineEmits(['card-click', 'relayout', 'load-more'])
 
 const containerRef = ref(null)
 const containerWidth = ref(0)
 const hasMounted = ref(false)
+
+/** 已参与过入场动画的 item id，用于区分新增批次与已有卡片 */
+const renderedIds = new Set()
+/** 距离底部多少像素开始加载下一批 */
+const LOAD_THRESHOLD = 480
+/** 防止同一批重复触发 */
+let loadPending = false
 
 /* 触屏判定（用于调整瀑布流间距 + hover 行为） */
 const isTouch =
@@ -115,6 +124,40 @@ function updateWidth() {
   }
 }
 
+/** 用户是否已经滚动过：避免首屏未滚动就被判定为“接近底部” */
+let userHasScrolled = false
+
+/**
+ * 接近底部检测
+ * - 仅在 hasMore 为 true 且没有待处理的加载时触发
+ * - 如果页面本身无法滚动（内容不足一屏），允许直接补加载，避免卡住
+ */
+function checkNearBottom() {
+  if (!props.hasMore || loadPending) return
+  const el = containerRef.value
+  if (!el) return
+
+  const pageCanScroll =
+    document.documentElement.scrollHeight > window.innerHeight + 1
+  if (!userHasScrolled && pageCanScroll) return
+
+  const distance = el.getBoundingClientRect().bottom - window.innerHeight
+  if (distance <= LOAD_THRESHOLD) {
+    loadPending = true
+    emit('load-more')
+  }
+}
+
+let scrollRaf = 0
+function onWindowScroll() {
+  userHasScrolled = true
+  if (scrollRaf) return
+  scrollRaf = requestAnimationFrame(() => {
+    scrollRaf = 0
+    checkNearBottom()
+  })
+}
+
 onMounted(() => {
   updateWidth()
   resizeObserver = new ResizeObserver(() => {
@@ -125,11 +168,15 @@ onMounted(() => {
     resizeObserver.observe(containerRef.value)
   }
   window.addEventListener('scroll', lockScroll, { passive: true })
+  window.addEventListener('scroll', onWindowScroll, { passive: true })
 })
 
 onUnmounted(() => {
   resizeObserver?.disconnect()
   window.removeEventListener('scroll', lockScroll)
+  window.removeEventListener('scroll', onWindowScroll)
+  if (scrollRaf) cancelAnimationFrame(scrollRaf)
+  scrollLocked = false
   document.body.style.overflow = ''
 })
 
@@ -157,19 +204,24 @@ function getInitialPosition(item) {
 // 动画执行
 function animateItems() {
   nextTick(() => {
-    // 首次入场时锁定滚动位置
-    if (!hasMounted.value) {
+    // 首批入场时锁定滚动位置，避免飞入动画引起页面跳动
+    const isFirstBatch = !hasMounted.value
+    if (isFirstBatch) {
       scrollY = window.scrollY
       scrollLocked = true
       document.body.style.overflow = 'hidden'
       window.scrollTo(0, scrollY)
     }
 
-    grid.value.forEach((item, index) => {
+    /** 本批次新增（尚未播放过入场动画）的卡片 */
+    const fresh = []
+
+    grid.value.forEach((item) => {
       const el = containerRef.value?.querySelector(`[data-key="${item.id}"]`)
       if (!el) return
 
-      if (hasMounted.value) {
+      if (renderedIds.has(item.id)) {
+        // 已有卡片：只跟随重排平滑移动
         gsap.to(el, {
           x: item.x,
           y: item.y,
@@ -177,34 +229,46 @@ function animateItems() {
           ease: props.ease,
           overwrite: 'auto'
         })
-      } else {
-        const initial = getInitialPosition(item)
-        gsap.fromTo(el,
-          {
+        return
+      }
+
+      renderedIds.add(item.id)
+      fresh.push({ el, item })
+    })
+
+    fresh.forEach(({ el, item }, index) => {
+      const from = isFirstBatch
+        ? {
+            ...getInitialPosition(item),
             opacity: 0,
-            x: initial.x,
-            y: initial.y,
             scale: 0.9,
             filter: 'blur(8px)'
-          },
-          {
-            opacity: 1,
-            x: item.x,
-            y: item.y,
-            scale: 1,
-            filter: 'blur(0px)',
-            duration: 0.8,
-            ease: props.ease,
-            delay: index * props.stagger,
-            onComplete: () => {
-              if (index === grid.value.length - 1) {
-                scrollLocked = false
-                document.body.style.overflow = ''
-              }
-            }
           }
-        )
-      }
+        : {
+            // 后续批次：从下方轻微浮入，与首屏动画区分
+            x: item.x,
+            y: item.y + 60,
+            opacity: 0,
+            scale: 0.96
+          }
+
+      gsap.fromTo(el, from, {
+        x: item.x,
+        y: item.y,
+        opacity: 1,
+        scale: 1,
+        filter: 'blur(0px)',
+        duration: isFirstBatch ? 0.8 : 0.6,
+        ease: props.ease,
+        delay: Math.min(index, 10) * props.stagger,
+        onComplete: () => {
+          // 首批最后一张完成后解除滚动锁
+          if (isFirstBatch && index === fresh.length - 1) {
+            scrollLocked = false
+            document.body.style.overflow = ''
+          }
+        }
+      })
     })
 
     hasMounted.value = true
@@ -213,6 +277,23 @@ function animateItems() {
 
 watch(() => props.items, animateItems, { deep: true })
 watch(containerWidth, animateItems)
+
+/** 新一批数据渲染后解除节流，并在仍接近底部时继续加载 */
+watch(
+  () => props.items.length,
+  () => {
+    loadPending = false
+    nextTick(checkNearBottom)
+  }
+)
+
+/** 已无更多数据时清理挂起的加载标记 */
+watch(
+  () => props.hasMore,
+  (more) => {
+    if (!more) loadPending = false
+  }
+)
 
 // 悬停效果
 function handleMouseEnter(itemId) {
@@ -262,37 +343,48 @@ function handleCardClick(index) {
 </script>
 
 <template>
-  <div
-    ref="containerRef"
-    class="masonry-grid"
-    :style="{ height: containerHeight + 'px' }"
-  >
+  <div class="masonry">
     <div
-      v-for="(item, idx) in grid"
-      :key="item.id"
-      :data-key="item.id"
-      class="masonry-item"
-      :style="{
-        position: 'absolute',
-        width: item.width + 'px',
-        height: item.height + 'px'
-      }"
+      ref="containerRef"
+      class="masonry-grid"
+      :style="{ height: containerHeight + 'px' }"
     >
-      <WaterfallCard
-        :item="item"
-        :is-hovered="hoveredId === item.id"
-        :tilt-x="((tiltData[item.id]?.y ?? 0) * 18) + 'deg'"
-        :tilt-y="(-((tiltData[item.id]?.x ?? 0) * 18)) + 'deg'"
-        @mouse-move="(e) => handleMouseMove(e, item.id)"
-        @mouse-enter="() => handleMouseEnter(item.id)"
-        @mouse-leave="() => handleMouseLeave(item.id)"
-        @click="handleCardClick(idx)"
-      />
+      <div
+        v-for="(item, idx) in grid"
+        :key="item.id"
+        :data-key="item.id"
+        class="masonry-item"
+        :style="{
+          position: 'absolute',
+          width: item.width + 'px',
+          height: item.height + 'px'
+        }"
+      >
+        <WaterfallCard
+          :item="item"
+          :is-hovered="hoveredId === item.id"
+          :tilt-x="((tiltData[item.id]?.y ?? 0) * 18) + 'deg'"
+          :tilt-y="(-((tiltData[item.id]?.x ?? 0) * 18)) + 'deg'"
+          @mouse-move="(e) => handleMouseMove(e, item.id)"
+          @mouse-enter="() => handleMouseEnter(item.id)"
+          @mouse-leave="() => handleMouseLeave(item.id)"
+          @click="handleCardClick(idx)"
+        />
+      </div>
     </div>
+
+    <!-- 全部加载完成提示 -->
+    <p v-if="!hasMore && items.length" class="masonry-end" role="status">
+      已加载全部作品
+    </p>
   </div>
 </template>
 
 <style scoped>
+.masonry {
+  width: 100%;
+}
+
 .masonry-grid {
   position: relative;
   width: 100%;
@@ -301,5 +393,26 @@ function handleCardClick(index) {
 .masonry-item {
   will-change: transform, opacity;
   cursor: pointer;
+}
+
+.masonry-end {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 44px 0 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--c-mid);
+}
+
+.masonry-end::before,
+.masonry-end::after {
+  content: '';
+  width: 44px;
+  height: 1px;
+  background: var(--c-mist);
 }
 </style>
