@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue'
-import { PHOTOS, PHOTO_CATEGORIES, unsplashUrl } from '@/data/photos.js'
+import { PHOTOS, PHOTO_CATEGORIES } from '@/data/photos.js'
 
 /**
  * 照片数据 + 分类筛选 composable
@@ -28,19 +28,20 @@ export function usePhotos() {
 
   /**
    * 转成 Masonry 库需要的 items 格式
-   * - src: 缩略图 URL（用于瀑布流）
-   * - lightbox: 灯箱需要的全字段
+   * - src: 瀑布流展示图（800w 本地 WebP）
+   * - thumb: 缩略图（400w）
+   * - lightbox: 灯箱所需的大图（1600w）与 EXIF
    */
   const masonryItems = computed(() =>
     filteredPhotos.value.map((p) => ({
       id: p.id,
-      src: unsplashUrl(p.photoId, { width: 800, quality: 80, mono: p.mono }),
-      thumb: unsplashUrl(p.photoId, { width: 400, quality: 70, mono: p.mono }),
+      src: p.img.display,
+      thumb: p.img.thumb,
       width: p.width,
       height: p.height,
       alt: p.title,
       lightbox: {
-        src: unsplashUrl(p.photoId, { width: 1600, quality: 85, mono: p.mono }),
+        src: p.img.full,
         width: p.width,
         height: p.height,
         title: p.title,
