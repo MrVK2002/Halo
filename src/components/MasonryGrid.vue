@@ -44,6 +44,11 @@ const containerRef = ref(null)
 const containerWidth = ref(0)
 const hasMounted = ref(false)
 
+/** 是否正在播放入场动画：动画期间隐藏底部提示，避免照片从文字上方划入 */
+const isAnimating = ref(false)
+/** 入场动画结束后的提示显隐计时器 */
+let animationTimer = 0
+
 /** 已参与过入场动画的 item id，用于区分新增批次与已有卡片 */
 const renderedIds = new Set()
 /** 距离底部多少像素开始加载下一批 */
@@ -176,6 +181,7 @@ onUnmounted(() => {
   window.removeEventListener('scroll', lockScroll)
   window.removeEventListener('scroll', onWindowScroll)
   if (scrollRaf) cancelAnimationFrame(scrollRaf)
+  clearTimeout(animationTimer)
   scrollLocked = false
   document.body.style.overflow = ''
 })
@@ -235,6 +241,17 @@ function animateItems() {
       renderedIds.add(item.id)
       fresh.push({ el, item })
     })
+
+    // 本批次动画期间隐藏“已加载全部作品”，等卡片全部落位后再显示
+    if (fresh.length) {
+      clearTimeout(animationTimer)
+      isAnimating.value = true
+      const maxDelay = Math.min(fresh.length - 1, 10) * props.stagger
+      const animationDuration = isFirstBatch ? 0.8 : 0.6
+      animationTimer = window.setTimeout(() => {
+        isAnimating.value = false
+      }, (maxDelay + animationDuration) * 1000 + 200)
+    }
 
     fresh.forEach(({ el, item }, index) => {
       const from = isFirstBatch
@@ -373,8 +390,8 @@ function handleCardClick(index) {
       </div>
     </div>
 
-    <!-- 全部加载完成提示 -->
-    <p v-if="!hasMore && items.length" class="masonry-end" role="status">
+    <!-- 全部加载完成提示：等最后一批卡片入场动画结束后再显示 -->
+    <p v-if="!hasMore && containerHeight > 0 && !isAnimating" class="masonry-end" role="status">
       已加载全部作品
     </p>
   </div>
@@ -401,11 +418,25 @@ function handleCardClick(index) {
   justify-content: center;
   gap: 14px;
   padding: 44px 0 12px;
-  font-family: var(--font-mono);
+  /* 与侧边菜单保持一致的中文无衬线字体 */
+  font-family: var(--font-hans);
   font-size: 11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--c-mid);
+  /* 动画结束后出现：淡入上浮，避免突然弹出 */
+  animation: masonry-end-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes masonry-end-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .masonry-end::before,

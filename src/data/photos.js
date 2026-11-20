@@ -1,7 +1,7 @@
 /**
  * 摄影作品数据
  * - 原图位于 public/images/portfolio，页面使用 public/images/portfolio-optimized 下的 WebP
- * - 3 个主分类 + 3 个子分类，合计 13 张
+ * - 3 个主分类 + 3 个子分类，合计 17 张
  * - 每张带完整 EXIF 元数据（Lightbox 内展示）
  */
 import placeholders from './photo-placeholders.json'
@@ -55,6 +55,15 @@ const PHOTOS = [
     img: localImages('frame', 'floral-portrait-harmony'),
     exif: { camera: 'Fuji X-T5 / 56mm F1.2', aperture: 'F/1.4', shutter: '1/500s', iso: 'ISO 200', date: '2025.05.10' }
   },
+  {
+    id: 'p14',
+    category: 'frame',
+    subcategory: 'frame.narrative',
+    title: '柔光剪影',
+    width: 904, height: 1200,
+    img: localImages('frame', 'silhouette-in-soft-light'),
+    exif: { camera: 'Leica M11 / 50mm F2', aperture: 'F/2.0', shutter: '1/250s', iso: 'ISO 400', date: '2025.06.20' }
+  },
 
   // ===== Exposure Log 曝光日志 =====
   {
@@ -82,6 +91,15 @@ const PHOTOS = [
     width: 1200, height: 800,
     img: localImages('exposure', 'volcanic-cinder-cone'),
     exif: { camera: 'Nikon Z8 / 70-200mm F2.8', aperture: 'F/11', shutter: '1/320s', iso: 'ISO 100', date: '2025.03.18' }
+  },
+  {
+    id: 'p15',
+    category: 'exposure',
+    subcategory: 'exposure.available-light',
+    title: '海岸落日',
+    width: 800, height: 1200,
+    img: localImages('exposure', 'serene-coastal-sunset'),
+    exif: { camera: 'Sony A7R5 / 16-35mm F2.8', aperture: 'F/8.0', shutter: '1/250s', iso: 'ISO 100', date: '2025.05.30' }
   },
 
   // ===== Redundant Pixels 冗余像素 =====
@@ -143,6 +161,24 @@ const PHOTOS = [
     width: 904, height: 1200,
     img: localImages('pixels', 'neon-contemplation'),
     exif: { camera: 'Leica M11 / 50mm F2', aperture: 'F/2.0', shutter: '1/60s', iso: 'ISO 1600', date: '2024.12.12' }
+  },
+  {
+    id: 'p16',
+    category: 'pixels',
+    subcategory: 'pixels.grain',
+    title: '夜色店招',
+    width: 904, height: 1200,
+    img: localImages('pixels', 'nighttime-urban-storefront'),
+    exif: { camera: 'Ricoh GR IIIx', aperture: 'F/2.8', shutter: '1/60s', iso: 'ISO 1600', date: '2025.05.16' }
+  },
+  {
+    id: 'p17',
+    category: 'pixels',
+    subcategory: 'pixels.grain',
+    title: '城市斑马线',
+    width: 1200, height: 800,
+    img: localImages('pixels', 'urban-crosswalk-scene'),
+    exif: { camera: 'Fuji X100V / 23mm F2', aperture: 'F/4.0', shutter: '1/250s', iso: 'ISO 400', date: '2025.04.28' }
   }
 ]
 
