@@ -1,7 +1,7 @@
 /**
  * 摄影作品数据
  * - 原图位于 public/images/portfolio，页面使用 public/images/portfolio-optimized 下的 WebP
- * - 3 个主分类 + 3 个子分类，合计 23 张
+ * - 3 个主分类 + 3 个子分类，合计 32 张
  * - 每张带完整 EXIF 元数据（Lightbox 内展示）
  */
 import placeholders from './photo-placeholders.json'
@@ -82,6 +82,51 @@ const PHOTOS = [
     img: localImages('frame', 'silhouette-at-sunset'),
     exif: { camera: 'Canon R5 / 70-200mm F2.8', aperture: 'F/4.0', shutter: '1/800s', iso: 'ISO 200', date: '2025.05.22' }
   },
+  {
+    id: 'p24',
+    category: 'frame',
+    subcategory: 'frame.narrative',
+    title: '木栈奔跑',
+    width: 904, height: 1200,
+    img: localImages('frame', 'boardwalk-runners'),
+    exif: { camera: 'Sony A7M4 / 70-200mm F2.8', aperture: 'F/4.0', shutter: '1/500s', iso: 'ISO 400', date: '2025.06.18' }
+  },
+  {
+    id: 'p25',
+    category: 'frame',
+    subcategory: 'frame.narrative',
+    title: '城市沉思',
+    width: 1200, height: 673,
+    img: localImages('frame', 'contemplative-young-man-in-urban-setting'),
+    exif: { camera: 'Leica Q3 / 28mm', aperture: 'F/2.8', shutter: '1/250s', iso: 'ISO 400', date: '2025.06.02' }
+  },
+  {
+    id: 'p26',
+    category: 'frame',
+    subcategory: 'frame.narrative',
+    title: '街头自拍',
+    width: 673, height: 1200,
+    img: localImages('frame', 'man-taking-selfie'),
+    exif: { camera: 'Fuji X100V / 23mm F2', aperture: 'F/2.8', shutter: '1/125s', iso: 'ISO 320', date: '2025.05.19' }
+  },
+  {
+    id: 'p27',
+    category: 'frame',
+    subcategory: 'frame.narrative',
+    title: '工作室自拍',
+    width: 673, height: 1200,
+    img: localImages('frame', 'selfie-in-creative-studio'),
+    exif: { camera: 'Canon R5 / 35mm F1.4', aperture: 'F/2.0', shutter: '1/160s', iso: 'ISO 200', date: '2025.05.06' }
+  },
+  {
+    id: 'p28',
+    category: 'frame',
+    subcategory: 'frame.narrative',
+    title: '户外运动风尚',
+    width: 992, height: 1200,
+    img: localImages('frame', 'sporty-elegance-outdoors'),
+    exif: { camera: 'Sony A7M4 / 85mm F1.8', aperture: 'F/2.2', shutter: '1/640s', iso: 'ISO 200', date: '2025.04.25' }
+  },
 
   // ===== Exposure Log 曝光日志 =====
   {
@@ -145,6 +190,24 @@ const PHOTOS = [
     width: 800, height: 1200,
     img: localImages('exposure', 'serene-sunset-kayaking'),
     exif: { camera: 'Canon R5 / 70-200mm F2.8', aperture: 'F/5.6', shutter: '1/500s', iso: 'ISO 200', date: '2025.04.09' }
+  },
+  {
+    id: 'p29',
+    category: 'exposure',
+    subcategory: 'exposure.available-light',
+    title: '黄金时刻街景',
+    width: 1200, height: 1200,
+    img: localImages('exposure', 'golden-hour-city-street'),
+    exif: { camera: 'Leica Q3 / 28mm', aperture: 'F/5.6', shutter: '1/400s', iso: 'ISO 200', date: '2025.04.02' }
+  },
+  {
+    id: 'p30',
+    category: 'exposure',
+    subcategory: 'exposure.available-light',
+    title: '巍峨山脉',
+    width: 1200, height: 686,
+    img: localImages('exposure', 'majestic-mountain-range'),
+    exif: { camera: 'Sony A7R5 / 16-35mm F2.8', aperture: 'F/11', shutter: '1/320s', iso: 'ISO 100', date: '2025.03.12' }
   },
 
   // ===== Redundant Pixels 冗余像素 =====
@@ -233,6 +296,24 @@ const PHOTOS = [
     width: 840, height: 1200,
     img: localImages('pixels', 'blue-sports-car-at-night'),
     exif: { camera: 'Sony A7M4 / 35mm F1.4', aperture: 'F/1.8', shutter: '1/80s', iso: 'ISO 1600', date: '2025.03.25' }
+  },
+  {
+    id: 'p31',
+    category: 'pixels',
+    subcategory: 'pixels.grain',
+    title: '暮色现代宅',
+    width: 1200, height: 686,
+    img: localImages('pixels', 'modern-house-twilight-scene'),
+    exif: { camera: 'Sony A7M4 / 24-70mm F2.8', aperture: 'F/5.6', shutter: '1/60s', iso: 'ISO 800', date: '2025.03.08' }
+  },
+  {
+    id: 'p32',
+    category: 'pixels',
+    subcategory: 'pixels.grain',
+    title: '流光轨迹',
+    width: 960, height: 1200,
+    img: localImages('pixels', 'vibrant-light-trails'),
+    exif: { camera: 'Canon R5 / 24mm F1.4', aperture: 'F/8.0', shutter: '8s', iso: 'ISO 100', date: '2025.02.21' }
   }
 ]
 

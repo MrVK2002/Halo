@@ -3,14 +3,16 @@ import { PHOTOS, PHOTO_CATEGORIES } from '@/data/photos.js'
 
 /** 单批加载数量：兼顾首屏填充速度与滚动加载节奏 */
 const PAGE_SIZE = 9
+/** 「全部」分类标识 */
+const ALL_CATEGORY = 'all'
 
 /**
  * 照片数据 + 分类筛选 + 分批加载 composable
  */
 export function usePhotos() {
-  const activeCategory = ref('all')
-  /** 当前分类下已加载到的条数（滚动触底后递增） */
-  const visibleCount = ref(PAGE_SIZE)
+  const activeCategory = ref(ALL_CATEGORY)
+  /** 当前分类下已加载到的条数：「全部」一次展示所有作品，其余分类按批递增 */
+  const visibleCount = ref(PHOTOS.length)
 
   const counts = computed(() => {
     const map = { all: PHOTOS.length }
@@ -23,15 +25,43 @@ export function usePhotos() {
     return map
   })
 
+  /**
+   * 全部分类的展示顺序：按作品集轮询交错
+   * 避免数组按分类分组存放导致首屏只出现单一分类的作品
+   */
+  const interleavedPhotos = computed(() => {
+    const groups = new Map()
+    for (const p of PHOTOS) {
+      const group = groups.get(p.category)
+      if (group) {
+        group.push(p)
+      } else {
+        groups.set(p.category, [p])
+      }
+    }
+
+    const queues = [...groups.values()]
+    const maxLength = Math.max(...queues.map((q) => q.length))
+    const result = []
+
+    for (let i = 0; i < maxLength; i++) {
+      for (const queue of queues) {
+        if (i < queue.length) result.push(queue[i])
+      }
+    }
+
+    return result
+  })
+
   const filteredPhotos = computed(() => {
-    if (activeCategory.value === 'all') return PHOTOS
+    if (activeCategory.value === ALL_CATEGORY) return interleavedPhotos.value
     return PHOTOS.filter((p) =>
       p.category === activeCategory.value ||
       p.subcategory === activeCategory.value
     )
   })
 
-  /** 当前已加载的照片（分页切片） */
+  /** 当前已加载的照片（「全部」为全量，分类视图按批切片） */
   const visiblePhotos = computed(() => filteredPhotos.value.slice(0, visibleCount.value))
 
   /** 是否还有未加载的照片 */
@@ -74,8 +104,8 @@ export function usePhotos() {
 
   function setCategory(key) {
     activeCategory.value = key
-    // 切换分类时重置分页，从第一批重新开始
-    visibleCount.value = PAGE_SIZE
+    // 「全部」一次性展示所有作品，其余分类重置分页从第一批开始
+    visibleCount.value = key === ALL_CATEGORY ? PHOTOS.length : PAGE_SIZE
   }
 
   return {

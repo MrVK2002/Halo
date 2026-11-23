@@ -7,6 +7,7 @@
 ## 功能特性
 
 - **瀑布流作品集**：按分类筛选（全部 / 帧率之外 / 曝光日志 / 冗余像素及子分类），列数随窗口宽度自适应。
+- **分批加载**：滚动接近底部时才加载下一批作品，图片未就绪时先显示高斯模糊占位图，加载完成后平滑淡入。
 - **灯箱预览**：点击照片放大查看，支持键盘方向键、触屏滑动切换，并展示作品标题与 EXIF 信息。
 - **About**：Polaroid 风格肖像卡片与个人简介。
 - **Contact**：左右分栏的联系页面，包含邮箱、电话等联系方式。
@@ -45,10 +46,10 @@ src/
 
 ## 内容维护
 
-- 作品图片与分类在 `src/data/photos.js` 中维护，替换 `photoId` 即可更换图片。
+- 作品原图放在 `public/images/portfolio/{frame|exposure|pixels}/`，执行 `npm run images` 会在 `public/images/portfolio-optimized/` 下生成 400 / 800 / 1600 三档 WebP，并更新 `src/data/photo-placeholders.json` 中的模糊占位图，再在 `src/data/photos.js` 中登记即可。
 - Contact 页面中的文案与联系方式为演示内容，正式使用前请替换为真实信息。
 - Guestbook 目前为前端内存数据，刷新后恢复初始留言。
 
 ## License
 
-代码以 MIT 协议开源。图片版权归各自摄影师所有，遵循 [Unsplash License](https://unsplash.com/license)。
+代码以 MIT 协议开源。站内摄影作品版权归作者所有。
