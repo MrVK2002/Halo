@@ -18,9 +18,6 @@ export function usePhotos() {
     const map = { all: PHOTOS.length }
     for (const p of PHOTOS) {
       map[p.category] = (map[p.category] || 0) + 1
-      if (p.subcategory) {
-        map[p.subcategory] = (map[p.subcategory] || 0) + 1
-      }
     }
     return map
   })
@@ -53,12 +50,10 @@ export function usePhotos() {
     return result
   })
 
+  /** 每个作品集相互独立，照片只归属一个作品集 */
   const filteredPhotos = computed(() => {
     if (activeCategory.value === ALL_CATEGORY) return interleavedPhotos.value
-    return PHOTOS.filter((p) =>
-      p.category === activeCategory.value ||
-      p.subcategory === activeCategory.value
-    )
+    return PHOTOS.filter((p) => p.category === activeCategory.value)
   })
 
   /** 当前已加载的照片（「全部」为全量，分类视图按批切片） */

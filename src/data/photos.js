@@ -1,7 +1,7 @@
 /**
  * 摄影作品数据
  * - 原图位于 public/images/portfolio，页面使用 public/images/portfolio-optimized 下的 WebP
- * - 3 个主分类 + 3 个子分类，合计 32 张
+ * - 6 个独立作品集（无子分类概念），合计 32 张，每张仅归属一个作品集
  * - 每张带完整 EXIF 元数据（Lightbox 内展示）
  */
 import placeholders from './photo-placeholders.json'
@@ -9,44 +9,30 @@ import placeholders from './photo-placeholders.json'
 const PHOTO_CATEGORIES = [
   { key: 'all', labelEN: 'All', labelCN: '全部' },
   { key: 'frame', labelEN: 'Beyond the Frame Rate', labelCN: '帧率之外' },
-  { key: 'frame.narrative', labelEN: 'Narrative Frames', labelCN: '叙事瞬间' },
+  { key: 'narrative', labelEN: 'Narrative Frames', labelCN: '叙事瞬间' },
   { key: 'exposure', labelEN: 'Exposure Log', labelCN: '曝光日志' },
-  { key: 'exposure.available-light', labelEN: 'Available Light', labelCN: '可用光' },
+  { key: 'available-light', labelEN: 'Available Light', labelCN: '可用光' },
   { key: 'pixels', labelEN: 'Redundant Pixels', labelCN: '冗余像素' },
-  { key: 'pixels.grain', labelEN: 'Grain Residue', labelCN: '颗粒残像' }
+  { key: 'grain', labelEN: 'Grain Residue', labelCN: '颗粒残像' }
 ]
 
-/** 生成本地图片三档路径（指向独立的优化目录，原图目录只放源文件） */
-function localImages(category, slug) {
-  const base = `/images/portfolio-optimized/${category}/${slug}`
+/**
+ * 生成本地图片三档路径
+ * - 第一个参数是图片存放的目录名，与作品集 key 解耦（作品集调整不影响图片路径）
+ * - 原图目录只放源文件，页面统一读取优化目录
+ */
+function localImages(folder, slug) {
+  const base = `/images/portfolio-optimized/${folder}/${slug}`
   return {
     thumb: `${base}-400.webp`,
     display: `${base}-800.webp`,
     full: `${base}-1600.webp`,
-    placeholder: placeholders[`${category}/${slug}`] || ''
+    placeholder: placeholders[`${folder}/${slug}`] || ''
   }
 }
 
 const PHOTOS = [
   // ===== Beyond the Frame Rate 帧率之外 =====
-  {
-    id: 'p01',
-    category: 'frame',
-    subcategory: 'frame.narrative',
-    title: '专注时刻',
-    width: 908, height: 1200,
-    img: localImages('frame', 'analyst-at-work'),
-    exif: { camera: 'Sony A7M4 / 50mm F1.4', aperture: 'F/2.0', shutter: '1/160s', iso: 'ISO 800', date: '2025.06.12' }
-  },
-  {
-    id: 'p02',
-    category: 'frame',
-    subcategory: 'frame.narrative',
-    title: '流动的肖像',
-    width: 960, height: 1200,
-    img: localImages('frame', 'dynamic-woman-portrait'),
-    exif: { camera: 'Canon R5 / 85mm F1.2', aperture: 'F/1.8', shutter: '1/250s', iso: 'ISO 400', date: '2025.05.28' }
-  },
   {
     id: 'p03',
     category: 'frame',
@@ -55,10 +41,27 @@ const PHOTOS = [
     img: localImages('frame', 'floral-portrait-harmony'),
     exif: { camera: 'Fuji X-T5 / 56mm F1.2', aperture: 'F/1.4', shutter: '1/500s', iso: 'ISO 200', date: '2025.05.10' }
   },
+
+  // ===== Narrative Frames 叙事瞬间 =====
+  {
+    id: 'p01',
+    category: 'narrative',
+    title: '专注时刻',
+    width: 908, height: 1200,
+    img: localImages('frame', 'analyst-at-work'),
+    exif: { camera: 'Sony A7M4 / 50mm F1.4', aperture: 'F/2.0', shutter: '1/160s', iso: 'ISO 800', date: '2025.06.12' }
+  },
+  {
+    id: 'p02',
+    category: 'narrative',
+    title: '流动的肖像',
+    width: 960, height: 1200,
+    img: localImages('frame', 'dynamic-woman-portrait'),
+    exif: { camera: 'Canon R5 / 85mm F1.2', aperture: 'F/1.8', shutter: '1/250s', iso: 'ISO 400', date: '2025.05.28' }
+  },
   {
     id: 'p14',
-    category: 'frame',
-    subcategory: 'frame.narrative',
+    category: 'narrative',
     title: '柔光剪影',
     width: 904, height: 1200,
     img: localImages('frame', 'silhouette-in-soft-light'),
@@ -66,8 +69,7 @@ const PHOTOS = [
   },
   {
     id: 'p18',
-    category: 'frame',
-    subcategory: 'frame.narrative',
+    category: 'narrative',
     title: '奔跑残影',
     width: 992, height: 1200,
     img: localImages('frame', 'runner-in-motion-blur'),
@@ -75,8 +77,7 @@ const PHOTOS = [
   },
   {
     id: 'p19',
-    category: 'frame',
-    subcategory: 'frame.narrative',
+    category: 'narrative',
     title: '落日剪影',
     width: 960, height: 1200,
     img: localImages('frame', 'silhouette-at-sunset'),
@@ -84,8 +85,7 @@ const PHOTOS = [
   },
   {
     id: 'p24',
-    category: 'frame',
-    subcategory: 'frame.narrative',
+    category: 'narrative',
     title: '木栈奔跑',
     width: 904, height: 1200,
     img: localImages('frame', 'boardwalk-runners'),
@@ -93,8 +93,7 @@ const PHOTOS = [
   },
   {
     id: 'p25',
-    category: 'frame',
-    subcategory: 'frame.narrative',
+    category: 'narrative',
     title: '城市沉思',
     width: 1200, height: 673,
     img: localImages('frame', 'contemplative-young-man-in-urban-setting'),
@@ -102,8 +101,7 @@ const PHOTOS = [
   },
   {
     id: 'p26',
-    category: 'frame',
-    subcategory: 'frame.narrative',
+    category: 'narrative',
     title: '街头自拍',
     width: 673, height: 1200,
     img: localImages('frame', 'man-taking-selfie'),
@@ -111,8 +109,7 @@ const PHOTOS = [
   },
   {
     id: 'p27',
-    category: 'frame',
-    subcategory: 'frame.narrative',
+    category: 'narrative',
     title: '工作室自拍',
     width: 673, height: 1200,
     img: localImages('frame', 'selfie-in-creative-studio'),
@@ -120,8 +117,7 @@ const PHOTOS = [
   },
   {
     id: 'p28',
-    category: 'frame',
-    subcategory: 'frame.narrative',
+    category: 'narrative',
     title: '户外运动风尚',
     width: 992, height: 1200,
     img: localImages('frame', 'sporty-elegance-outdoors'),
@@ -137,10 +133,11 @@ const PHOTOS = [
     img: localImages('exposure', 'classic-car-by-the-coast'),
     exif: { camera: 'Leica Q3 / 28mm', aperture: 'F/8.0', shutter: '1/500s', iso: 'ISO 100', date: '2025.04.22' }
   },
+
+  // ===== Available Light 可用光 =====
   {
     id: 'p05',
-    category: 'exposure',
-    subcategory: 'exposure.available-light',
+    category: 'available-light',
     title: '山丘之上',
     width: 900, height: 1200,
     img: localImages('exposure', 'modern-hilltop-structure'),
@@ -148,8 +145,7 @@ const PHOTOS = [
   },
   {
     id: 'p06',
-    category: 'exposure',
-    subcategory: 'exposure.available-light',
+    category: 'available-light',
     title: '火山渣锥',
     width: 1200, height: 800,
     img: localImages('exposure', 'volcanic-cinder-cone'),
@@ -157,8 +153,7 @@ const PHOTOS = [
   },
   {
     id: 'p15',
-    category: 'exposure',
-    subcategory: 'exposure.available-light',
+    category: 'available-light',
     title: '海岸落日',
     width: 800, height: 1200,
     img: localImages('exposure', 'serene-coastal-sunset'),
@@ -166,8 +161,7 @@ const PHOTOS = [
   },
   {
     id: 'p20',
-    category: 'exposure',
-    subcategory: 'exposure.available-light',
+    category: 'available-light',
     title: '藤蔓石迹',
     width: 904, height: 1200,
     img: localImages('exposure', 'overgrown-stone-ruins'),
@@ -175,8 +169,7 @@ const PHOTOS = [
   },
   {
     id: 'p21',
-    category: 'exposure',
-    subcategory: 'exposure.available-light',
+    category: 'available-light',
     title: '山坡红屋',
     width: 900, height: 1200,
     img: localImages('exposure', 'red-shed-on-hillside'),
@@ -184,8 +177,7 @@ const PHOTOS = [
   },
   {
     id: 'p22',
-    category: 'exposure',
-    subcategory: 'exposure.available-light',
+    category: 'available-light',
     title: '日落泛舟',
     width: 800, height: 1200,
     img: localImages('exposure', 'serene-sunset-kayaking'),
@@ -193,8 +185,7 @@ const PHOTOS = [
   },
   {
     id: 'p29',
-    category: 'exposure',
-    subcategory: 'exposure.available-light',
+    category: 'available-light',
     title: '黄金时刻街景',
     width: 1200, height: 1200,
     img: localImages('exposure', 'golden-hour-city-street'),
@@ -202,8 +193,7 @@ const PHOTOS = [
   },
   {
     id: 'p30',
-    category: 'exposure',
-    subcategory: 'exposure.available-light',
+    category: 'available-light',
     title: '巍峨山脉',
     width: 1200, height: 686,
     img: localImages('exposure', 'majestic-mountain-range'),
@@ -211,24 +201,6 @@ const PHOTOS = [
   },
 
   // ===== Redundant Pixels 冗余像素 =====
-  {
-    id: 'p07',
-    category: 'pixels',
-    subcategory: 'pixels.grain',
-    title: '城市喧嚣',
-    width: 904, height: 1200,
-    img: localImages('pixels', 'man-in-urban-chaos'),
-    exif: { camera: 'Ricoh GR IIIx', aperture: 'F/2.8', shutter: '1/125s', iso: 'ISO 1600', date: '2025.03.02' }
-  },
-  {
-    id: 'p08',
-    category: 'pixels',
-    subcategory: 'pixels.grain',
-    title: '暮色建筑',
-    width: 1200, height: 686,
-    img: localImages('pixels', 'modern-architectural-elegance-at-twilight'),
-    exif: { camera: 'Sony A7M4 / 35mm F1.4', aperture: 'F/5.6', shutter: '1/125s', iso: 'ISO 400', date: '2025.02.14' }
-  },
   {
     id: 'p09',
     category: 'pixels',
@@ -261,10 +233,27 @@ const PHOTOS = [
     img: localImages('pixels', 'modern-minimalist-building'),
     exif: { camera: 'Sony A7R5 / 24-70mm F2.8', aperture: 'F/8.0', shutter: '1/400s', iso: 'ISO 100', date: '2024.12.26' }
   },
+
+  // ===== Grain Residue 颗粒残像 =====
+  {
+    id: 'p07',
+    category: 'grain',
+    title: '城市喧嚣',
+    width: 904, height: 1200,
+    img: localImages('pixels', 'man-in-urban-chaos'),
+    exif: { camera: 'Ricoh GR IIIx', aperture: 'F/2.8', shutter: '1/125s', iso: 'ISO 1600', date: '2025.03.02' }
+  },
+  {
+    id: 'p08',
+    category: 'grain',
+    title: '暮色建筑',
+    width: 1200, height: 686,
+    img: localImages('pixels', 'modern-architectural-elegance-at-twilight'),
+    exif: { camera: 'Sony A7M4 / 35mm F1.4', aperture: 'F/5.6', shutter: '1/125s', iso: 'ISO 400', date: '2025.02.14' }
+  },
   {
     id: 'p13',
-    category: 'pixels',
-    subcategory: 'pixels.grain',
+    category: 'grain',
     title: '霓虹沉思',
     width: 904, height: 1200,
     img: localImages('pixels', 'neon-contemplation'),
@@ -272,8 +261,7 @@ const PHOTOS = [
   },
   {
     id: 'p16',
-    category: 'pixels',
-    subcategory: 'pixels.grain',
+    category: 'grain',
     title: '夜色店招',
     width: 904, height: 1200,
     img: localImages('pixels', 'nighttime-urban-storefront'),
@@ -281,8 +269,7 @@ const PHOTOS = [
   },
   {
     id: 'p17',
-    category: 'pixels',
-    subcategory: 'pixels.grain',
+    category: 'grain',
     title: '城市斑马线',
     width: 1200, height: 800,
     img: localImages('pixels', 'urban-crosswalk-scene'),
@@ -290,8 +277,7 @@ const PHOTOS = [
   },
   {
     id: 'p23',
-    category: 'pixels',
-    subcategory: 'pixels.grain',
+    category: 'grain',
     title: '夜色跑车',
     width: 840, height: 1200,
     img: localImages('pixels', 'blue-sports-car-at-night'),
@@ -299,8 +285,7 @@ const PHOTOS = [
   },
   {
     id: 'p31',
-    category: 'pixels',
-    subcategory: 'pixels.grain',
+    category: 'grain',
     title: '暮色现代宅',
     width: 1200, height: 686,
     img: localImages('pixels', 'modern-house-twilight-scene'),
@@ -308,8 +293,7 @@ const PHOTOS = [
   },
   {
     id: 'p32',
-    category: 'pixels',
-    subcategory: 'pixels.grain',
+    category: 'grain',
     title: '流光轨迹',
     width: 960, height: 1200,
     img: localImages('pixels', 'vibrant-light-trails'),
