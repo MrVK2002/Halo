@@ -1,7 +1,7 @@
 /**
  * 摄影作品数据
  * - 原图位于 public/images/portfolio，页面使用 public/images/portfolio-optimized 下的 WebP
- * - 6 个独立作品集（无子分类概念），合计 32 张，每张仅归属一个作品集
+ * - 6 个独立作品集（无子分类概念），合计 37 张，每张仅归属一个作品集
  * - 每张带完整 EXIF 元数据（Lightbox 内展示）
  */
 import placeholders from './photo-placeholders.json'
@@ -168,6 +168,22 @@ const PHOTOS = [
     width: 992, height: 1200,
     img: localImages('frame', 'sporty-elegance-outdoors'),
     exif: { camera: 'Sony A7M4 / 85mm F1.8', aperture: 'F/2.2', shutter: '1/640s', iso: 'ISO 200', date: '2025.04.25' }
+  },
+  {
+    id: 'p33',
+    category: 'narrative',
+    title: '高反差肖像',
+    width: 904, height: 1200,
+    img: localImages('frame', 'high-contrast-portrait'),
+    exif: { camera: 'Sony A7M4 / 85mm F1.4', aperture: 'F/1.6', shutter: '1/200s', iso: 'ISO 200', date: '2025.07.02' }
+  },
+  {
+    id: 'p34',
+    category: 'narrative',
+    title: '动势剪影',
+    width: 904, height: 1200,
+    img: localImages('frame', 'silhouette-in-motion'),
+    exif: { camera: 'Canon R5 / 50mm F1.2', aperture: 'F/2.0', shutter: '1/1000s', iso: 'ISO 100', date: '2025.06.28' }
   },
 
   // ===== Exposure Log 曝光日志 =====
@@ -344,6 +360,30 @@ const PHOTOS = [
     width: 960, height: 1200,
     img: localImages('pixels', 'vibrant-light-trails'),
     exif: { camera: 'Canon R5 / 24mm F1.4', aperture: 'F/8.0', shutter: '8s', iso: 'ISO 100', date: '2025.02.21' }
+  },
+  {
+    id: 'p35',
+    category: 'grain',
+    title: '光斑浮影',
+    width: 1200, height: 898,
+    img: localImages('pixels', 'abstract-bokeh-glow'),
+    exif: { camera: 'Sony A7M4 / 50mm F1.4', aperture: 'F/1.4', shutter: '1/60s', iso: 'ISO 1600', date: '2025.02.08' }
+  },
+  {
+    id: 'p36',
+    category: 'grain',
+    title: '像素辉光',
+    width: 800, height: 1200,
+    img: localImages('pixels', 'abstract-digital-glow'),
+    exif: { camera: 'Leica M11 / 50mm F2', aperture: 'F/2.0', shutter: '1/30s', iso: 'ISO 3200', date: '2025.01.26' }
+  },
+  {
+    id: 'p37',
+    category: 'grain',
+    title: '夜色敞篷',
+    width: 840, height: 1200,
+    img: localImages('pixels', 'black-convertible-at-night'),
+    exif: { camera: 'Sony A7M4 / 35mm F1.4', aperture: 'F/1.8', shutter: '1/60s', iso: 'ISO 2000', date: '2025.01.14' }
   }
 ]
 
