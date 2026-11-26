@@ -21,6 +21,10 @@
       rel="stylesheet"
     />
     <title>Leo Liang Photography | 屿墙摄影</title>
+    <script>
+      // 禁用浏览器「刷新后恢复上次滚动位置」，保证每次进入都从页面顶部开始
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
+    </script>
     <style>
       /* 移动端不留默认 cursor 的圆形背景 */
       html, body { height: 100%; }
