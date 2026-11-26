@@ -358,7 +358,7 @@ function handleCardClick(index) {
   // 记录被点击卡片在视口中的位置，供灯箱做「拾起放大」过渡
   const item = props.items[index]
   const el = item ? containerRef.value?.querySelector(`[data-key="${item.id}"]`) : null
-  emit('card-click', index, el ? el.getBoundingClientRect() : null)
+  emit('card-click', index, el ? el.getBoundingClientRect() : null, el)
 }
 </script>
 

@@ -21,8 +21,8 @@ function onImgLoad(e) {
   isLoading.value = false
   clearTimeout(loadingTimer)
   showLoadingIndicator.value = false
-  // 过渡时临时写死的尺寸在图片就绪后恢复为自动，避免窗口缩放后尺寸失真
-  if (e?.target && e.target === flySizedEl) restoreImgSize(e.target)
+  // 过渡结束后（避免动画中途改布局）再恢复自动尺寸
+  if (e?.target && e.target === flySizedEl && !isFlyActive.value) restoreImgSize(e.target)
 }
 
 function onImgError() {
@@ -43,7 +43,7 @@ async function openByIndex(index, originRect) {
   if (!originRect) return
 
   flyFromRect = originRect
-  flying.value = true
+  flyPhase.value = 'lift'
   await nextTick()
   runFlyIn()
 }
@@ -187,16 +187,27 @@ function onImageLeave() {
   exitImmersive()
 }
 
-/* —— 「拾起放大」过渡：以卡片位置为起点，FLIP 飞到灯箱最终位置 —— */
-const flying = ref(false)
+/* —— 「拾起放大」两段式过渡 ——
+ * 阶段一 lift：图片从照片墙卡片位置脱离，移动到视口正中，同时背景逐渐高斯模糊
+ * 阶段二 enter：图片继续放大进入灯箱最终位置，灯箱背景与操作 UI 淡入
+ */
+const flyPhase = ref('') // '' | 'lift' | 'enter'
+/** 是否处于入场过渡中（隐藏叠加 UI、禁用图片切换过渡） */
+const isFlyActive = computed(() => flyPhase.value !== '')
+/** 背景是否已进入高斯模糊态（由 CSS 过渡完成动画） */
+const pageBlurOn = ref(false)
 /** 灯箱主图元素，作为 FLIP 的终点测量对象 */
 const mainImgRef = ref(null)
-/** 过渡动画时长（ms） */
-const FLY_DURATION = 640
+/** 阶段一：脱离、移动到视口正中并放大到灯箱最终尺寸的时长（秒） */
+const LIFT_DURATION = 0.75
+/** 阶段二：切入灯箱（位置微调 + 背景/UI 淡入）的时长（秒） */
+const ENTER_DURATION = 0.45
 /** 卡片缩略图在视口中的起始矩形 */
 let flyFromRect = null
 /** 正在做 FLIP 的主图元素 */
 let flyEl = null
+/** 过渡时间轴 */
+let flyTl = null
 /** 过渡期间被临时写入固定尺寸的主图元素（等图片加载后恢复自动尺寸） */
 let flySizedEl = null
 
@@ -226,18 +237,47 @@ function getDisplaySize() {
 
 /** 结束过渡：清理内联样式并恢复叠加 UI */
 function cancelFly() {
+  if (flyTl) {
+    flyTl.kill()
+    flyTl = null
+  }
   if (flyEl) {
     gsap.killTweensOf(flyEl)
     gsap.set(flyEl, { clearProps: 'transform,borderRadius' })
   }
+  // 图片已就绪时恢复自动尺寸（未就绪则等 load 事件）
+  if (flySizedEl && flySizedEl.complete && flySizedEl.naturalWidth > 0) {
+    restoreImgSize(flySizedEl)
+  }
   flyEl = null
   flyFromRect = null
-  flying.value = false
+  pageBlurOn.value = false
+  flyPhase.value = ''
+}
+
+/** 阶段二：图片已放大到灯箱尺寸，切入灯箱（位置微调 + 背景/UI 淡入） */
+function enterLightbox(img) {
+  if (flyEl !== img) return
+  flyPhase.value = 'enter'
+  pageBlurOn.value = false
+  gsap.to(img, {
+    x: 0,
+    y: 0,
+    scale: 1,
+    borderRadius: '0px',
+    duration: ENTER_DURATION,
+    ease: 'sine.inOut',
+    clearProps: 'transform,borderRadius',
+    onComplete: () => {
+      if (flyEl === img) cancelFly()
+    }
+  })
 }
 
 /**
- * 执行 FLIP 动画
+ * 执行两段式 FLIP
  * - 起点：卡片矩形（按目标尺寸等比换算的位移与缩放）
+ * - 中间点：视口正中，且已放大到灯箱最终尺寸
  * - 终点：主图在灯箱中的实际布局位置
  */
 function runFlyIn() {
@@ -262,27 +302,30 @@ function runFlyIn() {
   }
 
   const { left, top, width, height } = flyFromRect
-  const scale = width / target.width
-  const dx = left + width / 2 - (target.left + target.width / 2)
-  const dy = top + height / 2 - (target.top + target.height / 2)
+  const startScale = width / target.width
+  // 相对主图自身中心点的位移
+  const startX = left + width / 2 - (target.left + target.width / 2)
+  const startY = top + height / 2 - (target.top + target.height / 2)
+  const centerX = window.innerWidth / 2 - (target.left + target.width / 2)
+  const centerY = window.innerHeight / 2 - (target.top + target.height / 2)
 
   flyEl = img
-  gsap.fromTo(
-    img,
-    { x: dx, y: dy, scale, borderRadius: '8px' },
-    {
-      x: 0,
-      y: 0,
-      scale: 1,
-      borderRadius: '0px',
-      duration: FLY_DURATION / 1000,
-      ease: 'power3.out',
-      clearProps: 'transform,borderRadius',
-      onComplete: () => {
-        if (flyEl === img) cancelFly()
-      }
-    }
-  )
+  flyPhase.value = 'lift'
+  pageBlurOn.value = true
+
+  // 瞬移到卡片位置，避免先闪在最终位置
+  gsap.set(img, { x: startX, y: startY, scale: startScale, borderRadius: '8px' })
+
+  flyTl = gsap.timeline()
+  flyTl.to(img, {
+    x: centerX,
+    y: centerY,
+    scale: 1,
+    borderRadius: '0px',
+    duration: LIFT_DURATION,
+    ease: 'power2.out'
+  })
+  flyTl.add(() => enterLightbox(img))
 }
 
 /** 过渡期间用照片墙已加载的图片垫底，避免原图未就绪时飞行中显示空框 */
@@ -360,11 +403,15 @@ defineExpose({ openByIndex })
 </script>
 
 <template>
-  <Transition name="lb-fade">
+  <Transition name="lb-fade" :css="!isFlyActive">
     <div
       v-if="state.isOpen && current"
       class="lb"
-      :class="{ 'lb--immersive': isImmersive, 'lb--flying': flying }"
+      :class="{
+        'lb--immersive': isImmersive,
+        'lb--flying': isFlyActive,
+        'lb--lift': flyPhase === 'lift'
+      }"
       role="dialog"
       aria-modal="true"
       :aria-label="current.lightbox.title || current.alt"
@@ -373,6 +420,9 @@ defineExpose({ openByIndex })
       @touchmove.passive="onTouchMove"
       @touchend.passive="onTouchEnd"
     >
+      <!-- 背景高斯模糊层：图片脱离过程中逐渐虚化整个页面 -->
+      <div class="lb__page-blur" :class="{ 'is-on': pageBlurOn }" aria-hidden="true" />
+
       <!-- 背景：以当前图片为基底的高斯模糊 -->
       <div class="lb__bg">
         <Transition name="lb-bg">
@@ -471,7 +521,7 @@ defineExpose({ openByIndex })
             </div>
           </div>
 
-          <Transition name="lb-img" mode="out-in" :css="!flying">
+          <Transition name="lb-img" mode="out-in" :css="!isFlyActive">
             <img
               ref="mainImgRef"
               :key="current.id"
@@ -480,7 +530,7 @@ defineExpose({ openByIndex })
               :alt="current.alt || current.lightbox.title"
               :width="current.lightbox.width"
               :height="current.lightbox.height"
-              :style="flying ? flyBgStyle : null"
+              :style="isFlyActive ? flyBgStyle : null"
               draggable="false"
               @load="onImgLoad"
               @error="onImgError"
@@ -514,6 +564,24 @@ defineExpose({ openByIndex })
   padding: 90px 24px 80px;
 }
 
+/* 背景高斯模糊层：图片脱墙过程中逐渐虚化整个页面
+ * 模糊半径保持恒定、只淡入淡出，避免逐帧重算 backdrop-filter 造成掉帧
+ */
+.lb__page-blur {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.3);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  transition: opacity 0.65s ease-out;
+}
+
+.lb__page-blur.is-on {
+  opacity: 1;
+}
+
 /* 背景：以当前图片为基底的高斯模糊 */
 .lb__bg {
   position: absolute;
@@ -521,6 +589,12 @@ defineExpose({ openByIndex })
   overflow: hidden;
   background: #000;
   cursor: default;
+  transition: opacity 0.45s ease-out;
+}
+
+/* 脱离阶段先隐藏灯箱背景，等进入灯箱时再淡入 */
+.lb--lift .lb__bg {
+  opacity: 0;
 }
 
 /* 放大并外扩，避免模糊后边缘透出黑边 */
@@ -582,17 +656,28 @@ defineExpose({ openByIndex })
   cursor: progress;
 }
 
-/* —— 沉浸模式 / 拾起放大过渡期间：隐藏全部叠加 UI —— */
+/* —— 沉浸模式 / 脱离阶段：隐藏全部叠加 UI（进入灯箱阶段淡入） —— */
 .lb--immersive .lb__btn,
 .lb--immersive .lb__counter,
 .lb--immersive .lb__collection,
 .lb--immersive .lb__caption,
-.lb--flying .lb__btn,
-.lb--flying .lb__counter,
-.lb--flying .lb__collection,
-.lb--flying .lb__caption {
+.lb--lift .lb__btn,
+.lb--lift .lb__counter,
+.lb--lift .lb__collection,
+.lb--lift .lb__caption {
   opacity: 0;
   pointer-events: none;
+}
+
+/* 整个过渡期间都不显示加载动画，避免与飞行动画叠加 */
+.lb--flying .lb__loading {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 过渡期间提升合成层，保证位移/缩放动画流畅 */
+.lb--flying .lb__img {
+  will-change: transform;
 }
 
 .lb__btn--nav {

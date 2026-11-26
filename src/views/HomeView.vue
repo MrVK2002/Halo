@@ -42,13 +42,29 @@ const mobileBrand = computed(() => {
   }
 })
 
+/** 过渡期间被「拾起」的照片墙卡片元素（关闭灯箱时恢复显示） */
+let hiddenCardEl = null
+
 /**
  * 打开灯箱
  * @param {number} index 图片索引
  * @param {DOMRect|null} rect 被点击卡片的视口矩形（用于拾起放大动画）
+ * @param {HTMLElement|null} cardEl 被点击卡片元素（动画期间隐藏，避免与原图重影）
  */
-function handleCardClick(index, rect) {
+function handleCardClick(index, rect, cardEl) {
+  if (cardEl) {
+    cardEl.style.visibility = 'hidden'
+    hiddenCardEl = cardEl
+  }
   lightboxRef.value?.openByIndex(index, rect)
+}
+
+/** 灯箱关闭时恢复被隐藏的卡片 */
+function handleLightboxClose() {
+  if (hiddenCardEl) {
+    hiddenCardEl.style.visibility = ''
+    hiddenCardEl = null
+  }
 }
 
 function openDrawer() {
@@ -154,7 +170,7 @@ onMounted(() => {
       </div>
     </main>
 
-    <Lightbox ref="lightboxRef" :items="masonryItems" />
+    <Lightbox ref="lightboxRef" :items="masonryItems" @close="handleLightboxClose" />
   </div>
 </template>
 
