@@ -1,5 +1,6 @@
 <script setup>
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import gsap from 'gsap'
 import { useLightbox } from '@/composables/useLightbox.js'
 import { PHOTO_CATEGORIES } from '@/data/photos.js'
 
@@ -16,10 +17,12 @@ const isLoading = ref(true)
 const showLoadingIndicator = ref(false)
 let loadingTimer = null
 
-function onImgLoad() {
+function onImgLoad(e) {
   isLoading.value = false
   clearTimeout(loadingTimer)
   showLoadingIndicator.value = false
+  // 过渡时临时写死的尺寸在图片就绪后恢复为自动，避免窗口缩放后尺寸失真
+  if (e?.target && e.target === flySizedEl) restoreImgSize(e.target)
 }
 
 function onImgError() {
@@ -28,12 +31,25 @@ function onImgError() {
   showLoadingIndicator.value = false
 }
 
-function openByIndex(index) {
+/**
+ * 从照片墙打开灯箱
+ * @param {number} index 图片索引
+ * @param {DOMRect|null} originRect 被点击卡片在视口中的矩形，用于「拾起放大」过渡
+ */
+async function openByIndex(index, originRect) {
+  cancelFly()
   open(index, props.items)
   document.body.style.overflow = 'hidden'
+  if (!originRect) return
+
+  flyFromRect = originRect
+  flying.value = true
+  await nextTick()
+  runFlyIn()
 }
 
 function onClose() {
+  cancelFly()
   exitImmersive()
   close()
   document.body.style.overflow = ''
@@ -171,6 +187,115 @@ function onImageLeave() {
   exitImmersive()
 }
 
+/* —— 「拾起放大」过渡：以卡片位置为起点，FLIP 飞到灯箱最终位置 —— */
+const flying = ref(false)
+/** 灯箱主图元素，作为 FLIP 的终点测量对象 */
+const mainImgRef = ref(null)
+/** 过渡动画时长（ms） */
+const FLY_DURATION = 640
+/** 卡片缩略图在视口中的起始矩形 */
+let flyFromRect = null
+/** 正在做 FLIP 的主图元素 */
+let flyEl = null
+/** 过渡期间被临时写入固定尺寸的主图元素（等图片加载后恢复自动尺寸） */
+let flySizedEl = null
+
+/** 恢复主图的自动尺寸 */
+function restoreImgSize(img) {
+  if (!img) return
+  img.style.width = ''
+  img.style.height = ''
+  flySizedEl = null
+}
+
+/**
+ * 计算主图在灯箱中的最终显示尺寸
+ * 与 .lb__img 的 max-width / max-height 约束保持一致
+ */
+function getDisplaySize() {
+  const naturalW = current.value?.lightbox?.width || 3
+  const naturalH = current.value?.lightbox?.height || 4
+  const isMobile = window.innerWidth <= 768
+  // 左右 padding：桌面 24 * 2，移动端 12 * 2
+  const maxW = window.innerWidth - (isMobile ? 24 : 48)
+  // 上下 padding + 图注预留：桌面/移动端均为 128
+  const maxH = window.innerHeight - 128
+  const scale = Math.min(1, maxW / naturalW, maxH / naturalH)
+  return { width: naturalW * scale, height: naturalH * scale }
+}
+
+/** 结束过渡：清理内联样式并恢复叠加 UI */
+function cancelFly() {
+  if (flyEl) {
+    gsap.killTweensOf(flyEl)
+    gsap.set(flyEl, { clearProps: 'transform,borderRadius' })
+  }
+  flyEl = null
+  flyFromRect = null
+  flying.value = false
+}
+
+/**
+ * 执行 FLIP 动画
+ * - 起点：卡片矩形（按目标尺寸等比换算的位移与缩放）
+ * - 终点：主图在灯箱中的实际布局位置
+ */
+function runFlyIn() {
+  const img = mainImgRef.value
+  if (!img || !flyFromRect) {
+    cancelFly()
+    return
+  }
+
+  // 原图未加载完成时主图没有布局尺寸，先按约束写死最终尺寸，保证终点可测量
+  if (!img.naturalWidth) {
+    const { width, height } = getDisplaySize()
+    img.style.width = `${width}px`
+    img.style.height = `${height}px`
+    flySizedEl = img
+  }
+
+  const target = img.getBoundingClientRect()
+  if (!target.width || !target.height) {
+    cancelFly()
+    return
+  }
+
+  const { left, top, width, height } = flyFromRect
+  const scale = width / target.width
+  const dx = left + width / 2 - (target.left + target.width / 2)
+  const dy = top + height / 2 - (target.top + target.height / 2)
+
+  flyEl = img
+  gsap.fromTo(
+    img,
+    { x: dx, y: dy, scale, borderRadius: '8px' },
+    {
+      x: 0,
+      y: 0,
+      scale: 1,
+      borderRadius: '0px',
+      duration: FLY_DURATION / 1000,
+      ease: 'power3.out',
+      clearProps: 'transform,borderRadius',
+      onComplete: () => {
+        if (flyEl === img) cancelFly()
+      }
+    }
+  )
+}
+
+/** 过渡期间用照片墙已加载的图片垫底，避免原图未就绪时飞行中显示空框 */
+const flyBgStyle = computed(() => {
+  const src = current.value?.src || current.value?.thumb
+  if (!src) return null
+  return {
+    backgroundImage: `url(${src})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center'
+  }
+})
+
 watch(
   () => [state.isOpen, state.index],
   ([open, idx]) => {
@@ -204,6 +329,7 @@ onBeforeUnmount(() => {
   document.body.style.overflow = ''
   clearTimeout(loadingTimer)
   clearImmersiveTimer()
+  cancelFly()
 })
 
 /* —— 作品集信息（左上角） —— */
@@ -238,7 +364,7 @@ defineExpose({ openByIndex })
     <div
       v-if="state.isOpen && current"
       class="lb"
-      :class="{ 'lb--immersive': isImmersive }"
+      :class="{ 'lb--immersive': isImmersive, 'lb--flying': flying }"
       role="dialog"
       aria-modal="true"
       :aria-label="current.lightbox.title || current.alt"
@@ -345,14 +471,16 @@ defineExpose({ openByIndex })
             </div>
           </div>
 
-          <Transition name="lb-img" mode="out-in">
+          <Transition name="lb-img" mode="out-in" :css="!flying">
             <img
+              ref="mainImgRef"
               :key="current.id"
               class="lb__img"
               :src="current.lightbox.src"
               :alt="current.alt || current.lightbox.title"
               :width="current.lightbox.width"
               :height="current.lightbox.height"
+              :style="flying ? flyBgStyle : null"
               draggable="false"
               @load="onImgLoad"
               @error="onImgError"
@@ -454,11 +582,15 @@ defineExpose({ openByIndex })
   cursor: progress;
 }
 
-/* —— 沉浸模式：悬停图片 1.5s 后隐藏全部叠加 UI —— */
+/* —— 沉浸模式 / 拾起放大过渡期间：隐藏全部叠加 UI —— */
 .lb--immersive .lb__btn,
 .lb--immersive .lb__counter,
 .lb--immersive .lb__collection,
-.lb--immersive .lb__caption {
+.lb--immersive .lb__caption,
+.lb--flying .lb__btn,
+.lb--flying .lb__counter,
+.lb--flying .lb__collection,
+.lb--flying .lb__caption {
   opacity: 0;
   pointer-events: none;
 }

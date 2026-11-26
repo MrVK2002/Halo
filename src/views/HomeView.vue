@@ -42,8 +42,13 @@ const mobileBrand = computed(() => {
   }
 })
 
-function handleCardClick(index) {
-  lightboxRef.value?.openByIndex(index)
+/**
+ * 打开灯箱
+ * @param {number} index 图片索引
+ * @param {DOMRect|null} rect 被点击卡片的视口矩形（用于拾起放大动画）
+ */
+function handleCardClick(index, rect) {
+  lightboxRef.value?.openByIndex(index, rect)
 }
 
 function openDrawer() {
