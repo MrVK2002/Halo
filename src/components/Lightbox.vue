@@ -33,6 +33,7 @@ function openByIndex(index) {
 }
 
 function onClose() {
+  exitImmersive()
   close()
   document.body.style.overflow = ''
   emit('close')
@@ -138,10 +139,42 @@ async function onDownload() {
   }
 }
 
+/* —— 沉浸模式：鼠标悬停图片 1.5s 后隐藏全部 UI，移出图片立刻恢复 —— */
+const isImmersive = ref(false)
+/** 悬停多久后进入沉浸模式（ms） */
+const IMMERSIVE_DELAY = 1500
+let immersiveTimer = null
+
+/** 清除进入沉浸模式的定时器 */
+function clearImmersiveTimer() {
+  clearTimeout(immersiveTimer)
+  immersiveTimer = null
+}
+
+/** 退出沉浸模式并取消待触发的定时器 */
+function exitImmersive() {
+  clearImmersiveTimer()
+  isImmersive.value = false
+}
+
+/** 鼠标进入图片：延迟进入沉浸模式 */
+function onImageEnter() {
+  clearImmersiveTimer()
+  immersiveTimer = setTimeout(() => {
+    isImmersive.value = true
+  }, IMMERSIVE_DELAY)
+}
+
+/** 鼠标移出图片：立即恢复全部图标 */
+function onImageLeave() {
+  exitImmersive()
+}
+
 watch(
   () => [state.isOpen, state.index],
   ([open, idx]) => {
     if (!open) return
+    exitImmersive()
     isLoading.value = true
     showLoadingIndicator.value = false
     preload(idx + 1)
@@ -169,6 +202,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('keydown', onKeydown)
   document.body.style.overflow = ''
   clearTimeout(loadingTimer)
+  clearImmersiveTimer()
 })
 
 const exifFields = computed(() => {
@@ -194,6 +228,7 @@ defineExpose({ openByIndex })
     <div
       v-if="state.isOpen && current"
       class="lb"
+      :class="{ 'lb--immersive': isImmersive }"
       role="dialog"
       aria-modal="true"
       :aria-label="current.lightbox.title || current.alt"
@@ -296,6 +331,8 @@ defineExpose({ openByIndex })
               draggable="false"
               @load="onImgLoad"
               @error="onImgError"
+              @mouseenter="onImageEnter"
+              @mouseleave="onImageLeave"
             />
           </Transition>
         </div>
@@ -371,6 +408,14 @@ defineExpose({ openByIndex })
 .lb__btn:disabled {
   opacity: 0.4;
   cursor: progress;
+}
+
+/* —— 沉浸模式：悬停图片 1.5s 后隐藏全部叠加 UI —— */
+.lb--immersive .lb__btn,
+.lb--immersive .lb__counter,
+.lb--immersive .lb__caption {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .lb__btn--nav {
@@ -482,6 +527,7 @@ defineExpose({ openByIndex })
   letter-spacing: 0.05em;
   color: rgba(255, 255, 255, 0.7);
   text-transform: uppercase;
+  transition: opacity 0.3s ease-out;
 }
 
 .lb__caption {
@@ -491,6 +537,7 @@ defineExpose({ openByIndex })
   text-align: left;
   color: #fff;
   pointer-events: none;
+  transition: opacity 0.3s ease-out;
 }
 
 .lb__caption-title {
