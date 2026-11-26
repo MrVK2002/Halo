@@ -247,7 +247,20 @@ defineExpose({ openByIndex })
       @touchmove.passive="onTouchMove"
       @touchend.passive="onTouchEnd"
     >
-      <div class="lb__bg" />
+      <!-- 背景：以当前图片为基底的高斯模糊 -->
+      <div class="lb__bg">
+        <Transition name="lb-bg">
+          <img
+            :key="current.id"
+            class="lb__bg-img"
+            :src="current.thumb || current.lightbox.src"
+            alt=""
+            aria-hidden="true"
+            draggable="false"
+          />
+        </Transition>
+        <div class="lb__bg-veil" />
+      </div>
 
       <div v-if="collection" class="lb__collection">{{ collection }}</div>
 
@@ -373,12 +386,31 @@ defineExpose({ openByIndex })
   padding: 90px 24px 80px;
 }
 
+/* 背景：以当前图片为基底的高斯模糊 */
 .lb__bg {
   position: absolute;
   inset: 0;
+  overflow: hidden;
   background: #000;
-  opacity: 0.96;
   cursor: default;
+}
+
+/* 放大并外扩，避免模糊后边缘透出黑边 */
+.lb__bg-img {
+  position: absolute;
+  inset: -20%;
+  width: 140%;
+  height: 140%;
+  object-fit: cover;
+  filter: blur(48px) saturate(115%) brightness(0.75);
+  transform: scale(1.05);
+}
+
+/* 压暗遮罩，保证前景图片与文字的对比度 */
+.lb__bg-veil {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
 }
 
 /* 按钮：直角、白色 70% 不透明 */
@@ -604,11 +636,21 @@ defineExpose({ openByIndex })
 .lb-img-enter-from { opacity: 0; transform: scale(0.97); }
 .lb-img-leave-to { opacity: 0; transform: scale(1.02); }
 
+/* 背景随图片切换交叉淡入淡出 */
+.lb-bg-enter-active,
+.lb-bg-leave-active {
+  transition: opacity 0.45s ease-out;
+}
+.lb-bg-enter-from,
+.lb-bg-leave-to { opacity: 0; }
+
 @media (prefers-reduced-motion: reduce) {
   .lb-fade-enter-active,
   .lb-fade-leave-active,
   .lb-img-enter-active,
-  .lb-img-leave-active { transition: none; }
+  .lb-img-leave-active,
+  .lb-bg-enter-active,
+  .lb-bg-leave-active { transition: none; }
   .lb-img-enter-from,
   .lb-img-leave-to { transform: none; }
 }
