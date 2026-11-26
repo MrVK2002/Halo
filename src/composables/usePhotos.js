@@ -76,7 +76,7 @@ export function usePhotos() {
    * - src: 瀑布流展示图（800w 本地 WebP）
    * - thumb: 缩略图（400w）
    * - placeholder: 24px 模糊占位图（base64，避免额外请求）
-   * - lightbox: 灯箱所需的大图（1600w）与 EXIF
+   * - lightbox: 灯箱所需的大图（1600w）、原图（下载用）与 EXIF
    */
   const masonryItems = computed(() =>
     visiblePhotos.value.map((p) => ({
@@ -89,6 +89,7 @@ export function usePhotos() {
       alt: p.title,
       lightbox: {
         src: p.img.full,
+        original: p.img.original,
         width: p.width,
         height: p.height,
         title: p.title,

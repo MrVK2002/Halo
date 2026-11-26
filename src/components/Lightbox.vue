@@ -82,6 +82,62 @@ function preload(adjIndex) {
   img.src = item.lightbox.src
 }
 
+/* —— 下载当前图片（原图） —— */
+const isDownloading = ref(false)
+const IMAGE_EXT_RE = /\.(jpe?g|png|webp|gif|avif|svg)$/i
+
+/** 下载地址：优先原图（public/images/portfolio 源文件），缺失时退回灯箱大图 */
+const downloadUrl = computed(
+  () => current.value?.lightbox?.original || current.value?.lightbox?.src || ''
+)
+
+/**
+ * 生成下载文件名
+ * 优先使用原图 URL 中的文件名，其次退回作品标题
+ * @returns {string} 文件名
+ */
+function buildFileName() {
+  const rawName = decodeURIComponent(downloadUrl.value.split('?')[0].split('/').pop() || '')
+  if (IMAGE_EXT_RE.test(rawName)) return rawName
+
+  const base = current.value?.lightbox?.title || current.value?.alt || 'image'
+  // 过滤文件名中的非法字符
+  return `${base.replaceAll(/[\\/:*?"<>|]/g, '-')}.jpg`
+}
+
+/**
+ * 下载当前原图
+ * 优先通过 fetch 取 blob 后触发浏览器下载（可保留文件名）；
+ * 跨域受限时退化为新窗口打开，由用户手动保存
+ */
+async function onDownload() {
+  const url = downloadUrl.value
+  if (!url || isDownloading.value) return
+
+  const fileName = buildFileName()
+  isDownloading.value = true
+  try {
+    const res = await fetch(url, { mode: 'cors' })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+
+    const blob = await res.blob()
+    const objectUrl = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = objectUrl
+    link.download = fileName
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    // 延迟释放，确保浏览器已开始下载
+    setTimeout(() => URL.revokeObjectURL(objectUrl), 1000)
+  } catch {
+    // 图片托管方未开放跨域时，改为新窗口打开
+    window.open(url, '_blank', 'noopener')
+  } finally {
+    isDownloading.value = false
+  }
+}
+
 watch(
   () => [state.isOpen, state.index],
   ([open, idx]) => {
@@ -152,6 +208,25 @@ defineExpose({ openByIndex })
         <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
           <path
             d="M5 5l14 14M19 5L5 19"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="square"
+          />
+        </svg>
+      </button>
+
+      <button
+        class="lb__btn lb__btn--download"
+        type="button"
+        aria-label="下载原图"
+        :aria-busy="isDownloading"
+        :disabled="isDownloading"
+        @click="onDownload"
+      >
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <path
+            d="M12 4v10m-4-4l4 4 4-4M5 19h14"
             fill="none"
             stroke="currentColor"
             stroke-width="1.6"
@@ -286,6 +361,16 @@ defineExpose({ openByIndex })
 .lb__btn--close {
   top: 16px;
   right: 16px;
+}
+
+.lb__btn--download {
+  top: 16px;
+  right: 64px;
+}
+
+.lb__btn:disabled {
+  opacity: 0.4;
+  cursor: progress;
 }
 
 .lb__btn--nav {
@@ -510,6 +595,11 @@ defineExpose({ openByIndex })
   .lb__btn--close {
     top: 14px;
     right: 14px;
+  }
+
+  .lb__btn--download {
+    top: 14px;
+    right: 60px;
   }
 }
 </style>

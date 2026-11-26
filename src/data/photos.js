@@ -17,17 +17,63 @@ const PHOTO_CATEGORIES = [
 ]
 
 /**
- * 生成本地图片三档路径
+ * 原图文件名映射
+ * - key：`${目录}/${slug}`，value：public/images/portfolio 下源文件的实际文件名
+ * - 源文件命名与 slug 不完全一致（空格与下划线混用），故显式维护映射，避免拼错导致下载 404
+ */
+const ORIGINAL_FILES = {
+  // frame
+  'frame/floral-portrait-harmony': 'Floral Portrait Harmony.png',
+  'frame/analyst-at-work': 'Analyst at Work.png',
+  'frame/dynamic-woman-portrait': 'Dynamic Woman Portrait.png',
+  'frame/silhouette-in-soft-light': 'Silhouette in Soft Light.png',
+  'frame/runner-in-motion-blur': 'Runner in Motion Blur.png',
+  'frame/silhouette-at-sunset': 'Silhouette at Sunset.png',
+  'frame/boardwalk-runners': 'Boardwalk_Runners.png',
+  'frame/contemplative-young-man-in-urban-setting': 'Contemplative_Young_Man_in_Urban_Setting.png',
+  'frame/man-taking-selfie': 'Man_Taking_Selfie.png',
+  'frame/selfie-in-creative-studio': 'Selfie_in_Creative_Studio.png',
+  'frame/sporty-elegance-outdoors': 'Sporty_Elegance_Outdoors.png',
+  // exposure
+  'exposure/classic-car-by-the-coast': 'Classic Car by the Coast.png',
+  'exposure/modern-hilltop-structure': 'Modern Hilltop Structure.png',
+  'exposure/volcanic-cinder-cone': 'Volcanic Cinder Cone.png',
+  'exposure/serene-coastal-sunset': 'Serene Coastal Sunset.png',
+  'exposure/overgrown-stone-ruins': 'Overgrown Stone Ruins.png',
+  'exposure/red-shed-on-hillside': 'Red Shed on Hillside.png',
+  'exposure/serene-sunset-kayaking': 'Serene Sunset Kayaking.png',
+  'exposure/golden-hour-city-street': 'Golden_Hour_City_Street.png',
+  'exposure/majestic-mountain-range': 'Majestic_Mountain_Range.png',
+  // pixels
+  'pixels/modern-architectural-elegance': 'Modern Architectural Elegance.png',
+  'pixels/modern-architectural-structure': 'Modern Architectural Structure.png',
+  'pixels/modern-cantilevered-house': 'Modern Cantilevered House.png',
+  'pixels/modern-minimalist-building': 'Modern Minimalist Building.png',
+  'pixels/man-in-urban-chaos': 'Man in Urban Chaos.png',
+  'pixels/modern-architectural-elegance-at-twilight': 'Modern Architectural Elegance at Twilight.png',
+  'pixels/neon-contemplation': 'Neon Contemplation.png',
+  'pixels/nighttime-urban-storefront': 'Nighttime Urban Storefront.png',
+  'pixels/urban-crosswalk-scene': 'Urban Crosswalk Scene.png',
+  'pixels/blue-sports-car-at-night': 'Blue Sports Car at Night.png',
+  'pixels/modern-house-twilight-scene': 'Modern_House_Twilight_Scene.png',
+  'pixels/vibrant-light-trails': 'Vibrant_Light_Trails.png'
+}
+
+/**
+ * 生成本地图片路径
  * - 第一个参数是图片存放的目录名，与作品集 key 解耦（作品集调整不影响图片路径）
- * - 原图目录只放源文件，页面统一读取优化目录
+ * - 原图目录只放源文件，页面统一读取优化目录；original 供灯箱「下载原图」使用
  */
 function localImages(folder, slug) {
+  const key = `${folder}/${slug}`
   const base = `/images/portfolio-optimized/${folder}/${slug}`
+  const originalName = ORIGINAL_FILES[key]
   return {
     thumb: `${base}-400.webp`,
     display: `${base}-800.webp`,
     full: `${base}-1600.webp`,
-    placeholder: placeholders[`${folder}/${slug}`] || ''
+    original: originalName ? `/images/portfolio/${folder}/${encodeURIComponent(originalName)}` : '',
+    placeholder: placeholders[key] || ''
   }
 }
 
