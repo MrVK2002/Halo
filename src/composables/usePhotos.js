@@ -81,6 +81,7 @@ export function usePhotos() {
   const masonryItems = computed(() =>
     visiblePhotos.value.map((p) => ({
       id: p.id,
+      category: p.category,
       src: p.img.display,
       thumb: p.img.thumb,
       placeholder: p.img.placeholder,

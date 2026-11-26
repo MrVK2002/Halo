@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useLightbox } from '@/composables/useLightbox.js'
+import { PHOTO_CATEGORIES } from '@/data/photos.js'
 
 const props = defineProps({
   items: { type: Array, default: () => [] }
@@ -205,6 +206,15 @@ onBeforeUnmount(() => {
   clearImmersiveTimer()
 })
 
+/* —— 作品集信息（左上角） —— */
+const CATEGORY_MAP = new Map(PHOTO_CATEGORIES.map((c) => [c.key, c]))
+
+const collection = computed(() => {
+  const category = CATEGORY_MAP.get(current.value?.category)
+  if (!category) return ''
+  return `${category.labelEN.toUpperCase()} - ${category.labelCN}`
+})
+
 const exifFields = computed(() => {
   const exif = current.value?.lightbox?.exif
   if (!exif) return []
@@ -238,6 +248,8 @@ defineExpose({ openByIndex })
       @touchend.passive="onTouchEnd"
     >
       <div class="lb__bg" />
+
+      <div v-if="collection" class="lb__collection">{{ collection }}</div>
 
       <button class="lb__btn lb__btn--close" type="button" aria-label="关闭" @click="onClose">
         <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
@@ -413,6 +425,7 @@ defineExpose({ openByIndex })
 /* —— 沉浸模式：悬停图片 1.5s 后隐藏全部叠加 UI —— */
 .lb--immersive .lb__btn,
 .lb--immersive .lb__counter,
+.lb--immersive .lb__collection,
 .lb--immersive .lb__caption {
   opacity: 0;
   pointer-events: none;
@@ -519,14 +532,32 @@ defineExpose({ openByIndex })
 
 .lb__counter {
   position: absolute;
-  top: 16px;
-  left: 16px;
+  right: 16px;
+  bottom: 16px;
   z-index: 2;
   font-family: var(--font-mono);
   font-size: 15px;
   letter-spacing: 0.05em;
   color: rgba(255, 255, 255, 0.7);
   text-transform: uppercase;
+  transition: opacity 0.3s ease-out;
+}
+
+/* 作品集信息：左上角，中英文统一使用思源黑体 */
+.lb__collection {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 2;
+  font-family: var(--font-hans);
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.7);
+  /* 预留右上角关闭/下载按钮的空间，过长时省略 */
+  max-width: calc(100% - 140px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: opacity 0.3s ease-out;
 }
 
@@ -634,8 +665,8 @@ defineExpose({ openByIndex })
 
 @media (max-width: 480px) {
   .lb__counter {
-    top: 14px;
-    left: 14px;
+    right: 14px;
+    bottom: 14px;
     font-size: 13px;
   }
 
@@ -647,6 +678,12 @@ defineExpose({ openByIndex })
   .lb__btn--download {
     top: 14px;
     right: 60px;
+  }
+
+  .lb__collection {
+    top: 14px;
+    left: 14px;
+    font-size: 13px;
   }
 }
 </style>
