@@ -1,7 +1,7 @@
 /**
  * 摄影作品数据
  * - 原图位于 public/images/portfolio，页面使用 public/images/portfolio-optimized 下的 WebP
- * - 6 个独立作品集（无子分类概念），合计 48 张，每张仅归属一个作品集
+ * - 6 个独立作品集（无子分类概念），合计 53 张，每张仅归属一个作品集
  * - 每张带完整 EXIF 元数据（Lightbox 内展示）
  */
 import placeholders from './photo-placeholders.json'
@@ -34,6 +34,14 @@ const ORIGINAL_FILES = {
   'frame/man-taking-selfie': 'Man_Taking_Selfie.png',
   'frame/selfie-in-creative-studio': 'Selfie_in_Creative_Studio.png',
   'frame/sporty-elegance-outdoors': 'Sporty_Elegance_Outdoors.png',
+  'frame/urban-motion': 'Urban Motion.png',
+  // narrative
+  'narrative/dreamy-portrait': 'Dreamy Portrait.png',
+  'narrative/urban-contemplation': 'Urban Contemplation.png',
+  // available-light
+  'available-light/underwater-serenity': 'Underwater Serenity.png',
+  // grain
+  'grain/cheerful-night-scene': 'Cheerful Night Scene.png',
   // exposure
   'exposure/classic-car-by-the-coast': 'Classic Car by the Coast.png',
   'exposure/modern-hilltop-structure': 'Modern Hilltop Structure.png',
@@ -86,6 +94,14 @@ const PHOTOS = [
     width: 960, height: 1200,
     img: localImages('frame', 'floral-portrait-harmony'),
     exif: { camera: 'Fuji X-T5 / 56mm F1.2', aperture: 'F/1.4', shutter: '1/500s', iso: 'ISO 200', date: '2025.05.10' }
+  },
+  {
+    id: 'p49',
+    category: 'frame',
+    title: '都市动势',
+    width: 762, height: 1199,
+    img: localImages('frame', 'urban-motion'),
+    exif: { camera: 'Sony A7M4 / 85mm F1.8', aperture: 'F/2.0', shutter: '1/500s', iso: 'ISO 250', date: '2025.07.14' }
   },
 
   // ===== Narrative Frames 叙事瞬间 =====
@@ -241,6 +257,22 @@ const PHOTOS = [
     img: localImages('frame', 'urban-scene-with-young-person'),
     exif: { camera: 'Ricoh GR IIIx', aperture: 'F/4.0', shutter: '1/320s', iso: 'ISO 200', date: '2025.06.08' }
   },
+  {
+    id: 'p50',
+    category: 'narrative',
+    title: '梦幻肖像',
+    width: 904, height: 1200,
+    img: localImages('narrative', 'dreamy-portrait'),
+    exif: { camera: 'Canon R5 / 85mm F1.2', aperture: 'F/1.4', shutter: '1/320s', iso: 'ISO 200', date: '2025.07.18' }
+  },
+  {
+    id: 'p51',
+    category: 'narrative',
+    title: '都市凝思',
+    width: 673, height: 1200,
+    img: localImages('narrative', 'urban-contemplation'),
+    exif: { camera: 'Ricoh GR IIIx', aperture: 'F/2.8', shutter: '1/125s', iso: 'ISO 640', date: '2025.07.22' }
+  },
 
   // ===== Exposure Log 曝光日志 =====
   {
@@ -324,6 +356,14 @@ const PHOTOS = [
     width: 1200, height: 800,
     img: localImages('exposure', 'minimalist-tree-scene'),
     exif: { camera: 'Sony A7R5 / 24-70mm F2.8', aperture: 'F/8.0', shutter: '1/500s', iso: 'ISO 100', date: '2025.05.26' }
+  },
+  {
+    id: 'p52',
+    category: 'available-light',
+    title: '水下静谧',
+    width: 992, height: 1200,
+    img: localImages('available-light', 'underwater-serenity'),
+    exif: { camera: 'Sony A7R5 / 16-35mm F2.8', aperture: 'F/8.0', shutter: '1/250s', iso: 'ISO 200', date: '2025.07.26' }
   },
 
   // ===== Redundant Pixels 冗余像素 =====
@@ -472,6 +512,14 @@ const PHOTOS = [
     width: 904, height: 1200,
     img: localImages('pixels', 'nighttime-street-scene'),
     exif: { camera: 'Ricoh GR IIIx', aperture: 'F/2.8', shutter: '1/40s', iso: 'ISO 3200', date: '2025.01.02' }
+  },
+  {
+    id: 'p53',
+    category: 'grain',
+    title: '欢快夜色',
+    width: 992, height: 1200,
+    img: localImages('grain', 'cheerful-night-scene'),
+    exif: { camera: 'Leica M11 / 35mm F2', aperture: 'F/2.0', shutter: '1/60s', iso: 'ISO 1600', date: '2025.07.30' }
   }
 ]
 
