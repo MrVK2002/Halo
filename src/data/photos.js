@@ -1,7 +1,7 @@
 /**
  * 摄影作品数据
  * - 原图位于 public/images/portfolio，页面使用 public/images/portfolio-optimized 下的 WebP
- * - 6 个独立作品集（无子分类概念），合计 37 张，每张仅归属一个作品集
+ * - 6 个独立作品集（无子分类概念），合计 48 张，每张仅归属一个作品集
  * - 每张带完整 EXIF 元数据（Lightbox 内展示）
  */
 import placeholders from './photo-placeholders.json'
@@ -185,6 +185,62 @@ const PHOTOS = [
     img: localImages('frame', 'silhouette-in-motion'),
     exif: { camera: 'Canon R5 / 50mm F1.2', aperture: 'F/2.0', shutter: '1/1000s', iso: 'ISO 100', date: '2025.06.28' }
   },
+  {
+    id: 'p38',
+    category: 'narrative',
+    title: '黑白肖像',
+    width: 960, height: 1200,
+    img: localImages('frame', 'black-and-white-portrait'),
+    exif: { camera: 'Leica M11 / 50mm F2', aperture: 'F/2.0', shutter: '1/250s', iso: 'ISO 400', date: '2025.07.10' }
+  },
+  {
+    id: 'p39',
+    category: 'narrative',
+    title: '黑白肖像 II',
+    width: 1200, height: 673,
+    img: localImages('frame', 'black-and-white-portrait-ii'),
+    exif: { camera: 'Leica M11 / 35mm F2', aperture: 'F/2.8', shutter: '1/320s', iso: 'ISO 400', date: '2025.07.10' }
+  },
+  {
+    id: 'p40',
+    category: 'narrative',
+    title: '动势沉思',
+    width: 673, height: 1200,
+    img: localImages('frame', 'contemplative-woman-in-motion'),
+    exif: { camera: 'Canon R5 / 85mm F1.2', aperture: 'F/1.8', shutter: '1/200s', iso: 'ISO 320', date: '2025.07.06' }
+  },
+  {
+    id: 'p41',
+    category: 'narrative',
+    title: '动势肖像',
+    width: 904, height: 1200,
+    img: localImages('frame', 'dynamic-portrait-scene'),
+    exif: { camera: 'Sony A7M4 / 85mm F1.8', aperture: 'F/2.0', shutter: '1/400s', iso: 'ISO 250', date: '2025.06.30' }
+  },
+  {
+    id: 'p42',
+    category: 'narrative',
+    title: '城市内省',
+    width: 960, height: 1200,
+    img: localImages('frame', 'introspective-urban-portrait'),
+    exif: { camera: 'Fuji X100V / 23mm F2', aperture: 'F/2.8', shutter: '1/125s', iso: 'ISO 500', date: '2025.06.24' }
+  },
+  {
+    id: 'p43',
+    category: 'narrative',
+    title: '晴日肖像',
+    width: 960, height: 1200,
+    img: localImages('frame', 'sunny-day-portrait'),
+    exif: { camera: 'Sony A7M4 / 50mm F1.4', aperture: 'F/2.2', shutter: '1/800s', iso: 'ISO 100', date: '2025.06.14' }
+  },
+  {
+    id: 'p44',
+    category: 'narrative',
+    title: '城市少年',
+    width: 1200, height: 800,
+    img: localImages('frame', 'urban-scene-with-young-person'),
+    exif: { camera: 'Ricoh GR IIIx', aperture: 'F/4.0', shutter: '1/320s', iso: 'ISO 200', date: '2025.06.08' }
+  },
 
   // ===== Exposure Log 曝光日志 =====
   {
@@ -261,6 +317,14 @@ const PHOTOS = [
     img: localImages('exposure', 'majestic-mountain-range'),
     exif: { camera: 'Sony A7R5 / 16-35mm F2.8', aperture: 'F/11', shutter: '1/320s', iso: 'ISO 100', date: '2025.03.12' }
   },
+  {
+    id: 'p45',
+    category: 'available-light',
+    title: '极简树影',
+    width: 1200, height: 800,
+    img: localImages('exposure', 'minimalist-tree-scene'),
+    exif: { camera: 'Sony A7R5 / 24-70mm F2.8', aperture: 'F/8.0', shutter: '1/500s', iso: 'ISO 100', date: '2025.05.26' }
+  },
 
   // ===== Redundant Pixels 冗余像素 =====
   {
@@ -294,6 +358,22 @@ const PHOTOS = [
     width: 904, height: 1200,
     img: localImages('pixels', 'modern-minimalist-building'),
     exif: { camera: 'Sony A7R5 / 24-70mm F2.8', aperture: 'F/8.0', shutter: '1/400s', iso: 'ISO 100', date: '2024.12.26' }
+  },
+  {
+    id: 'p46',
+    category: 'pixels',
+    title: '扶梯动势',
+    width: 904, height: 1200,
+    img: localImages('pixels', 'dynamic-escalator-scene'),
+    exif: { camera: 'Sony A7M4 / 24-70mm F2.8', aperture: 'F/4.0', shutter: '1/30s', iso: 'ISO 800', date: '2025.06.21' }
+  },
+  {
+    id: 'p47',
+    category: 'pixels',
+    title: '街头掠影',
+    width: 900, height: 1200,
+    img: localImages('pixels', 'urban-street-photography'),
+    exif: { camera: 'Fuji X100V / 23mm F2', aperture: 'F/5.6', shutter: '1/250s', iso: 'ISO 400', date: '2025.06.16' }
   },
 
   // ===== Grain Residue 颗粒残像 =====
@@ -384,6 +464,14 @@ const PHOTOS = [
     width: 840, height: 1200,
     img: localImages('pixels', 'black-convertible-at-night'),
     exif: { camera: 'Sony A7M4 / 35mm F1.4', aperture: 'F/1.8', shutter: '1/60s', iso: 'ISO 2000', date: '2025.01.14' }
+  },
+  {
+    id: 'p48',
+    category: 'grain',
+    title: '夜色街景',
+    width: 904, height: 1200,
+    img: localImages('pixels', 'nighttime-street-scene'),
+    exif: { camera: 'Ricoh GR IIIx', aperture: 'F/2.8', shutter: '1/40s', iso: 'ISO 3200', date: '2025.01.02' }
   }
 ]
 
