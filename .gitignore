@@ -3,3 +3,4 @@
 .trae-html-share-packages/index.html.zip
 /node_modules
 package-lock.json
+/public/images/original
