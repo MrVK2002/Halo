@@ -34,6 +34,14 @@ const ORIGINAL_FILES = {
   'frame/man-taking-selfie': 'Man_Taking_Selfie.png',
   'frame/selfie-in-creative-studio': 'Selfie_in_Creative_Studio.png',
   'frame/sporty-elegance-outdoors': 'Sporty_Elegance_Outdoors.png',
+  'frame/urban-motion': 'Urban Motion.png',
+  // narrative
+  'narrative/dreamy-portrait': 'Dreamy Portrait.png',
+  'narrative/urban-contemplation': 'Urban Contemplation.png',
+  // available-light
+  'available-light/underwater-serenity': 'Underwater Serenity.png',
+  // grain
+  'grain/cheerful-night-scene': 'Cheerful Night Scene.png',
   // exposure
   'exposure/classic-car-by-the-coast': 'Classic Car by the Coast.png',
   'exposure/modern-hilltop-structure': 'Modern Hilltop Structure.png',
@@ -86,6 +94,14 @@ const PHOTOS = [
     width: 960, height: 1200,
     img: localImages('frame', 'floral-portrait-harmony'),
     exif: { camera: 'Fuji X-T5 / 56mm F1.2', aperture: 'F/1.4', shutter: '1/500s', iso: 'ISO 200', date: '2025.05.10' }
+  },
+  {
+    id: 'p49',
+    category: 'frame',
+    title: '都市动势',
+    width: 762, height: 1199,
+    img: localImages('frame', 'urban-motion'),
+    exif: { camera: 'Sony A7M4 / 85mm F1.8', aperture: 'F/2.0', shutter: '1/500s', iso: 'ISO 250', date: '2025.07.14' }
   },
 
   // ===== Narrative Frames 叙事瞬间 =====
