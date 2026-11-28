@@ -1,7 +1,7 @@
 /**
  * 摄影作品数据
  * - 原图位于 public/images/portfolio，页面使用 public/images/portfolio-optimized 下的 WebP
- * - 6 个独立作品集（无子分类概念），合计 48 张，每张仅归属一个作品集
+ * - 6 个独立作品集（无子分类概念），合计 59 张，每张仅归属一个作品集
  * - 每张带完整 EXIF 元数据（Lightbox 内展示）
  */
 import placeholders from './photo-placeholders.json'
@@ -241,6 +241,22 @@ const PHOTOS = [
     img: localImages('frame', 'urban-scene-with-young-person'),
     exif: { camera: 'Ricoh GR IIIx', aperture: 'F/4.0', shutter: '1/320s', iso: 'ISO 200', date: '2025.06.08' }
   },
+  {
+    id: 'p49',
+    category: 'narrative',
+    title: '动势疾跑',
+    width: 1200, height: 800,
+    img: localImages('frame', 'dynamic-runners-in-motion'),
+    exif: { camera: 'Sony A7M4 / 70-200mm F2.8', aperture: 'F/4.0', shutter: '1/250s', iso: 'ISO 400', date: '2025.07.14' }
+  },
+  {
+    id: 'p50',
+    category: 'narrative',
+    title: '极速 F1',
+    width: 900, height: 1200,
+    img: localImages('frame', 'formula-1-in-motion'),
+    exif: { camera: 'Canon R5 / 300mm F2.8', aperture: 'F/5.6', shutter: '1/1000s', iso: 'ISO 200', date: '2025.07.08' }
+  },
 
   // ===== Exposure Log 曝光日志 =====
   {
@@ -325,6 +341,46 @@ const PHOTOS = [
     img: localImages('exposure', 'minimalist-tree-scene'),
     exif: { camera: 'Sony A7R5 / 24-70mm F2.8', aperture: 'F/8.0', shutter: '1/500s', iso: 'ISO 100', date: '2025.05.26' }
   },
+  {
+    id: 'p51',
+    category: 'available-light',
+    title: '温暖客厅',
+    width: 960, height: 1200,
+    img: localImages('exposure', 'cozy-living-room-scene'),
+    exif: { camera: 'Sony A7M4 / 24mm F1.4', aperture: 'F/2.0', shutter: '1/60s', iso: 'ISO 800', date: '2025.05.20' }
+  },
+  {
+    id: 'p52',
+    category: 'available-light',
+    title: '橙沙脊线',
+    width: 1200, height: 960,
+    img: localImages('exposure', 'diagonal-crest-of-the-orange-dune'),
+    exif: { camera: 'Nikon Z8 / 70-200mm F2.8', aperture: 'F/11', shutter: '1/400s', iso: 'ISO 100', date: '2025.05.12' }
+  },
+  {
+    id: 'p53',
+    category: 'available-light',
+    title: '极简咖啡',
+    width: 655, height: 1200,
+    img: localImages('exposure', 'minimal-coffee-setup'),
+    exif: { camera: 'Fuji X-T5 / 35mm F1.4', aperture: 'F/2.8', shutter: '1/125s', iso: 'ISO 320', date: '2025.05.04' }
+  },
+  {
+    id: 'p54',
+    category: 'available-light',
+    title: '柑橘静物',
+    width: 904, height: 1200,
+    img: localImages('exposure', 'rustic-citrus-basket'),
+    exif: { camera: 'Canon R5 / 50mm F1.2', aperture: 'F/2.8', shutter: '1/200s', iso: 'ISO 200', date: '2025.04.30' }
+  },
+  {
+    id: 'p55',
+    category: 'available-light',
+    title: '静谧公园',
+    width: 904, height: 1200,
+    img: localImages('exposure', 'serene-park-scene'),
+    exif: { camera: 'Sony A7R5 / 24-70mm F2.8', aperture: 'F/5.6', shutter: '1/250s', iso: 'ISO 200', date: '2025.04.20' }
+  },
 
   // ===== Redundant Pixels 冗余像素 =====
   {
@@ -374,6 +430,14 @@ const PHOTOS = [
     width: 900, height: 1200,
     img: localImages('pixels', 'urban-street-photography'),
     exif: { camera: 'Fuji X100V / 23mm F2', aperture: 'F/5.6', shutter: '1/250s', iso: 'ISO 400', date: '2025.06.16' }
+  },
+  {
+    id: 'p56',
+    category: 'pixels',
+    title: '现代前台',
+    width: 900, height: 1200,
+    img: localImages('pixels', 'modern-reception-area'),
+    exif: { camera: 'Leica SL2 / 24-90mm F2.8', aperture: 'F/5.6', shutter: '1/80s', iso: 'ISO 400', date: '2025.06.11' }
   },
 
   // ===== Grain Residue 颗粒残像 =====
@@ -472,6 +536,30 @@ const PHOTOS = [
     width: 904, height: 1200,
     img: localImages('pixels', 'nighttime-street-scene'),
     exif: { camera: 'Ricoh GR IIIx', aperture: 'F/2.8', shutter: '1/40s', iso: 'ISO 3200', date: '2025.01.02' }
+  },
+  {
+    id: 'p57',
+    category: 'grain',
+    title: '虚化花束',
+    width: 960, height: 1200,
+    img: localImages('pixels', 'blurred-floral-bouquet'),
+    exif: { camera: 'Canon R5 / 85mm F1.2', aperture: 'F/1.4', shutter: '1/250s', iso: 'ISO 400', date: '2025.07.04' }
+  },
+  {
+    id: 'p58',
+    category: 'grain',
+    title: '未来霓虹',
+    width: 800, height: 1200,
+    img: localImages('pixels', 'futuristic-neon-aesthetic'),
+    exif: { camera: 'Sony A7M4 / 35mm F1.4', aperture: 'F/1.8', shutter: '1/50s', iso: 'ISO 2500', date: '2025.06.26' }
+  },
+  {
+    id: 'p59',
+    category: 'grain',
+    title: '红色光轨',
+    width: 904, height: 1200,
+    img: localImages('pixels', 'glowing-red-light-trails'),
+    exif: { camera: 'Canon R5 / 24mm F1.4', aperture: 'F/8.0', shutter: '6s', iso: 'ISO 100', date: '2025.06.19' }
   }
 ]
 
